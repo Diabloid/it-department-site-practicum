@@ -1,2 +1,2 @@
-# it-department-site
-Інформаційний сайт для відділення програмування
+# it-department-site/feature
+Створений базовий проект
