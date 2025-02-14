@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Головна";
+}
+@model System.Data.DataTable
+
+<div class="text-center">
+    <h1 class="display-4">Вітаю!</h1>
+    <p>@ViewData["Title"]</p>
+    <table>
+        <tr>
+            @foreach (System.Data.DataColumn col in Model.Columns)
+            {
+                <th>@col.ColumnName</th>
+            }
+        </tr>
+        @foreach (System.Data.DataRow row in Model.Rows)
+        {
+            <tr>
+                @foreach (var item in row.ItemArray)
+                {
+                    <td>@item</td>
+                }
+            </tr>
+        }
+    </table>
+</div>
