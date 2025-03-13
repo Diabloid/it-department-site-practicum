@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container">
+    <div class="row">
+        <!-- Сайдбар меню -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="@Url.Action("Pages", "Admin")" class="list-group-item list-group-item-action">
+                    View All Pages
+                </a>
+                <!-- Додаткові опції можна додавати тут -->
+            </div>
+        </div>
+
+        <!-- Контентна область -->
+        <div class="col-md-9">
+            @RenderBody()  <!-- Тут буде відображатися контент в залежності від вибору -->
+        </div>
+    </div>
+</div>

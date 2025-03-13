@@ -1,0 +1,27 @@
+﻿@model List<it_department_site.Database.Page>
+
+<h2>All Pages</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Slug</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var page in Model)
+        {
+            <tr>
+                <td>@page.Title</td>
+                <td>@page.Slug</td>
+                <td>@page.Status</td>
+                <td>@page.CreatedAt</td>
+                <td>@page.UpdatedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>
