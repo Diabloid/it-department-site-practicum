@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using it_department_mvc.Models;
+using it_department_site.Models;
 using it_department_site.Database;
 using System.Collections.Generic;
 using System.Data;
+using dbhelper;
 
-namespace it_department_mvc.Controllers
+namespace it_department_site.Controllers
 {
     public class AdminController : Controller
     {
@@ -39,12 +40,18 @@ namespace it_department_mvc.Controllers
                     row["slug"].ToString(),
                     status,
                     row["content"].ToString(),
-                    Convert.ToDateTime(row["createdAt"]),
-                    Convert.ToDateTime(row["updatedAt"])
+                    Convert.ToDateTime(row["created_at"]),
+                    Convert.ToDateTime(row["updated_at"])
                 ));
             }
 
-            return View(pages);  // Відправка списку сторінок на вигляд
+            return PartialView("_PagesTable",pages);  // Відправка списку сторінок на вигляд
+        }
+        public IActionResult Users()
+        {
+            string query = "SELECT * FROM users";
+            var dt = _dbHelper.ExecuteQuery(query);
+            return PartialView("_UsersTable", dt);
         }
     }
 }

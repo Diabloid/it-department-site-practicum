@@ -1,11 +1,12 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Додаємо сервіси
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<dbhelper.Dbhelper>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Обробка помилок
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -14,14 +15,27 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
-// Налаштування маршруту для DbController і методу Index
+// Маршрут для панелі адміністратора (AdminController)
+app.MapControllerRoute(
+    name: "admin",
+    pattern: "Admin",
+    defaults: new { controller = "Admin", action = "Index" }
+);
+
+// Маршрут для відображення сторінок за slug (наприклад, /blog-post-1)
+app.MapControllerRoute(
+    name: "pageBySlug",
+    pattern: "{slug}",
+    defaults: new { controller = "Pages", action = "Details" }
+);
+
+// Основний маршрут за замовчуванням
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Db}/{action=Index}/{id?}"); // Замість HomeController ставимо DbController
+    pattern: "{controller=Pages}/{action=Index}/{id?}"
+);
 
 app.Run();

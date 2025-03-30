@@ -1,0 +1,27 @@
+﻿@model List<it_department_site.Database.Page>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Slug</th>
+            <th>Status</th>
+            <th>Content</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Slug</td>
+                <td>@item.Status</td>
+                <td>@item.Content</td>
+                <td>@item.CreatedAt</td>
+                <td>@item.UpdatedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>

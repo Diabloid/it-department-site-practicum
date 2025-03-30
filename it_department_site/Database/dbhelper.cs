@@ -2,44 +2,48 @@
 using System.Data;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
-using it_department_mvc;
+using it_department_site;
 
-public class Dbhelper
+namespace dbhelper
 {
-    private readonly string _connectionString;
 
-    public Dbhelper(IConfiguration configuration)
+    public class Dbhelper
     {
-        _connectionString = configuration.GetConnectionString("DefaultConnection");
-    }
+        private readonly string _connectionString;
 
-    // Виконання SELECT-запиту і повернення результату у DataTable
-    public DataTable ExecuteQuery(string query)
-    {
-        using (var connection = new MySqlConnection(_connectionString))
+        public Dbhelper(IConfiguration configuration)
         {
-            connection.Open();
-            using (var command = new MySqlCommand(query, connection))
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+
+        // Виконання SELECT-запиту і повернення результату у DataTable
+        public DataTable ExecuteQuery(string query)
+        {
+            using (var connection = new MySqlConnection(_connectionString))
             {
-                using (var adapter = new MySqlDataAdapter(command))
+                connection.Open();
+                using (var command = new MySqlCommand(query, connection))
                 {
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    return dt;
+                    using (var adapter = new MySqlDataAdapter(command))
+                    {
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        return dt;
+                    }
                 }
             }
         }
-    }
 
-    // Виконання INSERT, UPDATE, DELETE запитів
-    public int ExecuteNonQuery(string query)
-    {
-        using (var connection = new MySqlConnection(_connectionString))
+        // Виконання INSERT, UPDATE, DELETE запитів
+        public int ExecuteNonQuery(string query)
         {
-            connection.Open();
-            using (var command = new MySqlCommand(query, connection))
+            using (var connection = new MySqlConnection(_connectionString))
             {
-                return command.ExecuteNonQuery();
+                connection.Open();
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    return command.ExecuteNonQuery();
+                }
             }
         }
     }

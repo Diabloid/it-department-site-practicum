@@ -7,16 +7,27 @@
         <!-- Сайдбар меню -->
         <div class="col-md-3">
             <div class="list-group">
-                <a href="@Url.Action("Pages", "Admin")" class="list-group-item list-group-item-action">
-                    View All Pages
-                </a>
-                <!-- Додаткові опції можна додавати тут -->
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">View All Pages</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">View All Users</a>
             </div>
         </div>
 
         <!-- Контентна область -->
         <div class="col-md-9">
-            @RenderBody()  <!-- Тут буде відображатися контент в залежності від вибору -->
+            <div id="contentArea">
+                <h4>Оберіть опцію</h4>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function loadContent(option) {
+        fetch(`/Admin/${option}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("contentArea").innerHTML = html;
+            })
+            .catch(error => console.error("Error loading content:", error));
+    }
+</script>

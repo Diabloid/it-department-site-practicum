@@ -1,0 +1,14 @@
+﻿@model it_department_site.Database.Page
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container">
+    <h1>@Model.Title</h1>
+    <p><strong>Status:</strong> @Model.Status</p>
+    <p><strong>Created At:</strong> @Model.CreatedAt</p>
+    <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
+    <hr>
+    <div>@Html.Raw(Model.Content)</div> <!-- Відображення HTML-контенту -->
+</div>

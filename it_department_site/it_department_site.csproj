@@ -11,4 +11,8 @@
     <PackageReference Include="MySql.Data" Version="9.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Db\" />
+  </ItemGroup>
+
 </Project>

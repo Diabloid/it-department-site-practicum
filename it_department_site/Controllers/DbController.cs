@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using dbhelper;
 
 namespace it_department_site.Controllers
 {

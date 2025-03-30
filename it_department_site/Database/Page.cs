@@ -2,13 +2,13 @@
 {
     public class Page
     {
-        private int Id;
-        private string Title;
-        private string Slug;
-        private PageStatus Status;
-        private string Content;
-        private DateTime CreatedAt;
-        private DateTime UpdatedAt;
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Slug { get; set; }
+        public PageStatus Status { get; set; }
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         public Page() { }
 

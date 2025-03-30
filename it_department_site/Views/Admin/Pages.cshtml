@@ -13,14 +13,14 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var page in Model)
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@page.Title</td>
-                <td>@page.Slug</td>
-                <td>@page.Status</td>
-                <td>@page.CreatedAt</td>
-                <td>@page.UpdatedAt</td>
+                <td>@item.Title</td>
+                <td>@item.Slug</td>
+                <td>@item.Status</td>
+                <td>@item.CreatedAt</td>
+                <td>@item.UpdatedAt</td>
             </tr>
         }
     </tbody>

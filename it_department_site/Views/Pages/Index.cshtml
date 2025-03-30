@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Головна";
+}
+@model List<it_department_site.Database.Page>
+
+<div class="text-center">
+    <h1 class="display-4">Вітаю!</h1>
+    <p>@ViewData["Title"]</p>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Slug</th>
+            <th>Статус</th>
+            <th>Контент</th>
+            <th>Створено</th>
+            <th>Оновлено</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a href="@Url.Action("Details", "Pages", new { slug = item.Slug })">
+                        @item.Title
+                    </a>
+                </td>
+                <td>@item.Slug</td>
+                <td>@item.Status</td>
+                <td>@item.Content</td>
+                <td>@item.CreatedAt</td>
+                <td>@item.UpdatedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>
