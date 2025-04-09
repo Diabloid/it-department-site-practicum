@@ -20,7 +20,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
+@*                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Pages" asp-action="Index">Головна</a>
                         </li>
                         <li class="nav-item">
@@ -41,7 +41,8 @@
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="SocialSurveys">Соц. Опитування</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="FAQ">Поширені питання</a></li>
                             </ul>
-                        </li>
+                        </li> *@
+                        @await Component.InvokeAsync("Menu")
                     </ul>
                 </div>
             </div>

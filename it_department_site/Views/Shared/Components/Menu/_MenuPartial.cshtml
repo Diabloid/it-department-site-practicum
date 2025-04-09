@@ -1,0 +1,23 @@
+﻿@model List<it_department_site.Database.MenuItem>
+
+@foreach (var item in Model)
+{
+    if (item.Children.Any())
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-dark" href="#" data-bs-toggle="dropdown">@item.Name</a>
+            <ul class="dropdown-menu">
+                @foreach (var child in item.Children)
+                {
+                    <li><a class="dropdown-item" href="/@child.PageSlug">@child.Name</a></li>
+                }
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" href="/@item.PageSlug">@item.Name</a>
+        </li>
+    }
+}

@@ -68,6 +68,8 @@ namespace it_department_site.Controllers
                 Convert.ToDateTime(row["updated_at"])
             );
 
+
+
             return View(page); // Передаємо об'єкт сторінки у View
         }
     }
