@@ -1,6 +1,8 @@
 ﻿@model List<it_department_site.Database.Page>
 
-<h2>All Pages</h2>
+<h2>Усі сторінки</h2>
+
+<a href="/Admin/PageEditor" class="btn btn-success mb-3">Створити нову сторінку</a>
 
 <table class="table table-bordered">
     <thead>
@@ -10,6 +12,7 @@
             <th>Status</th>
             <th>Created At</th>
             <th>Updated At</th>
+            <th>Дії</th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +24,9 @@
                 <td>@item.Status</td>
                 <td>@item.CreatedAt</td>
                 <td>@item.UpdatedAt</td>
+                <td>
+                    <a href="/Admin/PageEditor?id=@item.Id" class="btn btn-sm btn-primary">Редагувати</a>
+                </td>
             </tr>
         }
     </tbody>

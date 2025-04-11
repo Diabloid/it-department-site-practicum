@@ -1,0 +1,86 @@
+﻿@model it_department_site.Models.PageEditorViewModel;
+@{
+    ViewData["Title"] = Model.Id == null ? "Нова сторінка" : "Редагувати сторінку";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="SavePage" method="post">
+    @if (Model.Id != null)
+    {
+        <input type="hidden" name="Id" value="@Model.Id" />
+    }
+
+    <div class="mb-3">
+        <label class="form-label">Заголовок</label>
+        <input name="Title" class="form-control" value="@Model.Title" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Slug</label>
+        <input name="Slug" class="form-control" value="@Model.Slug" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Шаблон сторінки</label>
+        <select class="form-select" onchange="applyTemplate(this.value)">
+            <option value="">Оберіть шаблон</option>
+            <option value="left-sidebar">Зліва сайдбар</option>
+            <option value="right-sidebar">Справа сайдбар</option>
+            <option value="no-sidebar">Без сайдбару</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Контент</label>
+        <!-- CKEditor буде підключено до цього textarea -->
+        <textarea name="Content" id="editor" rows="15" class="form-control">@Model.Content</textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Додати до меню (опціонально)</label>
+        <select class="form-control" name="ParentMenuItemId">
+            <option value="">Не додавати</option>
+            @foreach (var item in ViewBag.MenuItems as List<it_department_site.Database.MenuItem>)
+            {
+                <option value="@item.Id">@item.Name</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+</form>
+
+@section Scripts {
+    <!-- CKEditor підключення -->
+    <script src="~/ckeditor/ckeditor.js"></script>
+    <script>
+                FullEditor
+                    .create(document.querySelector('#editor'))
+                    .then(editor => {
+                        editorInstance = editor;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+
+                // Шаблони сторінок
+        //         function applyTemplate(template) {
+        //             const templates = {
+        //                 "left-sidebar": `<div class="row">
+        //     <aside class="col-md-3">Сайдбар зліва</aside>
+        //     <main class="col-md-9">Основний контент</main>
+        // </div>`,
+        //                 "right-sidebar": `<div class="row">
+        //     <main class="col-md-9">Основний контент</main>
+        //     <aside class="col-md-3">Сайдбар справа</aside>
+        // </div>`,
+        //                 "no-sidebar": `<div>Основний контент без сайдбару</div>`
+        //             };
+
+        //             if (template in templates && editorInstance) {
+        //                 editorInstance.setData(templates[template]);
+        //             }
+        //         }
+    </script>
+}

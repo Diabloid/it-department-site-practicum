@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Folder Include="Views\Db\" />
+    <Folder Include="wwwroot\ckeditor\src\" />
   </ItemGroup>
 
 </Project>
