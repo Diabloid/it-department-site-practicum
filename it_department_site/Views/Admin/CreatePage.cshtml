@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Створити нову сторінку";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Оберіть шаблон для нової сторінки</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card template-card" onclick="selectTemplate('left-sidebar')">
+                <div class="card-body">
+                    <h5 class="card-title">Зліва сайдбар</h5>
+                    <p class="card-text">Контент з правого боку, зліва — бокова панель.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card template-card" onclick="selectTemplate('no-sidebar')">
+                <div class="card-body">
+                    <h5 class="card-title">Без сайдбару</h5>
+                    <p class="card-text">Повна ширина контенту без бокових панелей.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card template-card" onclick="selectTemplate('right-sidebar')">
+                <div class="card-body">
+                    <h5 class="card-title">Справа сайдбар</h5>
+                    <p class="card-text">Контент з лівого боку, справа — бокова панель.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function selectTemplate(layoutType) {
+            fetch('/Admin/SaveTemplateSelection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                },
+                body: JSON.stringify({ layoutType })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/Admin/PageEditor';
+                } else {
+                    alert('Не вдалося зберегти шаблон.');
+                }
+            });
+        }
+    </script>
+}

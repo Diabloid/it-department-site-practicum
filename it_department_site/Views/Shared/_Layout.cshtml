@@ -1,4 +1,8 @@
 ﻿<!DOCTYPE html>
+@{
+    var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
+    @Html.AntiForgeryToken()
+}
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,9 +30,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Info">Інформація про спеціальність</a>
                         </li> *@
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Адмін Панель</a>
-                        </li>
 @* 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="studentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -43,6 +44,18 @@
                             </ul>
                         </li> *@
                         @await Component.InvokeAsync("Menu")
+                        @if (isJwtLoggedIn)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Адмін Панель</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Увійти</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

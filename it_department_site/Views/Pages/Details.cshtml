@@ -1,14 +1,55 @@
 ﻿@model it_department_site.Database.Page
-
+@using System.Text.Json
+@using it_department_site.Database
 @{
     ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+    var contentSections = Model.Content ?? new it_department_site.Database.ContentSections();
 }
-
-<div class="container">
-    <h1>@Model.Title</h1>
-    <p><strong>Status:</strong> @Model.Status</p>
-    <p><strong>Created At:</strong> @Model.CreatedAt</p>
-    <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
-    <hr>
-    <div>@Html.Raw(Model.Content)</div> <!-- Відображення HTML-контенту -->
-</div>
+@if (Model.LayoutType == "left-sidebar")
+{
+    <div class="content">
+        <h1>@Model.Title</h1>
+        <p><strong>Status:</strong> @Model.Status</p>
+        <p><strong>Created At:</strong> @Model.CreatedAt</p>
+        <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
+        <hr>
+    <div class="row">
+            <div class="col-md-3">
+                <div class="sidebar bg-light p-3"><div class="sidebar bg-light p-3">@Html.Raw(contentSections.left)</div></div>
+            </div>
+            <div class="col-md-9">
+                @Html.Raw(contentSections.main)
+            </div>
+    </div>
+    </div>
+}
+else if (Model.LayoutType == "right-sidebar")
+{
+    <div class="content">
+        <h1>@Model.Title</h1>
+        <p><strong>Status:</strong> @Model.Status</p>
+        <p><strong>Created At:</strong> @Model.CreatedAt</p>
+        <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
+        <hr>
+    <div class="row">
+            <div class="col-md-9">
+                @Html.Raw(contentSections.main)
+            </div>
+            <div class="col-md-3">
+                <div class="sidebar bg-light p-3">@Html.Raw(contentSections.right)</div>
+            </div>
+    </div>
+    </div>
+}
+else // no-sidebar
+{
+    <div class="content">
+        <h1>@Model.Title</h1>
+        <p><strong>Status:</strong> @Model.Status</p>
+        <p><strong>Created At:</strong> @Model.CreatedAt</p>
+        <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
+        <hr>
+        @Html.Raw(contentSections.main)
+    </div>
+}

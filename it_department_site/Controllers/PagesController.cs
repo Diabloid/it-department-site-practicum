@@ -1,76 +1,54 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using it_department_site.Database;
-using System.Data;
-using dbhelper;
+using it_department_site.Services;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace it_department_site.Controllers
 {
     public class PagesController : Controller
     {
-        private readonly Dbhelper _dbHelper;
+        private readonly IPageService _pageService;
 
-        public PagesController(Dbhelper dbHelper)
+        public PagesController(IPageService pageService)
         {
-            _dbHelper = dbHelper;
+            _pageService = pageService;
+        }
+        private bool IsAdminFromJwt()
+        {
+            var token = Request.Cookies["jwt"];
+            if (string.IsNullOrEmpty(token)) return false;
+
+            var handler = new JwtSecurityTokenHandler();
+            try
+            {
+                var jwt = handler.ReadJwtToken(token);
+                var roleClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+                return roleClaim?.Value == "Admin";
+            }
+            catch
+            {
+                return false;
+            }
         }
 
+        // Показ списку всіх сторінок
         public IActionResult Index()
         {
-            string query = "SELECT * FROM pages";
-            var dt = _dbHelper.ExecuteQuery(query);
-
-            List<Page> pages = new List<Page>();
-
-            foreach (DataRow row in dt.Rows)
-            {
-                PageStatus status = Enum.TryParse(row["status_"].ToString(), out PageStatus parsedStatus)
-                    ? parsedStatus
-                    : PageStatus.Draft;
-
-                pages.Add(new Page(
-                    Convert.ToInt32(row["id"]),
-                    row["title"].ToString(),
-                    row["slug"].ToString(),
-                    status,
-                    row["content"].ToString(),
-                    Convert.ToDateTime(row["created_at"]),
-                    Convert.ToDateTime(row["updated_at"])
-                ));
-            }
-
-            return View(pages); // Передаємо список сторінок у представлення Index.cshtml
+            var pages = _pageService.GetAllPages();
+            return View(pages);
         }
 
-        // Метод для відображення окремої сторінки
+        // Деталі сторінки за slug
         public IActionResult Details(string slug)
         {
-            string query = $"SELECT * FROM pages WHERE slug = '{slug}'";
-            var dt = _dbHelper.ExecuteQuery(query);
+            bool isAdmin = IsAdminFromJwt();
 
-            if (dt.Rows.Count == 0)
-            {
-                return NotFound(); // Якщо сторінку не знайдено, повертаємо 404
-            }
+            var page = _pageService.GetPageBySlug(slug, isAdmin);
 
-            DataRow row = dt.Rows[0];
+            if (page == null)
+                return View("~/Views/Shared/NotFound.cshtml");
 
-            PageStatus status = Enum.TryParse(row["status_"].ToString(), out PageStatus parsedStatus)
-                ? parsedStatus
-                : PageStatus.Draft;
-
-            Page page = new Page(
-                Convert.ToInt32(row["id"]),
-                row["title"].ToString(),
-                row["slug"].ToString(),
-                status,
-                row["content"].ToString(),
-                Convert.ToDateTime(row["created_at"]),
-                Convert.ToDateTime(row["updated_at"])
-            );
-
-
-
-            return View(page); // Передаємо об'єкт сторінки у View
+            return View(page);
         }
     }
 }

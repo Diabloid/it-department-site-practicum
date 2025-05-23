@@ -1,86 +1,150 @@
-﻿@model it_department_site.Models.PageEditorViewModel;
+﻿@using it_department_site.Database
+@model it_department_site.Models.PageEditorViewModel
 @{
     ViewData["Title"] = Model.Id == null ? "Нова сторінка" : "Редагувати сторінку";
+    Layout = "_Layout";
+    var menuItems = ViewBag.MenuItems as List<MenuItem>;
+    var layoutType = Model.LayoutType ?? "no-sidebar";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container mt-4">
+    <form asp-action="SavePage" method="post">
+        @if (Model.Id != null)
+        {
+            <input type="hidden" name="Id" value="@Model.Id" />
+        }
 
-<form asp-action="SavePage" method="post">
-    @if (Model.Id != null)
-    {
-        <input type="hidden" name="Id" value="@Model.Id" />
-    }
+        <input type="hidden" id="LayoutType" name="LayoutType" value="@layoutType" />
 
-    <div class="mb-3">
-        <label class="form-label">Заголовок</label>
-        <input name="Title" class="form-control" value="@Model.Title" required />
-    </div>
+        <div class="row">
+            <!-- Основна частина: контент сторінки -->
+            <div class="col-md-9">
+                <input name="Title" class="form-control fs-1 fw-bold mb-3" value="@Model.Title" placeholder="Заголовок сторінки" required />
+                <label class="form-label fw-bold">Статус</label>
+                <select name="Status" class="form-select">
+                    <option value="Draft" selected="@(Model.Status == "Draft")">Чернетка</option>
+                    <option value="Published" selected="@(Model.Status == "Published")">Опубліковано</option>
+                </select>
 
-    <div class="mb-3">
-        <label class="form-label">Slug</label>
-        <input name="Slug" class="form-control" value="@Model.Slug" required />
-    </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Контент</label>
+                    @* Логіка відображення textarea + сайдбарів залежно від layoutType *@
+                    @if (layoutType == "left-sidebar")
+                    {
+                        <div class="row">
+                            <div class="col-md-3">
+                                <textarea name="ContentSections.left" id="editorleft" rows="15" class="editor form-control">@Model.ContentSections.left</textarea>
+                            </div>
+                            <div class="col-md-9">
+                                <textarea name="ContentSections.main" id="editormain" rows="15" class="editor form-control">@Model.ContentSections.main</textarea>
+                            </div>
+                        </div>
+                    }
+                    else if (layoutType == "right-sidebar")
+                    {
+                        <div class="row">
+                            <div class="col-md-9">
+                                <textarea name="ContentSections.main" id="editormain" rows="15" class="editor form-control">@Model.ContentSections.main</textarea>
+                            </div>
+                            <div class="col-md-3">
+                                <textarea name="ContentSections.right" id="editorright" rows="15" class="editor form-control">@Model.ContentSections.right</textarea>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <textarea name="ContentSections.main" id="editormain" rows="15" class="editor form-control">@Model.ContentSections.main</textarea>
+                    }
+                </div>
+            </div>
 
-    <div class="mb-3">
-        <label class="form-label">Шаблон сторінки</label>
-        <select class="form-select" onchange="applyTemplate(this.value)">
-            <option value="">Оберіть шаблон</option>
-            <option value="left-sidebar">Зліва сайдбар</option>
-            <option value="right-sidebar">Справа сайдбар</option>
-            <option value="no-sidebar">Без сайдбару</option>
-        </select>
-    </div>
+            <!-- Бокова панель -->
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-header fw-bold">Налаштування</div>
+                    <div class="card-body">
 
-    <div class="mb-3">
-        <label class="form-label">Контент</label>
-        <!-- CKEditor буде підключено до цього textarea -->
-        <textarea name="Content" id="editor" rows="15" class="form-control">@Model.Content</textarea>
-    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Slug</label>
+                            <input name="Slug" class="form-control" value="@Model.Slug" required />
+                        </div>
 
-    <div class="form-group">
-        <label>Додати до меню (опціонально)</label>
-        <select class="form-control" name="ParentMenuItemId">
-            <option value="">Не додавати</option>
-            @foreach (var item in ViewBag.MenuItems as List<it_department_site.Database.MenuItem>)
-            {
-                <option value="@item.Id">@item.Name</option>
-            }
-        </select>
-    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Шаблон сторінки</label>
+                            <select class="form-select" name="LayoutType" onchange="applyTemplate(this.value)">
+                                <option value="left-sidebar" selected="@(layoutType == "left-sidebar")">Зліва сайдбар</option>
+                                <option value="right-sidebar" selected="@(layoutType == "right-sidebar")">Справа сайдбар</option>
+                                <option value="no-sidebar" selected="@(layoutType == "no-sidebar")">Без сайдбару</option>
+                            </select>
+                        </div>
 
-    <button type="submit" class="btn btn-primary">Зберегти</button>
-</form>
+                        <div class="mb-3">
+                            <label class="form-label">Меню</label>
+                            <select class="form-select" name="ParentMenuItemId">
+                                <option value="">Не додавати</option>
+                                @if (menuItems != null && menuItems.Any())
+                                {
+                                    foreach (var item in menuItems.OrderBy(i => i.Name))
+                                    {
+                                        <option value="@item.Id" selected="@(item.Id == Model.ParentMenuItemId)">@item.Name</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option disabled>Немає пунктів меню</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Дата створення</label>
+                            <input class="form-control" disabled value="@(Model.CreatedAt?.ToString("dd.MM.yyyy HH:mm:ss") ?? "-")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Оновлено</label>
+                            <input class="form-control" disabled value="@(Model.UpdatedAt?.ToString("dd.MM.yyyy HH:mm:ss") ?? "-")" />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">💾 Зберегти</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
-    <!-- CKEditor підключення -->
     <script src="~/ckeditor/ckeditor.js"></script>
     <script>
-                FullEditor
-                    .create(document.querySelector('#editor'))
-                    .then(editor => {
-                        editorInstance = editor;
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
+            document.addEventListener('DOMContentLoaded', () => {
+                // Перевір, чи FullEditor існує
+                if (typeof FullEditor === 'undefined') {
+                    console.error("❌ FullEditor is not defined. Використай ClassicEditor або іншу назву редактора.");
+                    return;
+                }
 
-                // Шаблони сторінок
-        //         function applyTemplate(template) {
-        //             const templates = {
-        //                 "left-sidebar": `<div class="row">
-        //     <aside class="col-md-3">Сайдбар зліва</aside>
-        //     <main class="col-md-9">Основний контент</main>
-        // </div>`,
-        //                 "right-sidebar": `<div class="row">
-        //     <main class="col-md-9">Основний контент</main>
-        //     <aside class="col-md-3">Сайдбар справа</aside>
-        // </div>`,
-        //                 "no-sidebar": `<div>Основний контент без сайдбару</div>`
-        //             };
+                const editorInstances = {};
 
-        //             if (template in templates && editorInstance) {
-        //                 editorInstance.setData(templates[template]);
-        //             }
-        //         }
+                document.querySelectorAll('textarea.editor').forEach(textarea => {
+                    FullEditor
+                        .create(textarea)
+                        .then(editor => {
+                            editorInstances[textarea.id] = editor;
+                        })
+                        .catch(error => {
+                            console.error(`❌ Error initializing ${textarea.id}:`, error);
+                        });
+                });
+
+                // Функція для вибору шаблону
+                function applyTemplate(value) {
+                    document.getElementById("LayoutType").value = value;
+                }
+
+                // Ініціалізація шаблону при завантаженні
+                applyTemplate('@layoutType');
+            });
+    </script>
     </script>
 }

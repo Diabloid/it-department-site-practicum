@@ -1,133 +1,149 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using it_department_site.Models;
+using it_department_site.Services;
 using it_department_site.Database;
-using System.Collections.Generic;
-using System.Data;
 using dbhelper;
+using it_department_site.Filters;
+using System.Text.Json;
+using System.Text.Encodings.Web;
 
 namespace it_department_site.Controllers
 {
+    [JwtAuthorize]
     public class AdminController : Controller
     {
+        private readonly IPageService _pageService;
+        private readonly IMenuService _menuService;
+        private readonly ILogger<AdminController> _logger;
         private readonly Dbhelper _dbHelper;
 
-        public AdminController(Dbhelper dbHelper)
+        public AdminController(
+            IPageService pageService,
+            IMenuService menuService,
+            Dbhelper dbHelper,
+            ILogger<AdminController> logger)
         {
+            _pageService = pageService;
+            _menuService = menuService;
             _dbHelper = dbHelper;
+            _logger = logger;
         }
 
-        // Метод для відображення меню та контенту
+        // Головна сторінка адмінки
         public IActionResult Index()
         {
             return View();
         }
-
-        // Метод для відображення всіх сторінок
-        public IActionResult Pages()
-        {
-            string query = "SELECT * FROM pages";
-            var dt = _dbHelper.ExecuteQuery(query);
-
-            List<Page> pages = new List<Page>();
-            foreach (DataRow row in dt.Rows)
-            {
-                PageStatus status = Enum.TryParse(row["status_"].ToString(), out PageStatus parsedStatus)
-                    ? parsedStatus
-                    : PageStatus.Draft;
-                pages.Add(new Page(
-                    Convert.ToInt32(row["id"]),
-                    row["title"].ToString(),
-                    row["slug"].ToString(),
-                    status,
-                    row["content"].ToString(),
-                    Convert.ToDateTime(row["created_at"]),
-                    Convert.ToDateTime(row["updated_at"])
-                ));
-            }
-
-            return PartialView("_PagesTable",pages);  // Відправка списку сторінок на вигляд
-        }
         public IActionResult Users()
         {
-            string query = "SELECT * FROM users";
-            var dt = _dbHelper.ExecuteQuery(query);
+            var dt = _dbHelper.ExecuteQuery("SELECT * FROM users ORDER BY id");
             return PartialView("_UsersTable", dt);
         }
-        // Сторінка редактора
+        // Список усіх сторінок
+        public IActionResult Pages()
+        {
+            var pages = _pageService.GetAllPages();
+            _logger.LogInformation("Адмін переглянув {Count} сторінок", pages.Count);
+            return PartialView("_PagesTable", pages);
+        }
+        public IActionResult Create()
+        {
+            return View("CreatePage");
+        }
+
+        // Редактор сторінки (створення або редагування)
         public IActionResult PageEditor(int? id)
         {
             PageEditorViewModel model;
+            ViewBag.MenuItems = _menuService.GetAllMenuItems();
 
             if (id == null)
             {
-                model = new PageEditorViewModel();
-            }
-            else
-            {
-                var dt = _dbHelper.ExecuteQuery($"SELECT * FROM pages WHERE id = {id}");
-
-                if (dt.Rows.Count == 0)
-                    return NotFound();
-
-                var row = dt.Rows[0];
+                var layoutType = HttpContext.Session.GetString("SelectedLayoutType") ?? "no-sidebar";
 
                 model = new PageEditorViewModel
                 {
-                    Id = Convert.ToInt32(row["id"]),
-                    Title = row["title"].ToString(),
-                    Slug = row["slug"].ToString(),
-                    Content = row["content"].ToString(),
-                    LayoutTemplate = "" // Не зберігається в БД, задається у редакторі
+                    LayoutType = layoutType
                 };
             }
-
-            // ✅ Завантажуємо меню, де parent_id IS NULL
-            var menuItemsDt = _dbHelper.ExecuteQuery("SELECT * FROM menu_items ORDER BY sort_order");
-            var menuItems = new List<MenuItem>();
-            foreach (DataRow menuRow in menuItemsDt.Rows)
+            else
             {
-                menuItems.Add(new MenuItem
+                var page = _pageService.GetPageById(id.Value);
+                if (page == null)
                 {
-                    Id = Convert.ToInt32(menuRow["id"]),
-                    Name = menuRow["name"].ToString(),
-                });
+                    _logger.LogWarning($"Сторінка з ID {id.Value} не знайдена");
+                    return NotFound();
+                }
+
+                model = new PageEditorViewModel
+                {
+                    Id = page.Id,
+                    Title = page.Title,
+                    Slug = page.Slug,
+                    Status = page.Status.ToString(),
+                    LayoutType = page.LayoutType,
+                    ContentSections = page.Content,
+                    CreatedAt = page.CreatedAt,
+                    UpdatedAt = page.UpdatedAt
+                };
             }
-            ViewBag.MenuItems = menuItems;
 
             return View(model);
         }
 
-        [HttpPost]
+        // POST: Збереження сторінки
         public IActionResult SavePage(PageEditorViewModel model)
         {
-            string query;
+            var page = new Page
+            {
+                Id = model.Id ?? 0,
+                Title = model.Title,
+                Slug = model.Slug,
+                Content = model.ContentSections,
+                Status = Enum.TryParse(model.Status, out PageStatus status) ? status : PageStatus.Draft,
+                LayoutType = model.LayoutType,  
+                CreatedAt = (DateTime)(model.CreatedAt != default ? model.CreatedAt : DateTime.Now),
+                UpdatedAt = DateTime.Now
+            };
 
             if (model.Id == null)
             {
-                // Додаємо нову сторінку
-                query = $"INSERT INTO pages (title, slug, status_, content, created_at, updated_at) VALUES (" +
-                        $"'{model.Title}', '{model.Slug}', 'Published', '{model.Content}', NOW(), NOW())";
+                _pageService.CreatePage(page);
+                _logger.LogInformation("Створено сторінку: {Title}", page.Title);
             }
             else
             {
-                // Оновлюємо існуючу сторінку
-                query = $"UPDATE pages SET title = '{model.Title}', slug = '{model.Slug}', " +
-                        $"content = '{model.Content}', updated_at = NOW() WHERE id = {model.Id}";
+                _pageService.UpdatePage(page);
+                _logger.LogInformation("Оновлено сторінку ID {Id}", page.Id);
             }
 
-            _dbHelper.ExecuteNonQuery(query);
+            return RedirectToAction("Index");   
+        }
 
-            // Якщо вибрано пункт меню, додаємо його
-            if (!string.IsNullOrEmpty(Request.Form["ParentMenuItemId"]))
-            {
-                int parentId = Convert.ToInt32(Request.Form["ParentMenuItemId"]);
-                string insertMenuQuery = $@"
-            INSERT INTO menu_items (name, parent_id, page_id, sort_order)
-            VALUES ('{model.Title}', {parentId}, {model.Id}, 99)";
-                _dbHelper.ExecuteNonQuery(insertMenuQuery);
-            }
-
+        // POST: Видалення сторінки
+        [HttpPost]
+        public IActionResult DeletePage(int id)
+        {
+            _pageService.DeletePage(id);
+            _logger.LogWarning("Сторінку з ID {Id} видалено", id);
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        public IActionResult SaveTemplateSelection([FromBody] TemplateSelectionModel model)
+        {
+            if (!string.IsNullOrEmpty(model.LayoutType))
+            {
+                HttpContext.Session.SetString("SelectedLayoutType", model.LayoutType);
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        public class TemplateSelectionModel
+        {
+            public string LayoutType { get; set; }
+        }
+
     }
 }
