@@ -7,9 +7,16 @@
         <!-- Сайдбар меню -->
         <div class="col-md-3">
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">View All Pages</a>
-                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">View All Users</a>
-                <a class="btn btn-danger" asp-controller="Auth" asp-action="Logout">Вийти</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">📄 View All Pages</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MenuItems')">🧩 Manage Menu Items</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">👤 View All Users</a>
+                <a class="list-group-item list-group-item-action" asp-action="LayoutSettings" asp-controller="Admin">
+                    ⚙️ Редагувати хедер і футер
+                </a>
+                <a class="list-group-item list-group-item-action" asp-action="EditTheme" asp-controller="Admin">
+                    ⚙️ Редагувати тему
+                </a>
+                <a class="btn btn-danger mt-3" asp-controller="Auth" asp-action="Logout">🚪 Вийти</a>
             </div>
         </div>
 
@@ -21,14 +28,54 @@
         </div>
     </div>
 </div>
-
+@section Scripts {
 <script>
-    function loadContent(option) {
-        fetch(`/Admin/${option}`)
-            .then(response => response.text())
+    document.addEventListener("DOMContentLoaded", () => {
+        const section = new URLSearchParams(window.location.search).get("section");
+        if (section) {
+            loadContent(section); // наприклад: section=menuItems
+        }
+    });
+
+    function loadContent(option, params = '') {
+        const url = `/Admin/${encodeURIComponent(option)}${params}`;
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
             })
-            .catch(error => console.error("Error loading content:", error));
+            .catch(error => {
+                console.error("Error loading content:", error);
+                document.getElementById("contentArea").innerHTML = "<div class='alert alert-danger'>Помилка завантаження вмісту.</div>";
+            });
+    }
+
+    // Приклад пагінації: loadPage(2) завантажить 2-гу сторінку
+    function loadPage(page) {
+        loadContent("Pages", `?page=${page}`);
+    }
+
+    function resetForm() {
+      document.getElementById('menuModalLabel').textContent = 'Створення пункту меню';
+      document.getElementById('menuId').value = '';
+      document.getElementById('menuName').value = '';
+      document.getElementById('parentId').value = '';
+      document.getElementById('pageId').value = '';
+      document.getElementById('sortOrder').value = '';
+    }
+
+    function fillForm(id, name, parentId, pageId, sortOrder) {
+      document.getElementById('menuModalLabel').textContent = 'Редагування пункту меню';
+      document.getElementById('menuId').value = id;
+      document.getElementById('menuName').value = name;
+      document.getElementById('parentId').value = parentId;
+      document.getElementById('pageId').value = pageId;
+      document.getElementById('sortOrder').value = sortOrder;
     }
 </script>
+}

@@ -2,12 +2,20 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace it_department_site.Filters
 {
     public class JwtAuthorizeAttribute : ActionFilterAttribute
     {
+        private readonly string[] _allowedRoles;
+
+        public JwtAuthorizeAttribute(params string[] roles)
+        {
+            _allowedRoles = roles ?? Array.Empty<string>();
+        }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var token = context.HttpContext.Request.Cookies["jwt"];
@@ -24,7 +32,7 @@ namespace it_department_site.Filters
             var tokenHandler = new JwtSecurityTokenHandler();
             try
             {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
@@ -34,10 +42,20 @@ namespace it_department_site.Filters
                     ValidAudience = config["Jwt:Audience"],
                     IssuerSigningKey = key
                 }, out _);
+
+                var role = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+                // Якщо передані ролі — перевірити
+                if (_allowedRoles.Length > 0 && !_allowedRoles.Contains(role))
+                {
+                    context.Result = new NotFoundResult(); // Можна змінити на редірект
+                    return;
+                }
             }
             catch
             {
-                context.Result = new NotFoundResult(); // або RedirectToAction("Login", "Auth");
+                context.Result = new NotFoundResult();
+                return;
             }
 
             base.OnActionExecuting(context);

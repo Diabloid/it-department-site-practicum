@@ -5,19 +5,48 @@
     if (item.Children.Any())
     {
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-dark" href="#" data-bs-toggle="dropdown">@item.Name</a>
+            @{
+                // Якщо item.PageSlug є — робимо клікабельний випадаючий пункт
+                var hasLink = !string.IsNullOrEmpty(item.PageSlug);
+            }
+
+            @if (hasLink)
+            {
+                <a class="nav-link dropdown-toggle" href="/@item.PageSlug" data-bs-toggle="dropdown">@item.Name</a>
+            }
+            else
+            {
+                <span class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@item.Name</span>
+            }
+
             <ul class="dropdown-menu">
                 @foreach (var child in item.Children)
                 {
-                    <li><a class="dropdown-item" href="/@child.PageSlug">@child.Name</a></li>
+                    @if (!string.IsNullOrEmpty(child.PageSlug))
+                    {
+                        <li><a class="dropdown-item" href="/@child.PageSlug">@child.Name</a></li>
+                    }
+                    else
+                    {
+                        <li><span class="dropdown-item text-muted">@child.Name</span></li>
+                    }
                 }
             </ul>
         </li>
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" href="/@item.PageSlug">@item.Name</a>
-        </li>
+        @if (!string.IsNullOrEmpty(item.PageSlug))
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="/@item.PageSlug">@item.Name</a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <span class="nav-link">@item.Name</span>
+            </li>
+        }
     }
 }

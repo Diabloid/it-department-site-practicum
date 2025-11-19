@@ -1,80 +1,141 @@
 ﻿<!DOCTYPE html>
+@inject it_department_site.Services.ISiteSettingsService SettingsService
+@using Microsoft.AspNetCore.Html
+@using System.Text.Encodings.Web
+@using System.Text.RegularExpressions
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+
+@functions {
+    string RenderHtml(IHtmlContent content)
+    {
+        using var writer = new StringWriter();
+        content.WriteTo(writer, HtmlEncoder.Default);
+        return writer.ToString();
+    }
+}
 @{
+
     var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
-    @Html.AntiForgeryToken()
+    var siteSettings = SettingsService.Get();
+    var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
+    string loginButtonHtml;
+
+    if (isJwtLoggedIn)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(Context.Request.Cookies["jwt"]);
+        var role = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "";
+        var username = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "";
+
+        if (role == "Admin")
+        {
+            loginButtonHtml = @"
+        <li class='nav-item'>
+            <a class='nav-link' href='/Admin/Index'>Адмін Панель</a>
+        </li>";
+        }
+        else if (role == "User")
+        {
+            loginButtonHtml = @"
+        <li class='nav-item'>
+            <a class='nav-link' href='/profile'>Профіль</a>
+        </li>";
+        }
+        else
+        {
+            loginButtonHtml = "<li class='nav-item'><a class='nav-link' href='/Login'>Увійти</a></li>";
+        }
+    }
+    else
+    {
+        loginButtonHtml = "<li class='nav-item'><a class='nav-link' href='/Login'>Увійти</a></li><li class='nav-item'><a class='nav-link' href='/register'>Зареєструватись</a></li>";
+    }
+
+    var searchHtml = @"
+        <li class='nav-item'>
+            <form class='d-flex position-relative' id='searchForm' autocomplete='off'>
+                <input class='form-control me-sm-2' type='search' id='searchInput' name='query' placeholder='Пошук...' />
+                <div id='suggestionsBox' class='list-group position-absolute w-100' style='top:100%; z-index:1000;'></div>
+            </form>
+        </li>";
+
+    var renderedHeader = (siteSettings?.HeaderHtml ?? "")
+        .Replace("@SiteTitle", siteSettings?.SiteTitle ?? "Назва сайту")
+        .Replace("<li class=\"nav-item\" data-dynamic=\"menu\">[меню]</li>", menuHtml)
+        .Replace("<li class=\"nav-item\" data-dynamic=\"login-button\">[вхід/адмін]</li>", loginButtonHtml)
+        .Replace("<li class=\"nav-item\" data-dynamic=\"search\">[пошук]</li>", searchHtml);
+    var theme = AvailableThemes.Themes.ContainsKey(siteSettings?.SelectedTheme ?? "default")
+        ? AvailableThemes.Themes[siteSettings.SelectedTheme]
+        : AvailableThemes.Themes["default"];
 }
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - it_department_mvc</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - @SettingsService.Get().SiteTitle</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    @if (!string.IsNullOrEmpty(siteSettings?.SelectedTheme) && siteSettings.SelectedTheme != "default")
+    {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/@(siteSettings.SelectedTheme)/bootstrap.min.css" />
+    }
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/it_department_mvc.styles.css" asp-append-version="true" />
-    <link rel="icon" type="image/x-icon" href="~/logopolytech-1.ico" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Pages" asp-action="Index">Інформаційний сайт 121</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav ms-auto">
-@*                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pages" asp-action="Index">Головна</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Info">Інформація про спеціальність</a>
-                        </li> *@
-@* 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="studentsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Студентам
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="studentsDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="EducationalPrograms">Освітні програми</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Practices">Практики</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="ELearning">Електронне навчання</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="SocialSurveys">Соц. Опитування</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="FAQ">Поширені питання</a></li>
-                            </ul>
-                        </li> *@
-                        @await Component.InvokeAsync("Menu")
-                        @if (isJwtLoggedIn)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Адмін Панель</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Увійти</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <link rel="icon" type="image/x-icon" href="D:\It-department-site\it-department-site\It_department_site\wwwroot\logopolytech-1.ico" />
+@*     <style>@Html.Raw(siteSettings.HeaderCss)</style> *@
+    @if (siteSettings?.CustomCss != null)
+    {
+        <style>
+            :root {
+            @Html.Raw(siteSettings.CustomCss)
+            }
+        </style>
+    }
 
-    <footer class="border-top footer text-muted">
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    @Html.Raw(renderedHeader)
+
+    <main class="container">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-secondary py-3 mt-auto">
         <div class="container">
-            &copy; 2025 - it_department_site - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        @Html.Raw(siteSettings?.FooterHtml ?? "© 2025 IT Department")
         </div>
     </footer>
+
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        const suggestionsBox = document.getElementById("suggestionsBox");
+
+        searchInput.addEventListener("input", async () => {
+            const query = searchInput.value.trim();
+            if (query.length < 2) {
+                suggestionsBox.innerHTML = "";
+                return;
+            }
+
+            const res = await fetch(`/Pages/SearchSuggestions?term=${encodeURIComponent(query)}`);
+            const suggestions = await res.json();
+
+            suggestionsBox.innerHTML = suggestions.map(item =>
+                `<a href="/${encodeURIComponent(item.slug)}" class="list-group-item list-group-item-action">${item.title}</a>`
+            ).join("");
+        });
+
+        document.addEventListener("click", () => suggestionsBox.innerHTML = "");
+    </script>
 </body>
 </html>
+

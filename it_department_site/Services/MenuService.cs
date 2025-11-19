@@ -1,5 +1,6 @@
 ﻿using it_department_site.Database;
 using it_department_site.Repositories;
+using ZstdSharp.Unsafe;
 
 namespace it_department_site.Services
 {
@@ -16,5 +17,13 @@ namespace it_department_site.Services
         {
             return _menuRepository.GetAll();
         }
+        public void LinkPageToMenu(int pageId, int? parentId, string title)
+        {
+            _menuRepository.LinkPageToMenu(pageId, parentId, title);
+        }
+        public MenuItem GetMenuItemById(int id) => _menuRepository.GetById(id);
+        public void CreateMenuItem(MenuItem item) => _menuRepository.Create(item);
+        public void UpdateMenuItem(MenuItem item) => _menuRepository.Update(item);
+        public void DeleteMenuItem(int id) => _menuRepository.Delete(id);
     }
 }

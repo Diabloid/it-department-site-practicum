@@ -1,15 +1,18 @@
 ﻿@model List<it_department_site.Database.Page>
 
+@{
+    int currentPage = ViewData["CurrentPage"] != null ? (int)ViewData["CurrentPage"] : 1;
+    int totalPages = ViewData["TotalPages"] != null ? (int)ViewData["TotalPages"] : 1;
+}
 <a href="/Admin/Create" class="btn btn-success mb-3">Створити нову сторінку</a>
-
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th>Title</th>
+            <th>Назва</th>
             <th>Slug</th>
-            <th>Status</th>
-            <th>Created At</th>
-            <th>Updated At</th>
+            <th>Статус</th>
+            <th>Дата створення</th>
+            <th>Оновлено</th>
             <th>Дії</th>
         </tr>
     </thead>
@@ -17,15 +20,11 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    <a href="@Url.Action("Details", "Pages", new { slug = item.Slug })">
-                        @item.Title
-                    </a>
-                </td>
+                <td><a href="@Url.Action("Details", "Pages", new { slug = item.Slug })">@item.Title</a></td>
                 <td>@item.Slug</td>
                 <td>@item.Status</td>
-                <td>@item.CreatedAt</td>
-                <td>@item.UpdatedAt</td>
+                <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>@item.UpdatedAt.ToString("yyyy-MM-dd")</td>
                 <td>
                     <a href="/Admin/PageEditor?id=@item.Id" class="btn btn-sm btn-primary">Редагувати</a>
                     <form method="post" asp-controller="Admin" asp-action="DeletePage" asp-route-id="@item.Id" style="display:inline;" onsubmit="return confirm('Ви дійсно хочете видалити цю сторінку?');">
@@ -36,3 +35,14 @@
         }
     </tbody>
 </table>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a href="#" class="page-link" onclick="loadPage(@i)">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

@@ -1,0 +1,61 @@
+﻿@model it_department_site.Database.SiteSettings
+@{
+    ViewData["Title"] = "Редагування теми";
+    var availableThemes = new Dictionary<string, string>
+    {
+        { "default", "Стандартна Bootstrap" },
+        { "cerulean", "Cerulean" },
+        { "cosmo", "Cosmo" },
+        { "cyborg", "Cyborg" },
+        { "darkly", "Darkly" },
+        { "flatly", "Flatly" },
+        { "journal", "Journal" },
+        { "litera", "Litera" },
+        { "lumen", "Lumen" },
+        { "lux", "Lux" },
+        { "materia", "Materia" },
+        { "minty", "Minty" },
+        { "morph", "Morph" },
+        { "pulse", "Pulse" },
+        { "quartz", "Quartz" },
+        { "sandstone", "Sandstone" },
+        { "simplex", "Simplex" },
+        { "sketchy", "Sketchy" },
+        { "slate", "Slate" },
+        { "solar", "Solar" },
+        { "spacelab", "Spacelab" },
+        { "superhero", "Superhero" },
+        { "united", "United" },
+        { "vapor", "Vapor" },
+        { "yeti", "Yeti" },
+        { "zephyr", "Zephyr" }
+    };
+}
+
+<h2>Оберіть тему оформлення</h2>
+
+<form method="post" asp-controller="Admin" asp-action="UpdateTheme">
+    <div class="form-group mb-3">
+        <label for="SelectedTheme">Тема:</label>
+        <select id="SelectedTheme" name="SelectedTheme" class="form-select">
+            @foreach (var theme in availableThemes)
+            {
+                if (Model.SelectedTheme == theme.Key)
+                {
+                    <option value="@theme.Key" selected>@theme.Value</option>
+                }
+                else
+                {
+                    <option value="@theme.Key">@theme.Value</option>
+                }
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Зберегти</button>
+</form>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["Success"]</div>
+}

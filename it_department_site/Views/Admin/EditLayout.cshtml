@@ -1,0 +1,41 @@
+﻿@model it_department_site.Database.SiteSettings
+
+<h2>Редагування сайту</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form method="post" asp-action="LayoutSettings" asp-controller="Admin">
+    <div class="mb-3">
+        <label>Назва сайту (в хедері):</label>
+        <input type="text" class="form-control" name="SiteTitle" value="@Model.SiteTitle" />
+    </div>
+
+    <div class="form-group">
+        <label for="FooterHtml">Редагування футера (HTML):</label>
+        <textarea id="FooterHtml" name="FooterHtml" class="form-control">@Model.FooterHtml</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">💾 Зберегти</button>
+</form>
+
+<script src="~/ckeditor/ckeditor.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        FullEditor
+            .create(document.querySelector('#FooterHtml'), {
+                ckfinder: {
+                    uploadUrl: '/ckeditor/upload'
+                }
+            })
+            .catch(error => {
+                console.error("❌ CKEditor не ініціалізувався:", error);
+            });
+    });
+</script>

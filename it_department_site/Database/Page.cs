@@ -10,21 +10,16 @@ namespace it_department_site.Database
         public string Slug { get; set; }
         public PageStatus Status { get; set; }
         public ContentSections Content { get; set; }
-        public string ContentJson // ← Зберігається в базу
-        {
-            get => JsonSerializer.Serialize(Content, new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            });
-            set => Content = JsonSerializer.Deserialize<ContentSections>(value) ?? new ContentSections();
-        }
-        public string LayoutType { get; set; } // <- нове поле
+        public string ContentJson { get; set; } = "";
+        public string LayoutType { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public bool AllowComments { get; set; } = true; // ← Нове поле
+        public int Views { get; set; }
 
         public Page() { }
 
-        public Page(int id, string title, string slug, PageStatus status, string contentJson, string layoutType, DateTime createdAt, DateTime updatedAt)
+        public Page(int id, string title, string slug, PageStatus status, string contentJson, string layoutType, DateTime createdAt, DateTime updatedAt, bool allowComments = true)
         {
             Id = id;
             Title = title;
@@ -33,15 +28,10 @@ namespace it_department_site.Database
             LayoutType = layoutType;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
+            AllowComments = allowComments;
 
-            if (!string.IsNullOrWhiteSpace(contentJson))
-            {
-                Content = System.Text.Json.JsonSerializer.Deserialize<ContentSections>(contentJson) ?? new ContentSections();
-            }
-            else
-            {
-                Content = new ContentSections();
-            }
+            ContentJson = contentJson;
+            Content = new ContentSections();
         }
     }
 

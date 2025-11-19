@@ -1,0 +1,102 @@
+﻿@model List<it_department_site.Database.MenuItem>
+<button type="button" class="btn btn-primary mb-3"
+        data-bs-toggle="modal" data-bs-target="#menuModal"
+        onclick="resetForm()">
+    ➕ Додати пункт
+</button>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Батько</th>
+            <th>Прив’язана сторінка</th>
+            <th>Порядок</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    @{
+                        @(Model.FirstOrDefault(x => x.Id == item.ParentId)?.Name ?? "-")
+                    }
+                </td>
+                <td>
+                    @{
+                        var page = (ViewBag.Pages as List<it_department_site.Database.Page>)?.FirstOrDefault(p => p.Id == item.PageId);
+                        @: @(page?.Title ?? "-")
+                    }
+                </td>
+
+                <td>@item.SortOrder</td>
+                <td>
+                    <!-- Кнопка редагування -->
+                    <button type="button" class="btn btn-sm btn-warning"
+                            data-bs-toggle="modal" data-bs-target="#menuModal"
+                            onclick="fillForm('@item.Id', '@item.Name', '@item.ParentId', '@item.PageId', '@item.SortOrder')">
+                        ✏️
+                    </button>
+                    <form asp-action="DeleteMenuItem" asp-route-id="@item.Id" method="post" style="display:inline">
+                        <button type="submit" class="btn btn-sm btn-danger">🗑</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<!-- Модалка з формою створення / редагування -->
+<div class="modal fade" id="menuModal" tabindex="-1" aria-labelledby="menuModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="menuItemForm" method="post" action="/Admin/SaveMenuItem">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="menuModalLabel">Редагування пункту меню</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="menuId">
+
+                    <div class="mb-3">
+                        <label for="menuName" class="form-label">Назва</label>
+                        <input type="text" class="form-control" id="menuName" name="Name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="parentId" class="form-label">Батько</label>
+                        <select class="form-select" id="parentId" name="ParentId">
+                            <option value="">(немає)</option>
+                            @foreach (var parent in Model)
+                            {
+                                <option value="@parent.Id">@parent.Name</option>
+                            }
+                        </select>
+                    </div>
+
+<div class="mb-3">
+    <label for="pageId" class="form-label">Прив’язана сторінка</label>
+    <select class="form-select" id="pageId" name="PageId">
+        <option value="">(немає)</option>
+        @foreach (var item in ViewBag.Pages as List<it_department_site.Database.Page>)
+        {
+            <option value="@item.Id">@item.Title</option>
+        }
+    </select>
+</div>
+
+                    <div class="mb-3">
+                        <label for="sortOrder" class="form-label">Порядок</label>
+                        <input type="number" class="form-control" id="sortOrder" name="SortOrder" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Зберегти</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

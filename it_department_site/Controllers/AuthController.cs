@@ -25,22 +25,47 @@ public class AuthController : Controller
     [HttpPost("/login")]
     public IActionResult Login(string username, string password)
     {
-        if (_authService.Login(username, password))
-        {
-            var token = GenerateJwtToken(username);
+        var user = _authService.Login(username, password);
 
-            // Зберігаємо токен у cookie
+        if (user != null)
+        {
+            int userId = user.Id;
+            string role = user.Username.ToLower() == "admin" ? "Admin" : "User";
+
+            var token = GenerateJwtToken(user.Id, user.Username, role);
+
             Response.Cookies.Append("jwt", token, new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.Now.AddHours(1)
             });
 
-            return RedirectToAction("Index", "Admin");
+            return role == "Admin"
+                ? RedirectToAction("Index", "Admin")
+                : RedirectToAction("Index", "Pages");
         }
 
         ViewBag.Error = "Невірний логін або пароль";
         return View();
+    }
+
+    [HttpGet("/register")]
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpPost("/register")]
+    public IActionResult Register(string username, string email, string password)
+    {
+        if (_authService.IsUsernameTaken(username))
+        {
+            ViewBag.Error = "Такий користувач вже існує!";
+            return View();
+        }
+
+        _authService.Register(username, email, password);
+        return RedirectToAction("Login");
     }
 
     public IActionResult Logout()
@@ -49,12 +74,13 @@ public class AuthController : Controller
         return RedirectToAction("Index", "Pages");
     }
 
-    private string GenerateJwtToken(string username)
+    private string GenerateJwtToken(int userId, string username, string role)
     {
         var claims = new[]
         {
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, "Admin")
+            new Claim(ClaimTypes.Role, role)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

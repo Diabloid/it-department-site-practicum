@@ -1,0 +1,46 @@
+﻿@model it_department_site.Database.MenuItem
+@{
+    var pages = ViewBag.Pages as List<it_department_site.Database.Page>;
+    var menuItems = ViewBag.MenuItems as List<it_department_site.Database.MenuItem>;
+}
+
+<form asp-action="SaveMenuItem" method="post">
+    @if (Model.Id != 0)
+    {
+        <input type="hidden" name="Id" value="@Model.Id" />
+    }
+
+    <div class="mb-3">
+        <label>Назва</label>
+        <input class="form-control" name="Name" value="@Model.Name" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Батьківський пункт</label>
+        <select class="form-select" name="ParentId">
+            <option value="">Без батька</option>
+            @foreach (var parent in menuItems.Where(i => i.Id != Model.Id))
+            {
+                <option value="@parent.Id" selected="@(parent.Id == Model.ParentId)">@parent.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Прив’язати до сторінки</label>
+        <select class="form-select" name="PageId">
+            <option value="">Не прив’язувати</option>
+            @foreach (var item in pages)
+            {
+                <option value="@item.Id" selected="@(item.Id == Model.PageId)">@item.Title</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Порядок</label>
+        <input class="form-control" type="number" name="SortOrder" value="@Model.SortOrder" />
+    </div>
+
+    <button type="submit" class="btn btn-success">💾 Зберегти</button>
+</form>

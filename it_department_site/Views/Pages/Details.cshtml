@@ -1,55 +1,220 @@
-﻿@model it_department_site.Database.Page
-@using System.Text.Json
-@using it_department_site.Database
+﻿@model it_department_site.DTOs.PageDto
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@inject it_department_site.Services.IFavoriteService FavoriteService
+
 @{
+    var jwt = Context.Request.Cookies["jwt"];
+    bool showFavoriteButton = false;
+    bool isAdmin = false;
+    int userId = 0;
+
+    if (!string.IsNullOrEmpty(jwt))
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(jwt);
+        var role = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+        var userIdClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        isAdmin = role == "Admin";
+        int.TryParse(userIdClaim, out userId);
+
+        if (role == "User" && userId > 0)
+        {
+            var alreadyFavorite = FavoriteService.IsAlreadyFavorite(userId, Model.Id);
+            showFavoriteButton = !alreadyFavorite;
+        }
+    }
+
     ViewData["Title"] = Model.Title;
     Layout = "_Layout";
-    var contentSections = Model.Content ?? new it_department_site.Database.ContentSections();
 }
-@if (Model.LayoutType == "left-sidebar")
-{
-    <div class="content">
-        <h1>@Model.Title</h1>
-        <p><strong>Status:</strong> @Model.Status</p>
-        <p><strong>Created At:</strong> @Model.CreatedAt</p>
-        <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
-        <hr>
-    <div class="row">
-            <div class="col-md-3">
-                <div class="sidebar bg-light p-3"><div class="sidebar bg-light p-3">@Html.Raw(contentSections.left)</div></div>
+
+<div class="w-100 px-4">
+    <div class="card shadow-sm mb-4 w-100">
+        <h3 class="card-header">@Model.Title</h3>
+
+        <div class="card-body p-4">
+            <p class="card-subtitle text-muted mb-2">
+                Створено: @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+            </p>
+
+            <div class="d-flex align-items-center gap-2 mt-2 mb-3">
+                @if (!string.IsNullOrEmpty(jwt) && !isAdmin)
+                {
+                    <button type="button"
+                            id="favorite-btn"
+                            class="btn btn-sm @(showFavoriteButton ? "btn-outline-danger" : "btn-outline-success")"
+                            data-page-id="@Model.Id">
+                        @(showFavoriteButton ? "🔖" : "✅")
+                    </button>
+                }
+
+                <button type="button"
+                        id="like-btn"
+                        class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
+                        data-page-id="@Model.Id">
+                    ❤️ <span id="like-count">@ViewBag.Likes</span>
+                </button>
+
+                <div class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" style="cursor: default;">
+                    👁 <span>@ViewBag.Views</span>
+                </div>
             </div>
-            <div class="col-md-9">
-                @Html.Raw(contentSections.main)
+            <hr />
+            @if (Model.LayoutType == "left-sidebar")
+            {
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="sidebar bg-light p-3 rounded">
+                            @Html.Raw(Model.LeftSidebar)
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        @Html.Raw(Model.MainContent)
+                    </div>
+                </div>
+            }
+            else if (Model.LayoutType == "right-sidebar")
+            {
+                <div class="row">
+                    <div class="col-md-9">
+                        @Html.Raw(Model.MainContent)
+                    </div>
+                    <div class="col-md-3">
+                        <div class="sidebar bg-light p-3 rounded">
+                            @Html.Raw(Model.RightSidebar)
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @Html.Raw(Model.MainContent)
+            }
+        </div>
+
+        @if (Model.AllowComments)
+        {
+            <div class="card-footer">
+                <h4>Коментарі</h4>
+
+                @if (!string.IsNullOrEmpty(jwt))
+                {
+                    <form asp-controller="Comment" asp-action="Add" method="post" class="mb-4">
+                        <input type="hidden" name="pageId" value="@Model.Id" />
+                        <input type="hidden" name="slug" value="@Model.Slug" />
+
+                        <label for="commentEditor" class="form-label">Залишити коментар:</label>
+                        <textarea id="commentEditor" name="content" class="form-control" rows="5"></textarea>
+
+                        <button type="submit" class="btn btn-primary mt-2">Надіслати</button>
+                    </form>
+                }
+
+                @if (ViewBag.Comments is List<it_department_site.Database.Comment> comments)
+                {
+                    foreach (var c in comments)
+                    {
+                        <div class="border rounded p-3 mb-3 position-relative">
+                            <strong>@c.Username</strong>
+                            <small class="text-muted">(@c.CreatedAt.ToString("dd.MM.yyyy HH:mm"))</small>
+                            <div class="mt-2">@Html.Raw(c.Content)</div>
+
+                            @if (isAdmin)
+                            {
+                                <form asp-controller="Comment" asp-action="Delete" asp-route-commentId="@c.Id"
+                                      asp-route-returnUrl="@Url.Action("Details", "Pages", new { slug = Model.Slug })"
+                                      method="post" class="position-absolute top-0 end-0 m-2 delete-comment-form">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle border-0" title="Видалити">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    }
+                }
             </div>
+        }
     </div>
-    </div>
-}
-else if (Model.LayoutType == "right-sidebar")
-{
-    <div class="content">
-        <h1>@Model.Title</h1>
-        <p><strong>Status:</strong> @Model.Status</p>
-        <p><strong>Created At:</strong> @Model.CreatedAt</p>
-        <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
-        <hr>
-    <div class="row">
-            <div class="col-md-9">
-                @Html.Raw(contentSections.main)
-            </div>
-            <div class="col-md-3">
-                <div class="sidebar bg-light p-3">@Html.Raw(contentSections.right)</div>
-            </div>
-    </div>
-    </div>
-}
-else // no-sidebar
-{
-    <div class="content">
-        <h1>@Model.Title</h1>
-        <p><strong>Status:</strong> @Model.Status</p>
-        <p><strong>Created At:</strong> @Model.CreatedAt</p>
-        <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
-        <hr>
-        @Html.Raw(contentSections.main)
-    </div>
-}
+</div>
+
+<script src="~/ckeditor/ckeditor.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        FullEditor
+            .create(document.querySelector('#commentEditor'), {
+                ckfinder: { uploadUrl: '/ckeditor/upload' }
+            })
+            .then(editor => {
+                document.querySelector('form').addEventListener('submit', function (e) {
+                    const content = editor.getData().trim();
+                    if (!content) {
+                        e.preventDefault();
+                        alert("Коментар не може бути порожнім.");
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("❌ CKEditor не ініціалізувався:", error);
+            });
+
+        const likeBtn = document.getElementById("like-btn");
+        if (likeBtn) {
+            likeBtn.addEventListener("click", () => {
+                const pageId = likeBtn.dataset.pageId;
+                fetch("/likes/toggle", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `pageId=${pageId}`
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById("like-count").textContent = data.likeCount;
+                    }
+                });
+            });
+        }
+
+        const favBtn = document.getElementById("favorite-btn");
+        favBtn?.addEventListener("click", () => {
+            const pageId = favBtn.dataset.pageId;
+            const isFavorite = favBtn.classList.contains("btn-outline-danger");
+            fetch("/favorites/toggle", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `pageId=${pageId}`
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const nowFavorite = !isFavorite;
+                    favBtn.innerHTML = nowFavorite ? "🔖" : "✅";
+                    favBtn.classList.toggle("btn-outline-danger", nowFavorite);
+                    favBtn.classList.toggle("btn-outline-success", !nowFavorite);
+                }
+            });
+        });
+
+        document.querySelectorAll('.delete-comment-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const container = this.closest('.border');
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        container.remove();
+                    } else {
+                        alert("Помилка при видаленні.");
+                    }
+                });
+            });
+        });
+    });
+</script>

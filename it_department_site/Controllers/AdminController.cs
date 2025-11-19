@@ -7,6 +7,7 @@ using dbhelper;
 using it_department_site.Filters;
 using System.Text.Json;
 using System.Text.Encodings.Web;
+using it_department_site.Repositories;
 
 namespace it_department_site.Controllers
 {
@@ -17,19 +18,44 @@ namespace it_department_site.Controllers
         private readonly IMenuService _menuService;
         private readonly ILogger<AdminController> _logger;
         private readonly Dbhelper _dbHelper;
+        private readonly ISiteSettingsService _settingsService;
 
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
             Dbhelper dbHelper,
-            ILogger<AdminController> logger)
+            ILogger<AdminController> logger,
+            ISiteSettingsService settingsService)
         {
             _pageService = pageService;
             _menuService = menuService;
             _dbHelper = dbHelper;
             _logger = logger;
+            _settingsService = settingsService;
         }
+        public IActionResult LayoutSettings()
+        {
+            var settings = _settingsService.Get();
+            return View("EditLayout", settings);
+        }
+        [HttpPost]
+        public IActionResult LayoutSettings(SiteSettings model)
+        {
+            if (string.IsNullOrWhiteSpace(model.SiteTitle))
+            {
+                TempData["Error"] = "Назва сайту не може бути порожньою!";
+                return RedirectToAction("LayoutSettings");
+            }
 
+            var current = _settingsService.Get();
+            current.SiteTitle = model.SiteTitle;
+            current.FooterHtml = model.FooterHtml;
+
+            _settingsService.Save(current);
+
+            TempData["Success"] = "Зміни збережено!";
+            return RedirectToAction("LayoutSettings");
+        }
         // Головна сторінка адмінки
         public IActionResult Index()
         {
@@ -41,12 +67,25 @@ namespace it_department_site.Controllers
             return PartialView("_UsersTable", dt);
         }
         // Список усіх сторінок
-        public IActionResult Pages()
+        public IActionResult Pages(int page = 1)
         {
-            var pages = _pageService.GetAllPages();
-            _logger.LogInformation("Адмін переглянув {Count} сторінок", pages.Count);
+            int pageSize = 5;
+            var pages = _pageService.GetPaged(page, pageSize);
+            var totalPages = _pageService.GetTotal(pageSize);
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = totalPages;
+
             return PartialView("_PagesTable", pages);
         }
+        public IActionResult MenuItems()
+        {
+            var menuItems = _menuService.GetAllMenuItems();
+            ViewBag.Pages = _pageService.GetAllPages(); // додаємо всі сторінки
+
+            return PartialView("_MenuItemsTable", menuItems);
+        }
+
         public IActionResult Create()
         {
             return View("CreatePage");
@@ -85,7 +124,8 @@ namespace it_department_site.Controllers
                     LayoutType = page.LayoutType,
                     ContentSections = page.Content,
                     CreatedAt = page.CreatedAt,
-                    UpdatedAt = page.UpdatedAt
+                    UpdatedAt = page.UpdatedAt,
+                    AllowComments = page.AllowComments
                 };
             }
 
@@ -102,14 +142,16 @@ namespace it_department_site.Controllers
                 Slug = model.Slug,
                 Content = model.ContentSections,
                 Status = Enum.TryParse(model.Status, out PageStatus status) ? status : PageStatus.Draft,
-                LayoutType = model.LayoutType,  
+                LayoutType = model.LayoutType,
+                AllowComments = model.AllowComments, // ← Додай це!
                 CreatedAt = (DateTime)(model.CreatedAt != default ? model.CreatedAt : DateTime.Now),
                 UpdatedAt = DateTime.Now
             };
 
             if (model.Id == null)
             {
-                _pageService.CreatePage(page);
+                int newPageId = _pageService.CreatePage(page);
+                page.Id = newPageId;
                 _logger.LogInformation("Створено сторінку: {Title}", page.Title);
             }
             else
@@ -118,7 +160,12 @@ namespace it_department_site.Controllers
                 _logger.LogInformation("Оновлено сторінку ID {Id}", page.Id);
             }
 
-            return RedirectToAction("Index");   
+            if (model.ParentMenuItemId.HasValue)
+            {
+                _menuService.LinkPageToMenu(page.Id, model.ParentMenuItemId, page.Title);
+            }
+
+            return RedirectToAction("Index");
         }
 
         // POST: Видалення сторінки
@@ -145,5 +192,140 @@ namespace it_department_site.Controllers
             public string LayoutType { get; set; }
         }
 
+        public IActionResult AllPages(int page = 1)
+        {
+            int pageSize = 3;
+            var pages = _pageService.GetPaged(page, pageSize);
+            var totalPages = _pageService.GetTotal(pageSize);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            return View(pages);
+        }
+        public IActionResult CreateMenuItem()
+        {
+            ViewBag.Pages = _pageService.GetAllPages(); // для вибору сторінки
+            ViewBag.MenuItems = _menuService.GetAllMenuItems(); // для вибору батька
+            return View("EditMenuItem", new MenuItem());
+        }
+
+        public IActionResult EditMenuItem(int id)
+        {
+            var item = _menuService.GetMenuItemById(id);
+            ViewBag.Pages = _pageService.GetAllPages();
+            ViewBag.MenuItems = _menuService.GetAllMenuItems();
+            return View(item);
+        }
+
+
+        [HttpPost]
+        public IActionResult SaveMenuItem(MenuItem item)
+        {
+            if (item.Id == 0)
+                _menuService.CreateMenuItem(item);
+            else
+                _menuService.UpdateMenuItem(item);
+
+            return RedirectToAction("Index", new { section = "menuItems" });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteMenuItem(int id)
+        {
+            _menuService.DeleteMenuItem(id);
+            return RedirectToAction("Index", new { section = "menuItems" });
+        }
+        public IActionResult GetMenuItem(int id)
+        {
+            var item = _menuService.GetMenuItemById(id);
+            return Json(item);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Файл порожній");
+
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(uploadsPath))
+                Directory.CreateDirectory(uploadsPath);
+
+            var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            // Повертаємо шлях, який буде використовуватись у <img src="...">
+            var fileUrl = $"/uploads/{fileName}";
+            return Json(new { data = new[] { new { url = fileUrl } } });
+        }
+        public IActionResult EditTheme()
+        {
+            var settings = _settingsService.Get();
+            return View("EditTheme", settings);
+        }
+        [HttpPost]
+    //    public IActionResult UpdateTheme(ThemeSettings form)
+    //    {
+    //        var settings = _settingsService.Get();
+
+    //        var variables = new Dictionary<string, string>
+    //{
+    //    { "primary", form.Primary },
+    //    { "secondary", form.Secondary },
+    //    { "success", form.Success },
+    //    { "danger", form.Danger },
+    //    { "warning", form.Warning },
+    //    { "info", form.Info },
+    //    { "light", form.Light },
+    //    { "dark", form.Dark },
+    //    { "body-bg", form.BodyBg },
+    //    { "body-color", form.BodyText },
+    //    { "link-color", form.LinkColor }
+    //};
+
+    //        var css = new System.Text.StringBuilder(":root {\n");
+    //        foreach (var kvp in variables)
+    //        {
+    //            if (!string.IsNullOrWhiteSpace(kvp.Value))
+    //                css.AppendLine($"--bs-{kvp.Key}: {kvp.Value};");
+    //        }
+    //        css.AppendLine("}");
+
+    //        settings.CustomCss = css.ToString();
+    //        _settingsService.Save(settings);
+
+    //        TempData["Success"] = "Тема оновлена!";
+    //        return RedirectToAction("EditTheme");
+    //    }
+        [HttpGet]
+        public IActionResult ThemeSettings()
+        {
+            var settings = _settingsService.Get();
+            ViewBag.Themes = AvailableThemes.Themes.Keys.ToList();
+            return View("EditTheme", settings);
+        }
+
+        [HttpPost]
+        public IActionResult ThemeSettings(string selectedTheme)
+        {
+            var settings = _settingsService.Get();
+            settings.SelectedTheme = selectedTheme;
+            _settingsService.Save(settings);
+            TempData["Success"] = "Тема змінена!";
+            return RedirectToAction("ThemeSettings");
+        }
+        public IActionResult UpdateTheme(string SelectedTheme)
+        {
+            var settings = _settingsService.Get();
+            settings.SelectedTheme = SelectedTheme;
+            _settingsService.Save(settings);
+            TempData["Success"] = "Тему успішно збережено!";
+            return RedirectToAction("EditTheme");
+        }
     }
 }

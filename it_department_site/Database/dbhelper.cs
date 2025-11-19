@@ -46,5 +46,38 @@ namespace dbhelper
                 }
             }
         }
+        // Параметризований SELECT
+        public DataTable ExecuteQuery(string query, Dictionary<string, object> parameters)
+        {
+            using var connection = new MySqlConnection(_connectionString);
+            connection.Open();
+
+            using var command = new MySqlCommand(query, connection);
+            foreach (var param in parameters)
+            {
+                command.Parameters.AddWithValue(param.Key, param.Value);
+            }
+
+            using var adapter = new MySqlDataAdapter(command);
+            var dt = new DataTable();
+            adapter.Fill(dt);
+            return dt;
+        }
+
+        // Параметризований INSERT/UPDATE/DELETE
+        public int ExecuteNonQuery(string query, Dictionary<string, object> parameters)
+        {
+            using var connection = new MySqlConnection(_connectionString);
+            connection.Open();
+
+            using var command = new MySqlCommand(query, connection);
+            foreach (var param in parameters)
+            {
+                command.Parameters.AddWithValue(param.Key, param.Value);
+            }
+
+            return command.ExecuteNonQuery();
+        }
+
     }
 }

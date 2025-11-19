@@ -1,0 +1,43 @@
+﻿@model List<it_department_site.Database.Page>
+@{
+    ViewData["Title"] = "Усі сторінки";
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+}
+
+<h2>Усі сторінки</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Slug</th>
+            <th>Статус</th>
+            <th>Дата створення</th>
+            <th>Оновлено</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Slug</td>
+                <td>@item.Status</td>
+                <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                <td>@item.UpdatedAt.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link" asp-controller="Admin" asp-action="AllPages" asp-route-page="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
