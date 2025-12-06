@@ -49,25 +49,6 @@ public class AuthController : Controller
         return View();
     }
 
-    [HttpGet("/register")]
-    public IActionResult Register()
-    {
-        return View();
-    }
-
-    [HttpPost("/register")]
-    public IActionResult Register(string username, string email, string password)
-    {
-        if (_authService.IsUsernameTaken(username))
-        {
-            ViewBag.Error = "Такий користувач вже існує!";
-            return View();
-        }
-
-        _authService.Register(username, email, password);
-        return RedirectToAction("Login");
-    }
-
     public IActionResult Logout()
     {
         Response.Cookies.Delete("jwt");

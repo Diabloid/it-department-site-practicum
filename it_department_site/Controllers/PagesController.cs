@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using it_department_site.Services;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using it_department_site.DTOs;
 using it_department_site.Mappers;
 
@@ -12,29 +10,14 @@ namespace it_department_site.Controllers
         private readonly IPageService _pageService;
         private readonly ICommentService _commentService;
         private readonly ILikeService _likeService;
+        private readonly ICurrentUserService _currentUser; // ✅
 
-        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService)
+        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService, ICurrentUserService currentUser)
         {
             _pageService = pageService;
             _commentService = commentService;
             _likeService = likeService;
-        }
-        private bool IsAdminFromJwt()
-        {
-            var token = Request.Cookies["jwt"];
-            if (string.IsNullOrEmpty(token)) return false;
-
-            var handler = new JwtSecurityTokenHandler();
-            try
-            {
-                var jwt = handler.ReadJwtToken(token);
-                var roleClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-                return roleClaim?.Value == "Admin";
-            }
-            catch
-            {
-                return false;
-            }
+            _currentUser = currentUser;
         }
 
         // Показ списку всіх сторінок
@@ -43,29 +26,26 @@ namespace it_department_site.Controllers
             var pages = _pageService.GetAllPages();
             var dtoList = pages.Select(PageMapper.ToDto).ToList();
 
-            return View(dtoList); // ← List<PageDto>
+            return View(dtoList);
         }
 
         // Деталі сторінки за slug
         public IActionResult Details(string slug)
         {
-            bool isAdmin = IsAdminFromJwt();
+            // ✅ Стало:
+            bool isAdmin = _currentUser.IsAdmin;
+
             var page = _pageService.GetPageBySlug(slug, isAdmin);
             if (page == null)
                 return View("~/Views/Shared/NotFound.cshtml");
 
-            var jwt = Request.Cookies["jwt"];
-            if (!string.IsNullOrEmpty(jwt))
+            // ✅ Логіка переглядів стала простою:
+            if (_currentUser.IsAuthenticated)
             {
-                var token = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
-                var userIdClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-                if (int.TryParse(userIdClaim, out int userId))
+                int userId = _currentUser.UserId.Value;
+                if (!_pageService.HasUserViewedPage(userId, page.Id))
                 {
-                    if (!_pageService.HasUserViewedPage(userId, page.Id))
-                    {
-                        _pageService.MarkPageAsViewed(userId, page.Id);
-                    }
+                    _pageService.MarkPageAsViewed(userId, page.Id);
                 }
             }
 
@@ -73,9 +53,10 @@ namespace it_department_site.Controllers
             ViewBag.Likes = _likeService.GetLikeCount(page.Id);
             ViewBag.Views = _pageService.GetViews(page.Id);
 
-            var dto = PageMapper.ToDto(page); // page вже з оновленим Views
+            var dto = PageMapper.ToDto(page);
             return View(dto);
         }
+
         [HttpGet]
         public JsonResult SearchSuggestions(string term)
         {
@@ -89,6 +70,7 @@ namespace it_department_site.Controllers
 
             return Json(results);
         }
+
         [HttpPost]
         [Route("ckeditor/upload")]
         public async Task<IActionResult> UploadImage(IFormFile upload)
@@ -96,7 +78,7 @@ namespace it_department_site.Controllers
             if (upload != null && upload.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                Directory.CreateDirectory(uploadsFolder); // на випадок, якщо нема
+                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
                 var fileName = Guid.NewGuid().ToString() + Path.GetExtension(upload.FileName);
                 var filePath = Path.Combine(uploadsFolder, fileName);

@@ -1,8 +1,8 @@
-﻿using it_department_site.Database;
+﻿using Dapper; // ✅ Обов'язково додай цей using
+using it_department_site.Database;
 using dbhelper;
-using System.Data;
 using it_department_site.Repositories;
-using System.Text.Json;
+using System.Data;
 
 public class PageRepository : IPageRepository
 {
@@ -13,207 +13,137 @@ public class PageRepository : IPageRepository
         _dbHelper = dbHelper;
     }
 
+    private const string BaseSelectSql = @"
+        SELECT 
+            id, 
+            title, 
+            slug, 
+            status_ as Status, 
+            content as ContentJson, 
+            layout_type as LayoutType, 
+            created_at as CreatedAt, 
+            updated_at as UpdatedAt, 
+            allow_comments as AllowComments, 
+            Views 
+        FROM pages";
+
     public Page? GetBySlug(string slug)
     {
-        var query = "SELECT * FROM pages WHERE slug = @slug";
-        var parameters = new Dictionary<string, object>
-        {
-            { "@slug", slug }
-        };
-
-        var dt = _dbHelper.ExecuteQuery(query, parameters);
-        return dt.Rows.Count > 0 ? MapRow(dt.Rows[0]) : null;
+        using var db = _dbHelper.GetConnection();
+        return db.QueryFirstOrDefault<Page>(
+            $"{BaseSelectSql} WHERE slug = @slug",
+            new { slug });
     }
 
     public Page? GetById(int id)
     {
-        var query = "SELECT * FROM pages WHERE id = @id";
-        var parameters = new Dictionary<string, object>
-        {
-            { "@id", id }
-        };
-
-        var dt = _dbHelper.ExecuteQuery(query, parameters);
-        return dt.Rows.Count > 0 ? MapRow(dt.Rows[0]) : null;
+        using var db = _dbHelper.GetConnection();
+        return db.QueryFirstOrDefault<Page>(
+            $"{BaseSelectSql} WHERE id = @id",
+            new { id });
     }
 
     public List<Page> GetAll()
     {
-        var dt = _dbHelper.ExecuteQuery("SELECT * FROM pages");
-        List<Page> pages = new();
-        foreach (DataRow row in dt.Rows)
-        {
-            pages.Add(MapRow(row));
-        }
-        return pages;
+        using var db = _dbHelper.GetConnection();
+        return db.Query<Page>(BaseSelectSql).ToList();
     }
 
     public int Create(Page page)
     {
-        var query = @"INSERT INTO pages 
-        (title, slug, status_, content, layout_type, created_at, updated_at, allow_comments)
-        VALUES (@title, @slug, @status, @content, @layout_type, NOW(), NOW(), @allow_comments);
-        SELECT LAST_INSERT_ID();";
+        using var db = _dbHelper.GetConnection();
+        var sql = @"
+            INSERT INTO pages 
+            (title, slug, status_, content, layout_type, created_at, updated_at, allow_comments, Views)
+            VALUES 
+            (@Title, @Slug, @Status, @ContentJson, @LayoutType, NOW(), NOW(), @AllowComments, 0);
+            
+            SELECT LAST_INSERT_ID();";
 
-        var parameters = new Dictionary<string, object>
-    {
-        { "@title", page.Title },
-        { "@slug", page.Slug },
-        { "@status", page.Status.ToString() },
-        { "@content", page.ContentJson },
-        { "@layout_type", page.LayoutType },
-        { "@allow_comments", page.AllowComments }
-    };
-
-        var result = _dbHelper.ExecuteQuery(query, parameters);
-        return Convert.ToInt32(result.Rows[0][0]);
+        return db.QuerySingle<int>(sql, page);
     }
 
     public void Update(Page page)
     {
-        var query = @"UPDATE pages SET 
-                title = @title,
-                slug = @slug,
-                status_ = @status,
-                content = @content,
-                layout_type = @layout_type,
-                allow_comments = @allow_comments,
+        using var db = _dbHelper.GetConnection();
+        var sql = @"
+            UPDATE pages SET 
+                title = @Title,
+                slug = @Slug,
+                status_ = @Status,
+                content = @ContentJson,
+                layout_type = @LayoutType,
+                allow_comments = @AllowComments,
                 updated_at = NOW()
-              WHERE id = @id";
+            WHERE id = @Id";
 
-        var parameters = new Dictionary<string, object>
-{
-    { "@id", page.Id },
-    { "@title", page.Title },
-    { "@slug", page.Slug },
-    { "@status", page.Status.ToString() },
-    { "@content", page.ContentJson },
-    { "@layout_type", page.LayoutType },
-    { "@allow_comments", page.AllowComments }
-};
-
-        _dbHelper.ExecuteNonQuery(query, parameters);
+        db.Execute(sql, page);
     }
 
     public void Delete(int id)
     {
-        var query = "DELETE FROM pages WHERE id = @id";
-        var parameters = new Dictionary<string, object>
-        {
-            { "@id", id }
-        };
-        _dbHelper.ExecuteNonQuery(query, parameters);
-    }
-
-    private Page MapRow(DataRow row)
-    {
-        PageStatus status = Enum.TryParse(row["status_"].ToString(), out PageStatus s) ? s : PageStatus.Draft;
-        string layoutType = row["layout_type"].ToString();
-        string contentJson = row["content"].ToString();
-        bool allowComments = row.Table.Columns.Contains("allow_comments") && row["allow_comments"] != DBNull.Value && Convert.ToBoolean(row["allow_comments"]);
-
-        return new Page(
-            Convert.ToInt32(row["id"]),
-            row["title"].ToString(),
-            row["slug"].ToString(),
-            status,
-            contentJson,
-            layoutType,
-            Convert.ToDateTime(row["created_at"]),
-            Convert.ToDateTime(row["updated_at"]),
-            allowComments // ← додати
-        );
+        using var db = _dbHelper.GetConnection();
+        db.Execute("DELETE FROM pages WHERE id = @id", new { id });
     }
 
     public List<Page> GetPaged(int pageNumber, int pageSize)
     {
+        using var db = _dbHelper.GetConnection();
         int offset = (pageNumber - 1) * pageSize;
-        string query = $"SELECT * FROM pages ORDER BY id DESC LIMIT {pageSize} OFFSET {offset}";
 
-        var dt = _dbHelper.ExecuteQuery(query);
-        List<Page> pages = new();
-        foreach (DataRow row in dt.Rows)
-        {
-            pages.Add(MapRow(row));
-        }
-        return pages;
+        var sql = $"{BaseSelectSql} ORDER BY id DESC LIMIT @pageSize OFFSET @offset";
+
+        return db.Query<Page>(sql, new { pageSize, offset }).ToList();
     }
 
     public int GetTotal(int pageSize)
     {
-        var dt = _dbHelper.ExecuteQuery("SELECT COUNT(*) AS total FROM pages");
-        int total = Convert.ToInt32(dt.Rows[0]["total"]);
+        using var db = _dbHelper.GetConnection();
+        int total = db.ExecuteScalar<int>("SELECT COUNT(*) FROM pages");
         return (int)Math.Ceiling((double)total / pageSize);
     }
 
     public List<Page> Search(string query)
     {
-        string sql = @"SELECT * FROM pages 
-                       WHERE LOWER(title) LIKE CONCAT('%', LOWER(@q), '%') 
-                          OR LOWER(slug) LIKE CONCAT('%', LOWER(@q), '%')";
+        using var db = _dbHelper.GetConnection();
+        var sql = $@"{BaseSelectSql} 
+                     WHERE LOWER(title) LIKE CONCAT('%', LOWER(@q), '%') 
+                        OR LOWER(slug) LIKE CONCAT('%', LOWER(@q), '%')";
 
-        var parameters = new Dictionary<string, object>
-        {
-            { "@q", query }
-        };
-
-        var dt = _dbHelper.ExecuteQuery(sql, parameters);
-        List<Page> results = new();
-        foreach (DataRow row in dt.Rows)
-        {
-            results.Add(MapRow(row));
-        }
-        return results;
+        return db.Query<Page>(sql, new { q = query }).ToList();
     }
+
+    // --- Методи переглядів (PageViews) ---
+
     public bool HasPageView(int userId, int pageId)
     {
-        var sql = "SELECT 1 FROM PageViews WHERE UserId = @userId AND PageId = @pageId LIMIT 1";
-        var parameters = new Dictionary<string, object>
-    {
-        { "@userId", userId },
-        { "@pageId", pageId }
-    };
+        using var db = _dbHelper.GetConnection();
+        int? result = db.QueryFirstOrDefault<int?>(
+            "SELECT 1 FROM page_views WHERE UserId = @userId AND PageId = @pageId LIMIT 1",
+            new { userId, pageId });
 
-        var dt = _dbHelper.ExecuteQuery(sql, parameters);
-        return dt.Rows.Count > 0;
+        return result.HasValue;
     }
 
     public void AddPageView(int userId, int pageId)
     {
-        var sql = "INSERT INTO PageViews (UserId, PageId) VALUES (@userId, @pageId)";
-        var parameters = new Dictionary<string, object>
-    {
-        { "@userId", userId },
-        { "@pageId", pageId }
-    };
-
-        _dbHelper.ExecuteNonQuery(sql, parameters);
+        using var db = _dbHelper.GetConnection();
+        db.Execute(
+            "INSERT INTO page_views (UserId, PageId) VALUES (@userId, @pageId)",
+            new { userId, pageId });
     }
 
     public void IncrementViews(int pageId)
     {
-        var sql = "UPDATE Pages SET Views = Views + 1 WHERE Id = @pageId";
-        var parameters = new Dictionary<string, object>
-    {
-        { "@pageId", pageId }
-    };
-
-        _dbHelper.ExecuteNonQuery(sql, parameters);
+        using var db = _dbHelper.GetConnection();
+        db.Execute(
+            "UPDATE pages SET Views = Views + 1 WHERE Id = @pageId",
+            new { pageId });
     }
+
     public int GetViews(int pageId)
     {
-        var sql = "SELECT Views FROM pages WHERE Id = @id";
-        var parameters = new Dictionary<string, object>
-    {
-        { "@id", pageId }
-    };
-
-        var dt = _dbHelper.ExecuteQuery(sql, parameters);
-        if (dt.Rows.Count > 0 && int.TryParse(dt.Rows[0]["Views"].ToString(), out int views))
-        {
-            return views;
-        }
-
-        return 0;
+        using var db = _dbHelper.GetConnection();
+        return db.ExecuteScalar<int>("SELECT Views FROM pages WHERE Id = @id", new { id = pageId });
     }
 }

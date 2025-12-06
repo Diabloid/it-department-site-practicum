@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Data;
 using MySql.Data.MySqlClient;
-using Microsoft.Extensions.Configuration;
-using it_department_site;
 
 namespace dbhelper
 {
@@ -14,6 +12,11 @@ namespace dbhelper
         public Dbhelper(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+
+        public IDbConnection GetConnection()
+        {
+            return new MySqlConnection(_connectionString);
         }
 
         // Виконання SELECT-запиту і повернення результату у DataTable

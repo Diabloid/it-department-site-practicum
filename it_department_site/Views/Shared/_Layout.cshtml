@@ -15,7 +15,6 @@
     }
 }
 @{
-
     var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
     var siteSettings = SettingsService.Get();
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
@@ -49,7 +48,7 @@
     }
     else
     {
-        loginButtonHtml = "<li class='nav-item'><a class='nav-link' href='/Login'>Увійти</a></li><li class='nav-item'><a class='nav-link' href='/register'>Зареєструватись</a></li>";
+        loginButtonHtml = "<li class='nav-item'><a class='nav-link' href='/Login'>Увійти</a></li>";
     }
 
     var searchHtml = @"
@@ -60,56 +59,51 @@
             </form>
         </li>";
 
-    var renderedHeader = (siteSettings?.HeaderHtml ?? "")
-        .Replace("@SiteTitle", siteSettings?.SiteTitle ?? "Назва сайту")
-        .Replace("<li class=\"nav-item\" data-dynamic=\"menu\">[меню]</li>", menuHtml)
-        .Replace("<li class=\"nav-item\" data-dynamic=\"login-button\">[вхід/адмін]</li>", loginButtonHtml)
-        .Replace("<li class=\"nav-item\" data-dynamic=\"search\">[пошук]</li>", searchHtml);
-    var theme = AvailableThemes.Themes.ContainsKey(siteSettings?.SelectedTheme ?? "default")
-        ? AvailableThemes.Themes[siteSettings.SelectedTheme]
-        : AvailableThemes.Themes["default"];
+
 }
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @SettingsService.Get().SiteTitle</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-    @if (!string.IsNullOrEmpty(siteSettings?.SelectedTheme) && siteSettings.SelectedTheme != "default")
-    {
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/@(siteSettings.SelectedTheme)/bootstrap.min.css" />
-    }
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/it_department_mvc.styles.css" asp-append-version="true" />
     <link rel="icon" type="image/x-icon" href="D:\It-department-site\it-department-site\It_department_site\wwwroot\logopolytech-1.ico" />
-@*     <style>@Html.Raw(siteSettings.HeaderCss)</style> *@
-    @if (siteSettings?.CustomCss != null)
-    {
-        <style>
-            :root {
-            @Html.Raw(siteSettings.CustomCss)
-            }
-        </style>
-    }
 
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
-    @Html.Raw(renderedHeader)
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" href="/Pages/Index">@(siteSettings?.SiteTitle ?? "Назва сайту")</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav ms-auto">
+                        @Html.Raw(searchHtml)
+                        @Html.Raw(menuHtml)
+                        @Html.Raw(loginButtonHtml)
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
 
     <main class="container">
         @RenderBody()
     </main>
 
-    <footer class="bg-secondary py-3 mt-auto">
+    <footer class="border-top footer text-muted">
         <div class="container">
-        @Html.Raw(siteSettings?.FooterHtml ?? "© 2025 IT Department")
+            @Html.Raw(siteSettings?.FooterHtml ?? "© 2025 IT Department")
         </div>
     </footer>
-
-
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -119,23 +113,29 @@
         const searchInput = document.getElementById("searchInput");
         const suggestionsBox = document.getElementById("suggestionsBox");
 
-        searchInput.addEventListener("input", async () => {
-            const query = searchInput.value.trim();
-            if (query.length < 2) {
-                suggestionsBox.innerHTML = "";
-                return;
-            }
+        if (searchInput) { // Додано перевірку на існування елемента, щоб не було помилок в консолі
+            searchInput.addEventListener("input", async () => {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    suggestionsBox.innerHTML = "";
+                    return;
+                }
 
-            const res = await fetch(`/Pages/SearchSuggestions?term=${encodeURIComponent(query)}`);
-            const suggestions = await res.json();
+                try {
+                    const res = await fetch(`/Pages/SearchSuggestions?term=${encodeURIComponent(query)}`);
+                    if (res.ok) {
+                        const suggestions = await res.json();
+                        suggestionsBox.innerHTML = suggestions.map(item =>
+                            `<a href="/${encodeURIComponent(item.slug)}" class="list-group-item list-group-item-action">${item.title}</a>`
+                        ).join("");
+                    }
+                } catch (e) {
+                    console.error("Помилка пошуку:", e);
+                }
+            });
 
-            suggestionsBox.innerHTML = suggestions.map(item =>
-                `<a href="/${encodeURIComponent(item.slug)}" class="list-group-item list-group-item-action">${item.title}</a>`
-            ).join("");
-        });
-
-        document.addEventListener("click", () => suggestionsBox.innerHTML = "");
+            document.addEventListener("click", () => suggestionsBox.innerHTML = "");
+        }
     </script>
 </body>
 </html>
-

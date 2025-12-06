@@ -36,6 +36,7 @@ builder.Services.AddSession();
 builder.Services.AddScoped<dbhelper.Dbhelper>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IPageRepository, PageRepository>();
 builder.Services.AddTransient<IPageService, PageService>();
@@ -53,6 +54,7 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 builder.Services.AddScoped<ILikeService, LikeService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddSingleton<Dbhelper>();
 builder.Services.AddSingleton<EncryptionService>();

@@ -2,26 +2,24 @@
 using it_department_site.Filters;
 using it_department_site.Services;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 [Route("comments")]
 public class CommentController : Controller
 {
     private readonly ICommentService _service;
+    private readonly ICurrentUserService _currentUser; // ✅
 
-    public CommentController(ICommentService service)
+    public CommentController(ICommentService service, ICurrentUserService currentUser)
     {
         _service = service;
+        _currentUser = currentUser;
     }
 
     [HttpPost("add")]
     [JwtAuthorize("User", "Admin")]
     public IActionResult Add(int pageId, string content, string slug)
     {
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(Request.Cookies["jwt"]);
-        var userId = int.Parse(jwt.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+        int userId = _currentUser.UserId.Value;
 
         _service.AddComment(new Comment
         {
@@ -32,6 +30,7 @@ public class CommentController : Controller
 
         return RedirectToAction("Details", "Pages", new { slug = slug });
     }
+
     [HttpPost("delete")]
     [JwtAuthorize("Admin")]
     public IActionResult Delete(int commentId, string returnUrl)

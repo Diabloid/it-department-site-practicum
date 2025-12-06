@@ -2,9 +2,6 @@
 using it_department_site.Filters;
 using it_department_site.Services;
 using it_department_site.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-
 
 [Route("profile")]
 [JwtAuthorize("User")]
@@ -13,40 +10,31 @@ public class ProfileController : Controller
     private readonly IProfileService _profileService;
     private readonly ILikeService _likeService;
     private readonly IPageService _pageService;
+    private readonly ICurrentUserService _currentUser; // ✅
 
-    public ProfileController(IProfileService profileService, ILikeService likeService, IPageService pageService)
+    public ProfileController(IProfileService profileService, ILikeService likeService, IPageService pageService, ICurrentUserService currentUser)
     {
         _profileService = profileService;
         _likeService = likeService;
         _pageService = pageService;
+        _currentUser = currentUser;
     }
 
     [HttpGet("")]
     public IActionResult Index()
     {
-        var token = Request.Cookies["jwt"];
-        if (string.IsNullOrEmpty(token))
-            return RedirectToAction("Login", "Auth");
+        // Атрибут [JwtAuthorize] вже перевірив токен, тому просто беремо ID
+        int userId = _currentUser.UserId.Value;
 
-        var handler = new JwtSecurityTokenHandler();
-        var jwt = handler.ReadJwtToken(token);
-        var userIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-            return RedirectToAction("Login", "Auth");
-
-        int userId = int.Parse(userIdClaim.Value);
-
-        // 🔽 Тепер тут повертається об'єкт User?
         var user = _profileService.GetUserInfo(userId);
-        if (user == null) // 🔽 Перевірка стала простішою
+        if (user == null)
             return RedirectToAction("Login", "Auth");
 
         ViewBag.Username = user.Username;
         ViewBag.Email = user.Email;
         ViewBag.Registered = user.CreatedAt.ToString("dd.MM.yyyy HH:mm");
 
-        // 🔽 Ось тут нова логіка
-        var favorites = _profileService.GetFavorites(userId); // List<Favorite>
+        var favorites = _profileService.GetFavorites(userId);
         var favoriteViewModels = new List<FavoritePageViewModel>();
 
         foreach (var fav in favorites)

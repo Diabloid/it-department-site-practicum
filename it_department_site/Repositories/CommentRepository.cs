@@ -1,60 +1,48 @@
-﻿using dbhelper;
+﻿using Dapper;
+using dbhelper;
 using it_department_site.Database;
+using it_department_site.Repositories;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 
 namespace it_department_site.Repositories
 {
     public class CommentRepository : ICommentRepository
     {
-        private readonly Dbhelper _db;
+        private readonly Dbhelper _dbHelper;
 
-        public CommentRepository(Dbhelper db)
+        public CommentRepository(Dbhelper dbHelper)
         {
-            _db = db;
+            _dbHelper = dbHelper;
         }
 
         public void AddComment(Comment comment)
         {
-            _db.ExecuteNonQuery(@"
-                INSERT INTO comments (user_id, page_id, content)
-                VALUES (@user_id, @page_id, @content)", new()
-            {
-                { "@user_id", comment.UserId },
-                { "@page_id", comment.PageId },
-                { "@content", comment.Content }
-            });
+            using var db = _dbHelper.GetConnection();
+            var sql = @"
+                INSERT INTO comments (user_id, page_id, content, created_at)
+                VALUES (@UserId, @PageId, @Content, NOW())";
+
+            db.Execute(sql, comment);
         }
 
         public List<Comment> GetCommentsByPage(int pageId)
         {
-            var result = _db.ExecuteQuery(@"
-        SELECT c.id, c.content, c.created_at, u.username
-        FROM comments c
-        JOIN users u ON c.user_id = u.id
-        WHERE c.page_id = @page_id
-        ORDER BY c.created_at DESC", new()
-    {
-        { "@page_id", pageId }
-    });
+            using var db = _dbHelper.GetConnection();
+            var sql = @"
+                SELECT c.id, c.content, c.created_at as CreatedAt, u.username
+                FROM comments c
+                JOIN users u ON c.user_id = u.id
+                WHERE c.page_id = @pageId
+                ORDER BY c.created_at DESC";
 
-            var list = new List<Comment>();
-            foreach (DataRow row in result.Rows)
-            {
-                list.Add(new Comment
-                {
-                    Id = Convert.ToInt32(row["id"]), // ❗ обов'язково додаємо Id
-                    Content = row["content"].ToString(),
-                    CreatedAt = Convert.ToDateTime(row["created_at"]),
-                    Username = row["username"].ToString()
-                });
-            }
-
-            return list;
+            return db.Query<Comment>(sql, new { pageId }).ToList();
         }
+
         public void DeleteComment(int commentId)
         {
-            _db.ExecuteNonQuery("DELETE FROM comments WHERE id = @id", new() { { "@id", commentId } });
+            using var db = _dbHelper.GetConnection();
+            db.Execute("DELETE FROM comments WHERE id = @commentId", new { commentId });
         }
     }
 }

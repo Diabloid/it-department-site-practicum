@@ -11,7 +11,6 @@
         public string HeaderCss { get; set; } // <== нове поле
         public string FooterCss { get; set; } // <== нове поле
         public string CustomCss { get; set; } // 🆕 нове поле
-        public string? SelectedTheme { get; set; }
 
 
     }

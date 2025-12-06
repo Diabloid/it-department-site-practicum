@@ -1,9 +1,6 @@
 ﻿using it_department_site.Filters;
 using it_department_site.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace it_department_site.Controllers
 {
@@ -12,14 +9,18 @@ namespace it_department_site.Controllers
     public class LikeController : Controller
     {
         private readonly ILikeService _likeService;
+        private readonly ICurrentUserService _currentUser;
 
-        public LikeController(ILikeService likeService) => _likeService = likeService;
+        public LikeController(ILikeService likeService, ICurrentUserService currentUser)
+        {
+            _likeService = likeService;
+            _currentUser = currentUser;
+        }
 
         [HttpPost("toggle")]
         public JsonResult Toggle(int pageId)
         {
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(Request.Cookies["jwt"]);
-            var userId = int.Parse(jwt.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            int userId = _currentUser.UserId.Value;
 
             bool liked = _likeService.ToggleLike(userId, pageId);
             int likeCount = _likeService.GetLikeCount(pageId);

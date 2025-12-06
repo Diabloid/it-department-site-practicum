@@ -17,16 +17,6 @@ namespace it_department_site.Services
             return _repository.ValidateCredentials(username, password);
         }
 
-        public bool IsUsernameTaken(string username)
-        {
-            return _repository.IsUsernameTaken(username);
-        }
-
-        public void Register(string username, string email, string password)
-        {
-            _repository.RegisterUser(username, email, password);
-        }
-
         public int GetUserId(string username)
         {
             return _repository.GetUserId(username);

@@ -1,6 +1,9 @@
-﻿using dbhelper;
+﻿using Dapper;
+using dbhelper;
 using it_department_site.Database;
-using System.Data;
+using it_department_site.Repositories;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace it_department_site.Repositories
 {
@@ -15,87 +18,74 @@ namespace it_department_site.Repositories
 
         public List<MenuItem> GetAll()
         {
-            var dt = _dbHelper.ExecuteQuery("SELECT * FROM menu_items ORDER BY sort_order");
-            var menuItems = new List<MenuItem>();
+            using var db = _dbHelper.GetConnection();
+            var sql = @"
+        SELECT 
+            m.id, 
+            m.name, 
+            m.parent_id as ParentId, 
+            m.page_id as PageId, 
+            m.sort_order as SortOrder,
+            p.slug as PageSlug    -- <--- Ось це поле нам потрібне для посилань!
+        FROM menu_items m
+        LEFT JOIN pages p ON m.page_id = p.id
+        ORDER BY m.sort_order";
 
-            foreach (DataRow row in dt.Rows)
-            {
-                menuItems.Add(new MenuItem
-                {
-                    Id = Convert.ToInt32(row["id"]),
-                    Name = row["name"].ToString(),
-                    ParentId = row["parent_id"] == DBNull.Value ? null : Convert.ToInt32(row["parent_id"]),
-                    PageId = row["page_id"] == DBNull.Value ? null : Convert.ToInt32(row["page_id"]),
-                    SortOrder = Convert.ToInt32(row["sort_order"])
-                });
-            }
-
-            return menuItems;
+            return db.Query<MenuItem>(sql).ToList();
         }
+
         public void LinkPageToMenu(int pageId, int? parentId, string title)
         {
-            var existingMenu = _dbHelper.ExecuteQuery($"SELECT id FROM menu_items WHERE page_id = {pageId}");
+            using var db = _dbHelper.GetConnection();
 
-            if (existingMenu.Rows.Count > 0)
+            var existingId = db.ExecuteScalar<int?>("SELECT id FROM menu_items WHERE page_id = @pageId", new { pageId });
+
+            if (existingId.HasValue)
             {
-                int menuItemId = Convert.ToInt32(existingMenu.Rows[0]["id"]);
-                _dbHelper.ExecuteNonQuery($@"
-            UPDATE menu_items 
-            SET name = '{title.Replace("'", "''")}', 
-                parent_id = {(parentId?.ToString() ?? "NULL")}
-            WHERE id = {menuItemId}
-        ");
+                var updateSql = "UPDATE menu_items SET name = @title, parent_id = @parentId WHERE id = @id";
+                db.Execute(updateSql, new { title, parentId, id = existingId.Value });
             }
             else
             {
-                _dbHelper.ExecuteNonQuery($@"
-            INSERT INTO menu_items (name, parent_id, page_id, sort_order)
-            VALUES ('{title.Replace("'", "''")}', {(parentId?.ToString() ?? "NULL")}, {pageId}, 0)
-        ");
+                var insertSql = "INSERT INTO menu_items (name, parent_id, page_id, sort_order) VALUES (@title, @parentId, @pageId, 0)";
+                db.Execute(insertSql, new { title, parentId, pageId });
             }
         }
+
         public MenuItem GetById(int id)
         {
-            var row = _dbHelper.ExecuteQuery($"SELECT * FROM menu_items WHERE id = {id}").Rows[0];
-            return new MenuItem
-            {
-                Id = Convert.ToInt32(row["id"]),
-                Name = row["name"].ToString(),
-                ParentId = row["parent_id"] == DBNull.Value ? null : (int?)Convert.ToInt32(row["parent_id"]),
-                PageId = row["page_id"] == DBNull.Value ? null : (int?)Convert.ToInt32(row["page_id"]),
-                SortOrder = Convert.ToInt32(row["sort_order"])
-            };
+            using var db = _dbHelper.GetConnection();
+            return db.QueryFirstOrDefault<MenuItem>(
+                "SELECT id, name, parent_id as ParentId, page_id as PageId, sort_order as SortOrder FROM menu_items WHERE id = @id",
+                new { id });
         }
 
         public void Create(MenuItem item)
         {
-            _dbHelper.ExecuteNonQuery($@"
-        INSERT INTO menu_items (name, parent_id, page_id, sort_order)
-        VALUES (
-            '{item.Name.Replace("'", "''")}', 
-            {(item.ParentId?.ToString() ?? "NULL")}, 
-            {(item.PageId?.ToString() ?? "NULL")}, 
-            {item.SortOrder}
-        )
-    ");
+            using var db = _dbHelper.GetConnection();
+            var sql = @"
+                INSERT INTO menu_items (name, parent_id, page_id, sort_order) 
+                VALUES (@Name, @ParentId, @PageId, @SortOrder)";
+            db.Execute(sql, item);
         }
 
         public void Update(MenuItem item)
         {
-            _dbHelper.ExecuteNonQuery($@"
-        UPDATE menu_items SET 
-            name = '{item.Name.Replace("'", "''")}',
-            parent_id = {(item.ParentId?.ToString() ?? "NULL")},
-            page_id = {(item.PageId?.ToString() ?? "NULL")},
-            sort_order = {item.SortOrder}
-        WHERE id = {item.Id}
-    ");
+            using var db = _dbHelper.GetConnection();
+            var sql = @"
+                UPDATE menu_items SET 
+                    name = @Name, 
+                    parent_id = @ParentId, 
+                    page_id = @PageId, 
+                    sort_order = @SortOrder 
+                WHERE id = @Id";
+            db.Execute(sql, item);
         }
 
         public void Delete(int id)
         {
-            _dbHelper.ExecuteNonQuery($"DELETE FROM menu_items WHERE id = {id}");
+            using var db = _dbHelper.GetConnection();
+            db.Execute("DELETE FROM menu_items WHERE id = @id", new { id });
         }
-
     }
 }
