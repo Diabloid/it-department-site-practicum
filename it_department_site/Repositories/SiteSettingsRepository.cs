@@ -1,23 +1,17 @@
-﻿using Dapper;
-using dbhelper;
-using it_department_site.Database;
-using it_department_site.Repositories;
-
-namespace it_department_site.Repositories
+﻿namespace it_department_site.Repositories
 {
     public class SiteSettingsRepository : ISiteSettingsRepository
     {
-        private readonly Dbhelper _dbHelper;
+        private readonly IDbConnection _db;
 
-        public SiteSettingsRepository(Dbhelper dbHelper)
+        public SiteSettingsRepository(IDbConnection db)
         {
-            _dbHelper = dbHelper;
+            _db = db;
         }
 
-        public SiteSettings Get()
+        public async Task<SiteSettings> GetAsync()
         {
-            using var db = _dbHelper.GetConnection();
-            var settings = db.QueryFirstOrDefault<SiteSettings>("SELECT * FROM site_settings WHERE Id = 1");
+            var settings = await _db.QueryFirstOrDefaultAsync<SiteSettings>("SELECT * FROM site_settings WHERE Id = 1");
 
             if (settings == null)
             {
@@ -29,13 +23,11 @@ namespace it_department_site.Repositories
                     CustomCss = ""
                 };
             }
-
             return settings;
         }
 
-        public void Save(SiteSettings settings)
+        public async Task SaveAsync(SiteSettings settings)
         {
-            using var db = _dbHelper.GetConnection();
             var sql = @"
                 UPDATE site_settings SET 
                     HeaderHtml = @HeaderHtml, 
@@ -46,7 +38,7 @@ namespace it_department_site.Repositories
                     SiteTitle = @SiteTitle 
                 WHERE Id = 1";
 
-            db.Execute(sql, settings);
+            await _db.ExecuteAsync(sql, settings);
         }
     }
 }

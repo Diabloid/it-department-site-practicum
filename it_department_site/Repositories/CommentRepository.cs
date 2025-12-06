@@ -1,34 +1,25 @@
-﻿using Dapper;
-using dbhelper;
-using it_department_site.Database;
-using it_department_site.Repositories;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace it_department_site.Repositories
+﻿namespace it_department_site.Repositories
 {
     public class CommentRepository : ICommentRepository
     {
-        private readonly Dbhelper _dbHelper;
+        private readonly IDbConnection _db;
 
-        public CommentRepository(Dbhelper dbHelper)
+        public CommentRepository(IDbConnection db)
         {
-            _dbHelper = dbHelper;
+            _db = db;
         }
 
-        public void AddComment(Comment comment)
+        public async Task AddCommentAsync(Comment comment)
         {
-            using var db = _dbHelper.GetConnection();
             var sql = @"
                 INSERT INTO comments (user_id, page_id, content, created_at)
                 VALUES (@UserId, @PageId, @Content, NOW())";
 
-            db.Execute(sql, comment);
+            await _db.ExecuteAsync(sql, comment);
         }
 
-        public List<Comment> GetCommentsByPage(int pageId)
+        public async Task<List<Comment>> GetCommentsByPageAsync(int pageId)
         {
-            using var db = _dbHelper.GetConnection();
             var sql = @"
                 SELECT c.id, c.content, c.created_at as CreatedAt, u.username
                 FROM comments c
@@ -36,13 +27,13 @@ namespace it_department_site.Repositories
                 WHERE c.page_id = @pageId
                 ORDER BY c.created_at DESC";
 
-            return db.Query<Comment>(sql, new { pageId }).ToList();
+            var result = await _db.QueryAsync<Comment>(sql, new { pageId });
+            return result.ToList();
         }
 
-        public void DeleteComment(int commentId)
+        public async Task DeleteCommentAsync(int commentId)
         {
-            using var db = _dbHelper.GetConnection();
-            db.Execute("DELETE FROM comments WHERE id = @commentId", new { commentId });
+            await _db.ExecuteAsync("DELETE FROM comments WHERE id = @commentId", new { commentId });
         }
     }
 }

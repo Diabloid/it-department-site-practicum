@@ -1,7 +1,4 @@
-﻿using it_department_site.Database;
-using it_department_site.Repositories;
-
-namespace it_department_site.Services
+﻿namespace it_department_site.Services
 {
     public class SiteSettingsService : ISiteSettingsService
     {
@@ -12,14 +9,14 @@ namespace it_department_site.Services
             _repository = repository;
         }
 
-        public SiteSettings Get()
+        public async Task<SiteSettings> GetAsync()
         {
-            return _repository.Get();
+            return await _repository.GetAsync();
         }
 
-        public void Save(SiteSettings settings)
+        public async Task SaveAsync(SiteSettings settings)
         {
-            _repository.Save(settings);
+            await _repository.SaveAsync(settings);
         }
     }
 }

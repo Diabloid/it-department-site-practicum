@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-@inject it_department_site.Services.ISiteSettingsService SettingsService
+@inject ISiteSettingsService SettingsService
 @using Microsoft.AspNetCore.Html
 @using System.Text.Encodings.Web
 @using System.Text.RegularExpressions
@@ -16,7 +16,7 @@
 }
 @{
     var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
-    var siteSettings = SettingsService.Get();
+    var siteSettings = await SettingsService.GetAsync();
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
     string loginButtonHtml;
 
@@ -65,7 +65,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - @SettingsService.Get().SiteTitle</title>
+    <title>@ViewData["Title"] - @siteSettings.SiteTitle</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />

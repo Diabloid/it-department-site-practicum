@@ -1,7 +1,7 @@
-﻿@inject it_department_site.Services.ISiteSettingsService SettingsService
+﻿@inject ISiteSettingsService SettingsService
 @{
     Layout = null;
-    var siteSettings = SettingsService.Get();
+    var siteSettings = await SettingsService.GetAsync();
 }
 
 <!DOCTYPE html>

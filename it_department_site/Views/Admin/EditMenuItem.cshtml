@@ -1,7 +1,7 @@
-﻿@model it_department_site.Database.MenuItem
+﻿@model it_department_site.Entities.MenuItem
 @{
-    var pages = ViewBag.Pages as List<it_department_site.Database.Page>;
-    var menuItems = ViewBag.MenuItems as List<it_department_site.Database.MenuItem>;
+    var pages = ViewBag.Pages as List<it_department_site.Entities.Page>;
+    var menuItems = ViewBag.MenuItems as List<it_department_site.Entities.MenuItem>;
 }
 
 <form asp-action="SaveMenuItem" method="post">

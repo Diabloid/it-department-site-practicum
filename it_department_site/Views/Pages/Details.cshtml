@@ -1,7 +1,7 @@
 ﻿@model it_department_site.DTOs.PageDto
 @using System.IdentityModel.Tokens.Jwt
 @using System.Security.Claims
-@inject it_department_site.Services.IFavoriteService FavoriteService
+@inject IFavoriteService FavoriteService
 
 @{
     var jwt = Context.Request.Cookies["jwt"];
@@ -21,7 +21,7 @@
 
         if (role == "User" && userId > 0)
         {
-            var alreadyFavorite = FavoriteService.IsAlreadyFavorite(userId, Model.Id);
+            var alreadyFavorite = await FavoriteService.IsAlreadyFavoriteAsync(userId, Model.Id);
             showFavoriteButton = !alreadyFavorite;
         }
     }
@@ -112,7 +112,7 @@
                     </form>
                 }
 
-                @if (ViewBag.Comments is List<it_department_site.Database.Comment> comments)
+                @if (ViewBag.Comments is List<Comment> comments)
                 {
                     foreach (var c in comments)
                     {

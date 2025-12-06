@@ -1,7 +1,4 @@
-﻿using it_department_site.Database;
-using it_department_site.Repositories;
-
-namespace it_department_site.Services
+﻿namespace it_department_site.Services
 {
     public class AuthService : IAuthService
     {
@@ -12,14 +9,14 @@ namespace it_department_site.Services
             _repository = repository;
         }
 
-        public User? Login(string username, string password)
+        public async Task<User?> LoginAsync(string username, string password)
         {
-            return _repository.ValidateCredentials(username, password);
+            return await _repository.ValidateCredentialsAsync(username, password);
         }
 
-        public int GetUserId(string username)
+        public async Task<int> GetUserIdAsync(string username)
         {
-            return _repository.GetUserId(username);
+            return await _repository.GetUserIdAsync(username);
         }
     }
 }

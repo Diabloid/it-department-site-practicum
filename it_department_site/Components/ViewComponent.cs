@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using it_department_site.Database;
-using it_department_site.Services; // ✅ Тепер використовуємо Services
-
-namespace it_department_site.ViewComponents
+﻿namespace it_department_site.ViewComponents
 {
     public class MenuViewComponent : ViewComponent
     {
@@ -13,9 +9,9 @@ namespace it_department_site.ViewComponents
             _menuService = menuService;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var menuItems = _menuService.GetAllMenuItems();
+            var menuItems = await _menuService.GetAllMenuItemsAsync();
 
             var lookup = menuItems.ToDictionary(m => m.Id);
             var rootItems = new List<MenuItem>();

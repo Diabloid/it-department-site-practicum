@@ -1,7 +1,4 @@
-﻿using it_department_site.Database;
-using it_department_site.Repositories;
-
-namespace it_department_site.Services
+﻿namespace it_department_site.Services
 {
     public class CommentService : ICommentService
     {
@@ -12,9 +9,10 @@ namespace it_department_site.Services
             _repo = repo;
         }
 
-        public void AddComment(Comment comment) => _repo.AddComment(comment);
+        public async Task AddCommentAsync(Comment comment) => await _repo.AddCommentAsync(comment);
 
-        public List<Comment> GetComments(int pageId) => _repo.GetCommentsByPage(pageId);
-        public void DeleteComment(int commentId) => _repo.DeleteComment(commentId);
+        public async Task<List<Comment>> GetCommentsAsync(int pageId) => await _repo.GetCommentsByPageAsync(pageId);
+
+        public async Task DeleteCommentAsync(int commentId) => await _repo.DeleteCommentAsync(commentId);
     }
 }

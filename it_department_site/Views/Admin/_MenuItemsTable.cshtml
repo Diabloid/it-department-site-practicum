@@ -1,4 +1,4 @@
-﻿@model List<it_department_site.Database.MenuItem>
+﻿@model List<it_department_site.Entities.MenuItem>
 <button type="button" class="btn btn-primary mb-3"
         data-bs-toggle="modal" data-bs-target="#menuModal"
         onclick="resetForm()">
@@ -26,7 +26,7 @@
                 </td>
                 <td>
                     @{
-                        var page = (ViewBag.Pages as List<it_department_site.Database.Page>)?.FirstOrDefault(p => p.Id == item.PageId);
+                        var page = (ViewBag.Pages as List<it_department_site.Entities.Page>)?.FirstOrDefault(p => p.Id == item.PageId);
                         @: @(page?.Title ?? "-")
                     }
                 </td>
@@ -79,7 +79,7 @@
     <label for="pageId" class="form-label">Прив’язана сторінка</label>
     <select class="form-select" id="pageId" name="PageId">
         <option value="">(немає)</option>
-        @foreach (var item in ViewBag.Pages as List<it_department_site.Database.Page>)
+        @foreach (var item in ViewBag.Pages as List<it_department_site.Entities.Page>)
         {
             <option value="@item.Id">@item.Title</option>
         }

@@ -1,24 +1,18 @@
-﻿using Dapper;
-using dbhelper;
-using it_department_site.Database;
-using it_department_site.Repositories;
-
-namespace it_department_site.Repositories
+﻿namespace it_department_site.Repositories
 {
     public class ProfileRepository : IProfileRepository
     {
-        private readonly Dbhelper _dbHelper;
+        private readonly IDbConnection _db;
 
-        public ProfileRepository(Dbhelper dbHelper)
+        public ProfileRepository(IDbConnection db)
         {
-            _dbHelper = dbHelper;
+            _db = db;
         }
 
-        public User? GetUserInfo(int userId)
+        public async Task<User?> GetUserInfoAsync(int userId)
         {
-            using var db = _dbHelper.GetConnection();
             var sql = "SELECT id, username, email, created_at as CreatedAt FROM users WHERE id = @userId";
-            return db.QueryFirstOrDefault<User>(sql, new { userId });
+            return await _db.QueryFirstOrDefaultAsync<User>(sql, new { userId });
         }
     }
 }

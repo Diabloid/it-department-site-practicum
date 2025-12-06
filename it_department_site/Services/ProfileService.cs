@@ -1,9 +1,4 @@
-﻿using it_department_site.Database;
-using it_department_site.Repositories;
-using System;
-using System.Collections.Generic;
-
-namespace it_department_site.Services
+﻿namespace it_department_site.Services
 {
     public class ProfileService : IProfileService
     {
@@ -16,14 +11,14 @@ namespace it_department_site.Services
             _favoriteRepository = favoriteRepository;
         }
 
-        public User? GetUserInfo(int userId)
+        public async Task<User?> GetUserInfoAsync(int userId)
         {
-            return _repository.GetUserInfo(userId);
+            return await _repository.GetUserInfoAsync(userId);
         }
 
-        public List<Favorite> GetFavorites(int userId)
+        public async Task<List<Favorite>> GetFavoritesAsync(int userId)
         {
-            return _favoriteRepository.GetFavoritesByUserId(userId);
+            return await _favoriteRepository.GetFavoritesByUserIdAsync(userId);
         }
     }
 }

@@ -1,40 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using it_department_site.Filters;
-using it_department_site.Services;
-
-[Route("favorites")]
+﻿[Route("favorites")]
 [JwtAuthorize("User")]
 public class FavoriteController : Controller
 {
     private readonly IFavoriteService _favoriteService;
-    private readonly IPageService _pageService;
-    private readonly ICurrentUserService _currentUser; 
+    private readonly ICurrentUserService _currentUser;
 
-    public FavoriteController(IFavoriteService favoriteService, IPageService pageService, ICurrentUserService currentUser)
+    public FavoriteController(IFavoriteService favoriteService, ICurrentUserService currentUser)
     {
         _favoriteService = favoriteService;
-        _pageService = pageService;
         _currentUser = currentUser;
     }
 
     [HttpPost("remove")]
-    public IActionResult Remove(int pageId)
+    public async Task<IActionResult> Remove(int pageId)
     {
-        // ✅ Використовуємо .Value, бо атрибут [JwtAuthorize] гарантує, що юзер залогінений
         int userId = _currentUser.UserId.Value;
-
-        _favoriteService.RemoveFromFavorites(userId, pageId);
-
+        await _favoriteService.RemoveFromFavoritesAsync(userId, pageId);
         return RedirectToAction("Index", "Profile");
     }
 
     [HttpPost("toggle")]
-    public JsonResult Toggle(int pageId)
+    public async Task<JsonResult> Toggle(int pageId)
     {
         int userId = _currentUser.UserId.Value;
-
-        bool added = _favoriteService.ToggleFavorite(userId, pageId);
-
+        bool added = await _favoriteService.ToggleFavoriteAsync(userId, pageId);
         return Json(new { success = true, isFavorite = added });
     }
 }

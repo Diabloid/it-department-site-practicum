@@ -1,6 +1,4 @@
-﻿using it_department_site.Repositories;
-
-namespace it_department_site.Services
+﻿namespace it_department_site.Services
 {
     public class LikeService : ILikeService
     {
@@ -8,22 +6,22 @@ namespace it_department_site.Services
 
         public LikeService(ILikeRepository repo) => _repo = repo;
 
-        public bool HasLiked(int userId, int pageId) => _repo.HasUserLiked(userId, pageId);
+        public async Task<bool> HasLikedAsync(int userId, int pageId) => await _repo.HasUserLikedAsync(userId, pageId);
 
-        public bool ToggleLike(int userId, int pageId)
+        public async Task<bool> ToggleLikeAsync(int userId, int pageId)
         {
-            if (_repo.HasUserLiked(userId, pageId))
+            if (await _repo.HasUserLikedAsync(userId, pageId))
             {
-                _repo.RemoveLike(userId, pageId);
+                await _repo.RemoveLikeAsync(userId, pageId);
                 return false;
             }
             else
             {
-                _repo.AddLike(userId, pageId);
+                await _repo.AddLikeAsync(userId, pageId);
                 return true;
             }
         }
 
-        public int GetLikeCount(int pageId) => _repo.GetLikeCount(pageId);
+        public async Task<int> GetLikeCountAsync(int pageId) => await _repo.GetLikeCountAsync(pageId);
     }
 }

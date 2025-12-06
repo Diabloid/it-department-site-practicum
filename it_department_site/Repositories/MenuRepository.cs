@@ -1,77 +1,65 @@
-﻿using Dapper;
-using dbhelper;
-using it_department_site.Database;
-using it_department_site.Repositories;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace it_department_site.Repositories
+﻿namespace it_department_site.Repositories
 {
     public class MenuRepository : IMenuRepository
     {
-        private readonly Dbhelper _dbHelper;
+        private readonly IDbConnection _db;
 
-        public MenuRepository(Dbhelper dbHelper)
+        public MenuRepository(IDbConnection db)
         {
-            _dbHelper = dbHelper;
+            _db = db;
         }
 
-        public List<MenuItem> GetAll()
+        public async Task<List<MenuItem>> GetAllAsync()
         {
-            using var db = _dbHelper.GetConnection();
             var sql = @"
-        SELECT 
-            m.id, 
-            m.name, 
-            m.parent_id as ParentId, 
-            m.page_id as PageId, 
-            m.sort_order as SortOrder,
-            p.slug as PageSlug    -- <--- Ось це поле нам потрібне для посилань!
-        FROM menu_items m
-        LEFT JOIN pages p ON m.page_id = p.id
-        ORDER BY m.sort_order";
+                SELECT 
+                    m.id, 
+                    m.name, 
+                    m.parent_id as ParentId, 
+                    m.page_id as PageId, 
+                    m.sort_order as SortOrder,
+                    p.slug as PageSlug
+                FROM menu_items m
+                LEFT JOIN pages p ON m.page_id = p.id
+                ORDER BY m.sort_order";
 
-            return db.Query<MenuItem>(sql).ToList();
+            var result = await _db.QueryAsync<MenuItem>(sql);
+            return result.ToList();
         }
 
-        public void LinkPageToMenu(int pageId, int? parentId, string title)
+        public async Task LinkPageToMenuAsync(int pageId, int? parentId, string title)
         {
-            using var db = _dbHelper.GetConnection();
-
-            var existingId = db.ExecuteScalar<int?>("SELECT id FROM menu_items WHERE page_id = @pageId", new { pageId });
+            var existingId = await _db.ExecuteScalarAsync<int?>("SELECT id FROM menu_items WHERE page_id = @pageId", new { pageId });
 
             if (existingId.HasValue)
             {
                 var updateSql = "UPDATE menu_items SET name = @title, parent_id = @parentId WHERE id = @id";
-                db.Execute(updateSql, new { title, parentId, id = existingId.Value });
+                await _db.ExecuteAsync(updateSql, new { title, parentId, id = existingId.Value });
             }
             else
             {
                 var insertSql = "INSERT INTO menu_items (name, parent_id, page_id, sort_order) VALUES (@title, @parentId, @pageId, 0)";
-                db.Execute(insertSql, new { title, parentId, pageId });
+                await _db.ExecuteAsync(insertSql, new { title, parentId, pageId });
             }
         }
 
-        public MenuItem GetById(int id)
+        public async Task<MenuItem> GetByIdAsync(int id)
         {
-            using var db = _dbHelper.GetConnection();
-            return db.QueryFirstOrDefault<MenuItem>(
+            return await _db.QueryFirstOrDefaultAsync<MenuItem>(
                 "SELECT id, name, parent_id as ParentId, page_id as PageId, sort_order as SortOrder FROM menu_items WHERE id = @id",
                 new { id });
         }
 
-        public void Create(MenuItem item)
+        public async Task CreateAsync(MenuItem item)
         {
-            using var db = _dbHelper.GetConnection();
             var sql = @"
                 INSERT INTO menu_items (name, parent_id, page_id, sort_order) 
                 VALUES (@Name, @ParentId, @PageId, @SortOrder)";
-            db.Execute(sql, item);
+            await _db.ExecuteAsync(sql, item);
         }
 
-        public void Update(MenuItem item)
+        public async Task UpdateAsync(MenuItem item)
         {
-            using var db = _dbHelper.GetConnection();
             var sql = @"
                 UPDATE menu_items SET 
                     name = @Name, 
@@ -79,13 +67,12 @@ namespace it_department_site.Repositories
                     page_id = @PageId, 
                     sort_order = @SortOrder 
                 WHERE id = @Id";
-            db.Execute(sql, item);
+            await _db.ExecuteAsync(sql, item);
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            using var db = _dbHelper.GetConnection();
-            db.Execute("DELETE FROM menu_items WHERE id = @id", new { id });
+            await _db.ExecuteAsync("DELETE FROM menu_items WHERE id = @id", new { id });
         }
     }
 }

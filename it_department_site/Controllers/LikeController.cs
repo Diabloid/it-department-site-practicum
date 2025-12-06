@@ -1,8 +1,4 @@
-﻿using it_department_site.Filters;
-using it_department_site.Services;
-using Microsoft.AspNetCore.Mvc;
-
-namespace it_department_site.Controllers
+﻿namespace it_department_site.Controllers
 {
     [Route("likes")]
     [JwtAuthorize("User", "Admin")]
@@ -18,12 +14,12 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost("toggle")]
-        public JsonResult Toggle(int pageId)
+        public async Task<JsonResult> Toggle(int pageId)
         {
             int userId = _currentUser.UserId.Value;
 
-            bool liked = _likeService.ToggleLike(userId, pageId);
-            int likeCount = _likeService.GetLikeCount(pageId);
+            bool liked = await _likeService.ToggleLikeAsync(userId, pageId);
+            int likeCount = await _likeService.GetLikeCountAsync(pageId);
 
             return Json(new { success = true, liked, likeCount });
         }

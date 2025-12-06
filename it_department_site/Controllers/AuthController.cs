@@ -1,9 +1,6 @@
-﻿using it_department_site.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 public class AuthController : Controller
 {
@@ -23,15 +20,14 @@ public class AuthController : Controller
     }
 
     [HttpPost("/login")]
-    public IActionResult Login(string username, string password)
+    public async Task<IActionResult> Login(string username, string password)
     {
-        var user = _authService.Login(username, password);
+        // ✅ await
+        var user = await _authService.LoginAsync(username, password);
 
         if (user != null)
         {
-            int userId = user.Id;
             string role = user.Username.ToLower() == "admin" ? "Admin" : "User";
-
             var token = GenerateJwtToken(user.Id, user.Username, role);
 
             Response.Cookies.Append("jwt", token, new CookieOptions

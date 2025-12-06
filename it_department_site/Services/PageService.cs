@@ -1,10 +1,4 @@
-﻿using it_department_site.Database;
-using it_department_site.Repositories;
-using it_department_site.Services;
-using NuGet.Protocol.Core.Types;
-using System.Text.Json;
-
-public class PageService : IPageService
+﻿public class PageService : IPageService
 {
     private readonly IPageRepository _pageRepository;
     private readonly EncryptionService _encryption;
@@ -15,22 +9,21 @@ public class PageService : IPageService
         _encryption = encryption;
     }
 
-    public Page? GetPageBySlug(string slug, bool isAdmin)
+    public async Task<Page?> GetPageBySlugAsync(string slug, bool isAdmin)
     {
-        var page = _pageRepository.GetBySlug(slug);
+        var page = await _pageRepository.GetBySlugAsync(slug);
         if (page == null) return null;
 
         if (page.Status == PageStatus.Draft && !isAdmin)
             return null;
 
-        // Дешифруємо вміст
         DecryptContent(page);
         return page;
     }
 
-    public Page GetPageById(int id)
+    public async Task<Page?> GetPageByIdAsync(int id)
     {
-        var page = _pageRepository.GetById(id);
+        var page = await _pageRepository.GetByIdAsync(id);
         if (page != null)
         {
             DecryptContent(page);
@@ -38,63 +31,74 @@ public class PageService : IPageService
         return page;
     }
 
-    public List<Page> GetAllPages()
+    public async Task<List<Page>> GetAllPagesAsync()
     {
-        var pages = _pageRepository.GetAll();
+        var pages = await _pageRepository.GetAllAsync();
         foreach (var page in pages)
             DecryptContent(page);
         return pages;
     }
 
-    public List<Page> GetPaged(int pageNumber, int pageSize)
+    public async Task<List<Page>> GetPagedAsync(int pageNumber, int pageSize)
     {
-        var pages = _pageRepository.GetPaged(pageNumber, pageSize);
+        var pages = await _pageRepository.GetPagedAsync(pageNumber, pageSize);
         foreach (var page in pages)
             DecryptContent(page);
         return pages;
     }
 
-    public int GetTotal(int p) => _pageRepository.GetTotal(p);
+    public async Task<int> GetTotalAsync(int p) => await _pageRepository.GetTotalAsync(p);
 
-    public List<Page> Search(string query)
+    public async Task<List<Page>> SearchAsync(string query)
     {
-        var pages = _pageRepository.Search(query);
+        var pages = await _pageRepository.SearchAsync(query);
         foreach (var page in pages)
             DecryptContent(page);
         return pages;
     }
 
-    public int CreatePage(Page page)
+    public async Task<int> CreatePageAsync(Page page)
     {
         EncryptContent(page);
-        return _pageRepository.Create(page);   
+        return await _pageRepository.CreateAsync(page);
     }
 
-    public void UpdatePage(Page page)
+    public async Task UpdatePageAsync(Page page)
     {
         EncryptContent(page);
-        _pageRepository.Update(page);
+        await _pageRepository.UpdateAsync(page);
     }
 
-    public void DeletePage(int id) => _pageRepository.Delete(id);
+    public async Task DeletePageAsync(int id) => await _pageRepository.DeleteAsync(id);
 
-    // 🔒 Метод шифрування вмісту перед збереженням
+    // Логіка переглядів
+    public async Task<bool> HasUserViewedPageAsync(int userId, int pageId)
+    {
+        return await _pageRepository.HasPageViewAsync(userId, pageId);
+    }
+
+    public async Task MarkPageAsViewedAsync(int userId, int pageId)
+    {
+        await _pageRepository.AddPageViewAsync(userId, pageId);
+        await _pageRepository.IncrementViewsAsync(pageId);
+    }
+
+    public async Task<int> GetViewsAsync(int pageId)
+    {
+        return await _pageRepository.GetViewsAsync(pageId);
+    }
+
+    // --- Private Methods (Encryption) ---
+    // Вони лишаються синхронними, бо це робота з пам'яттю/CPU
+
     private void EncryptContent(Page page)
     {
         var json = JsonSerializer.Serialize(page.Content);
-
-        Console.WriteLine("📝 Content to encrypt:");
-        Console.WriteLine(json);
-
+        // Прибрав зайві логи в консоль
         var encrypted = _encryption.Encrypt(json);
-
-        Console.WriteLine("🔐 Encrypted result:");
-        Console.WriteLine(encrypted);
-
         page.ContentJson = encrypted;
     }
 
-    // 🔓 Метод дешифрування після зчитування
     private void DecryptContent(Page page)
     {
         try
@@ -117,7 +121,6 @@ public class PageService : IPageService
         }
         catch (FormatException)
         {
-            // fallback для незашифрованих записів
             try
             {
                 page.Content = JsonSerializer.Deserialize<ContentSections>(page.ContentJson) ?? new ContentSections();
@@ -131,18 +134,5 @@ public class PageService : IPageService
         {
             page.Content = new ContentSections();
         }
-    }
-    public bool HasUserViewedPage(int userId, int pageId)
-    {
-        return _pageRepository.HasPageView(userId, pageId);
-    }
-    public void MarkPageAsViewed(int userId, int pageId)
-    {
-        _pageRepository.AddPageView(userId, pageId);
-        _pageRepository.IncrementViews(pageId);
-    }
-    public int GetViews(int pageId)
-    {
-        return _pageRepository.GetViews(pageId);
     }
 }

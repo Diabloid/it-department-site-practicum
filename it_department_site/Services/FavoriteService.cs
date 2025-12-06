@@ -1,8 +1,4 @@
-﻿using it_department_site.Database;
-using it_department_site.Repositories;
-using System.Collections.Generic;
-
-namespace it_department_site.Services
+﻿namespace it_department_site.Services
 {
     public class FavoriteService : IFavoriteService
     {
@@ -13,37 +9,39 @@ namespace it_department_site.Services
             _repo = repo;
         }
 
-        public void AddToFavorites(int userId, int pageId)
+        public async Task AddToFavoritesAsync(int userId, int pageId)
         {
-            if (!_repo.IsAlreadyFavorite(userId, pageId))
+            if (!await _repo.IsAlreadyFavoriteAsync(userId, pageId))
             {
-                _repo.AddToFavorites(userId, pageId);
+                await _repo.AddToFavoritesAsync(userId, pageId);
             }
         }
 
-        public bool IsAlreadyFavorite(int userId, int pageId)
+        public async Task<bool> IsAlreadyFavoriteAsync(int userId, int pageId)
         {
-            return _repo.IsAlreadyFavorite(userId, pageId);
+            return await _repo.IsAlreadyFavoriteAsync(userId, pageId);
         }
 
-        public List<Favorite> GetUserFavorites(int userId)
+        public async Task<List<Favorite>> GetUserFavoritesAsync(int userId)
         {
-            return _repo.GetFavoritesByUserId(userId);
+            return await _repo.GetFavoritesByUserIdAsync(userId);
         }
-        public void RemoveFromFavorites(int userId, int pageId)
+
+        public async Task RemoveFromFavoritesAsync(int userId, int pageId)
         {
-            _repo.RemoveFromFavorites(userId, pageId);
+            await _repo.RemoveFromFavoritesAsync(userId, pageId);
         }
-        public bool ToggleFavorite(int userId, int pageId)
+
+        public async Task<bool> ToggleFavoriteAsync(int userId, int pageId)
         {
-            if (_repo.IsAlreadyFavorite(userId, pageId))
+            if (await _repo.IsAlreadyFavoriteAsync(userId, pageId))
             {
-                _repo.RemoveFromFavorites(userId, pageId);
+                await _repo.RemoveFromFavoritesAsync(userId, pageId);
                 return false;
             }
             else
             {
-                _repo.AddToFavorites(userId, pageId);
+                await _repo.AddToFavoritesAsync(userId, pageId);
                 return true;
             }
         }

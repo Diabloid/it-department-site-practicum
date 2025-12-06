@@ -1,13 +1,8 @@
-﻿using it_department_site.Database;
-using it_department_site.Filters;
-using it_department_site.Services;
-using Microsoft.AspNetCore.Mvc;
-
-[Route("comments")]
+﻿[Route("comments")]
 public class CommentController : Controller
 {
     private readonly ICommentService _service;
-    private readonly ICurrentUserService _currentUser; // ✅
+    private readonly ICurrentUserService _currentUser;
 
     public CommentController(ICommentService service, ICurrentUserService currentUser)
     {
@@ -17,11 +12,11 @@ public class CommentController : Controller
 
     [HttpPost("add")]
     [JwtAuthorize("User", "Admin")]
-    public IActionResult Add(int pageId, string content, string slug)
+    public async Task<IActionResult> Add(int pageId, string content, string slug)
     {
         int userId = _currentUser.UserId.Value;
 
-        _service.AddComment(new Comment
+        await _service.AddCommentAsync(new Comment
         {
             UserId = userId,
             PageId = pageId,
@@ -33,9 +28,9 @@ public class CommentController : Controller
 
     [HttpPost("delete")]
     [JwtAuthorize("Admin")]
-    public IActionResult Delete(int commentId, string returnUrl)
+    public async Task<IActionResult> Delete(int commentId, string returnUrl)
     {
-        _service.DeleteComment(commentId);
+        await _service.DeleteCommentAsync(commentId);
         return Redirect(returnUrl ?? "/");
     }
 }

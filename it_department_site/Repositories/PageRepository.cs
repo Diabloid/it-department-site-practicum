@@ -1,16 +1,10 @@
-﻿using Dapper; // ✅ Обов'язково додай цей using
-using it_department_site.Database;
-using dbhelper;
-using it_department_site.Repositories;
-using System.Data;
-
-public class PageRepository : IPageRepository
+﻿public class PageRepository : IPageRepository
 {
-    private readonly Dbhelper _dbHelper;
+    private readonly IDbConnection _db;
 
-    public PageRepository(Dbhelper dbHelper)
+    public PageRepository(IDbConnection db)
     {
-        _dbHelper = dbHelper;
+        _db = db;
     }
 
     private const string BaseSelectSql = @"
@@ -27,45 +21,38 @@ public class PageRepository : IPageRepository
             Views 
         FROM pages";
 
-    public Page? GetBySlug(string slug)
+    public async Task<Page?> GetBySlugAsync(string slug)
     {
-        using var db = _dbHelper.GetConnection();
-        return db.QueryFirstOrDefault<Page>(
-            $"{BaseSelectSql} WHERE slug = @slug",
-            new { slug });
+        return await _db.QueryFirstOrDefaultAsync<Page>(
+            $"{BaseSelectSql} WHERE slug = @slug", new { slug });
     }
 
-    public Page? GetById(int id)
+    public async Task<Page?> GetByIdAsync(int id)
     {
-        using var db = _dbHelper.GetConnection();
-        return db.QueryFirstOrDefault<Page>(
-            $"{BaseSelectSql} WHERE id = @id",
-            new { id });
+        return await _db.QueryFirstOrDefaultAsync<Page>(
+            $"{BaseSelectSql} WHERE id = @id", new { id });
     }
 
-    public List<Page> GetAll()
+    public async Task<List<Page>> GetAllAsync()
     {
-        using var db = _dbHelper.GetConnection();
-        return db.Query<Page>(BaseSelectSql).ToList();
+        var result = await _db.QueryAsync<Page>(BaseSelectSql);
+        return result.ToList();
     }
 
-    public int Create(Page page)
+    public async Task<int> CreateAsync(Page page)
     {
-        using var db = _dbHelper.GetConnection();
         var sql = @"
             INSERT INTO pages 
             (title, slug, status_, content, layout_type, created_at, updated_at, allow_comments, Views)
             VALUES 
             (@Title, @Slug, @Status, @ContentJson, @LayoutType, NOW(), NOW(), @AllowComments, 0);
-            
             SELECT LAST_INSERT_ID();";
 
-        return db.QuerySingle<int>(sql, page);
+        return await _db.QuerySingleAsync<int>(sql, page);
     }
 
-    public void Update(Page page)
+    public async Task UpdateAsync(Page page)
     {
-        using var db = _dbHelper.GetConnection();
         var sql = @"
             UPDATE pages SET 
                 title = @Title,
@@ -77,73 +64,65 @@ public class PageRepository : IPageRepository
                 updated_at = NOW()
             WHERE id = @Id";
 
-        db.Execute(sql, page);
+        await _db.ExecuteAsync(sql, page);
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        using var db = _dbHelper.GetConnection();
-        db.Execute("DELETE FROM pages WHERE id = @id", new { id });
+        await _db.ExecuteAsync("DELETE FROM pages WHERE id = @id", new { id });
     }
 
-    public List<Page> GetPaged(int pageNumber, int pageSize)
+    public async Task<List<Page>> GetPagedAsync(int pageNumber, int pageSize)
     {
-        using var db = _dbHelper.GetConnection();
         int offset = (pageNumber - 1) * pageSize;
-
         var sql = $"{BaseSelectSql} ORDER BY id DESC LIMIT @pageSize OFFSET @offset";
 
-        return db.Query<Page>(sql, new { pageSize, offset }).ToList();
+        var result = await _db.QueryAsync<Page>(sql, new { pageSize, offset });
+        return result.ToList();
     }
 
-    public int GetTotal(int pageSize)
+    public async Task<int> GetTotalAsync(int pageSize)
     {
-        using var db = _dbHelper.GetConnection();
-        int total = db.ExecuteScalar<int>("SELECT COUNT(*) FROM pages");
+        int total = await _db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pages");
         return (int)Math.Ceiling((double)total / pageSize);
     }
 
-    public List<Page> Search(string query)
+    public async Task<List<Page>> SearchAsync(string query)
     {
-        using var db = _dbHelper.GetConnection();
         var sql = $@"{BaseSelectSql} 
                      WHERE LOWER(title) LIKE CONCAT('%', LOWER(@q), '%') 
                         OR LOWER(slug) LIKE CONCAT('%', LOWER(@q), '%')";
 
-        return db.Query<Page>(sql, new { q = query }).ToList();
+        var result = await _db.QueryAsync<Page>(sql, new { q = query });
+        return result.ToList();
     }
 
-    // --- Методи переглядів (PageViews) ---
+    // --- Перегляди ---
 
-    public bool HasPageView(int userId, int pageId)
+    public async Task<bool> HasPageViewAsync(int userId, int pageId)
     {
-        using var db = _dbHelper.GetConnection();
-        int? result = db.QueryFirstOrDefault<int?>(
+        int? result = await _db.QueryFirstOrDefaultAsync<int?>(
             "SELECT 1 FROM page_views WHERE UserId = @userId AND PageId = @pageId LIMIT 1",
             new { userId, pageId });
-
         return result.HasValue;
     }
 
-    public void AddPageView(int userId, int pageId)
+    public async Task AddPageViewAsync(int userId, int pageId)
     {
-        using var db = _dbHelper.GetConnection();
-        db.Execute(
+        await _db.ExecuteAsync(
             "INSERT INTO page_views (UserId, PageId) VALUES (@userId, @pageId)",
             new { userId, pageId });
     }
 
-    public void IncrementViews(int pageId)
+    public async Task IncrementViewsAsync(int pageId)
     {
-        using var db = _dbHelper.GetConnection();
-        db.Execute(
+        await _db.ExecuteAsync(
             "UPDATE pages SET Views = Views + 1 WHERE Id = @pageId",
             new { pageId });
     }
 
-    public int GetViews(int pageId)
+    public async Task<int> GetViewsAsync(int pageId)
     {
-        using var db = _dbHelper.GetConnection();
-        return db.ExecuteScalar<int>("SELECT Views FROM pages WHERE Id = @id", new { id = pageId });
+        return await _db.ExecuteScalarAsync<int>("SELECT Views FROM pages WHERE Id = @id", new { id = pageId });
     }
 }
