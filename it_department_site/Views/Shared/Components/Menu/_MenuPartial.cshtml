@@ -4,49 +4,31 @@
 {
     if (item.Children.Any())
     {
-        <li class="nav-item dropdown">
+        <li class="dropdown">
             @{
-                // Якщо item.PageSlug є — робимо клікабельний випадаючий пункт
-                var hasLink = !string.IsNullOrEmpty(item.PageSlug);
+                var linkUrl = !string.IsNullOrEmpty(item.PageSlug) ? $"/{item.PageSlug}" : "#";
             }
 
-            @if (hasLink)
-            {
-                <a class="nav-link dropdown-toggle" href="/@item.PageSlug" data-bs-toggle="dropdown">@item.Name</a>
-            }
-            else
-            {
-                <span class="nav-link dropdown-toggle" data-bs-toggle="dropdown">@item.Name</span>
-            }
+            <a href="@linkUrl">@item.Name</a>
 
-            <ul class="dropdown-menu">
+            <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
-                    @if (!string.IsNullOrEmpty(child.PageSlug))
-                    {
-                        <li><a class="dropdown-item" href="/@child.PageSlug">@child.Name</a></li>
-                    }
-                    else
-                    {
-                        <li><span class="dropdown-item text-muted">@child.Name</span></li>
-                    }
+                    var childUrl = !string.IsNullOrEmpty(child.PageSlug) ? $"/{child.PageSlug}" : "#";
+                    <a href="@childUrl">@child.Name</a>
                 }
-            </ul>
+            </div>
         </li>
     }
     else
     {
-        @if (!string.IsNullOrEmpty(item.PageSlug))
+        if (!string.IsNullOrEmpty(item.PageSlug))
         {
-            <li class="nav-item">
-                <a class="nav-link" href="/@item.PageSlug">@item.Name</a>
-            </li>
+            <li><a href="/@item.PageSlug">@item.Name</a></li>
         }
         else
         {
-            <li class="nav-item">
-                <span class="nav-link">@item.Name</span>
-            </li>
+            <li><a href="#">@item.Name</a></li>
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿<!DOCTYPE html>
-@inject ISiteSettingsService SettingsService
+@inject it_department_site.Services.Interfaces.ISiteSettingsService SettingsService
+@inject it_department_site.Services.Interfaces.ICurrentUserService CurrentUserService
 @using Microsoft.AspNetCore.Html
 @using System.Text.Encodings.Web
-@using System.Text.RegularExpressions
-@using System.IdentityModel.Tokens.Jwt
-@using System.Security.Claims
 
 @functions {
     string RenderHtml(IHtmlContent content)
@@ -14,127 +12,148 @@
         return writer.ToString();
     }
 }
+
 @{
     var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
     var siteSettings = await SettingsService.GetAsync();
+
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
+
     string loginButtonHtml;
 
-    if (isJwtLoggedIn)
+    if (CurrentUserService.IsAuthenticated)
     {
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(Context.Request.Cookies["jwt"]);
-        var role = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "";
-        var username = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "";
-
-        if (role == "Admin")
+        if (CurrentUserService.IsAdmin)
         {
-            loginButtonHtml = @"
-        <li class='nav-item'>
-            <a class='nav-link' href='/Admin/Index'>Адмін Панель</a>
-        </li>";
-        }
-        else if (role == "User")
-        {
-            loginButtonHtml = @"
-        <li class='nav-item'>
-            <a class='nav-link' href='/profile'>Профіль</a>
-        </li>";
+            loginButtonHtml = @"<li><a href='/Admin/Index'>Admin Panel</a></li>";
         }
         else
         {
-            loginButtonHtml = "<li class='nav-item'><a class='nav-link' href='/Login'>Увійти</a></li>";
+            loginButtonHtml = @"<li><a href='/profile'>Profile</a></li>";
         }
     }
     else
     {
-        loginButtonHtml = "<li class='nav-item'><a class='nav-link' href='/Login'>Увійти</a></li>";
+        loginButtonHtml = @"<li><a href='/Login'>Log In</a></li>";
     }
 
     var searchHtml = @"
-        <li class='nav-item'>
-            <form class='d-flex position-relative' id='searchForm' autocomplete='off'>
-                <input class='form-control me-sm-2' type='search' id='searchInput' name='query' placeholder='Пошук...' />
-                <div id='suggestionsBox' class='list-group position-absolute w-100' style='top:100%; z-index:1000;'></div>
+        <li>
+            <form id='searchForm' autocomplete='off' style='display:flex; align-items:center; margin:0;'>
+                <input type='search' id='searchInput' name='query' placeholder='Search...'
+                       style='padding: 8px; border-radius: 5px; border: 1px solid #ccc;' />
+                <div id='suggestionsBox' style='position:absolute; top:60px; background:white; width:200px; box-shadow:0 4px 8px rgba(0,0,0,0.1); border-radius:5px; z-index:1001;'></div>
             </form>
         </li>";
-
-
 }
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - @siteSettings.SiteTitle</title>
+    <title>@ViewData["Title"] - @(siteSettings?.SiteTitle ?? "IT Department")</title>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/it_department_mvc.styles.css" asp-append-version="true" />
-    <link rel="icon" type="image/x-icon" href="D:\It-department-site\it-department-site\It_department_site\wwwroot\logopolytech-1.ico" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
+    <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+
+    <link rel="icon" type="image/x-icon" href="~/logopolytech-1.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-and-navigation-buttons">
+                <div class="left-side">
+                    <div class="logo">
+                        <a href="/">
+                            <img src="~/images/Dark logo with text.png" alt="Logo"/>
+                        </a>
+                    </div>
+                </div>
 
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" href="/Pages/Index">@(siteSettings?.SiteTitle ?? "Назва сайту")</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav ms-auto">
-                        @Html.Raw(searchHtml)
-                        @Html.Raw(menuHtml)
+                <div class="right-side">
+                    <div class="navigation-buttons">
+                        <ul>
+                            <li><button class="lang-switch" type="button" style="border:none; background:none; cursor:pointer; font-weight:700; color:#4c229bc2;">UA</button></li>
+
+                            @Html.Raw(searchHtml)
+
+                            @Html.Raw(menuHtml)
+
+                            @Html.Raw(loginButtonHtml)
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="f-left-side">
+                <div class="f-logo">
+                    <img src="~/images/Footer logo.png" alt="Footer Logo" />
+                </div>
+            </div>
+            <div class="f-center-side">
+                <div class="social-media">
+                    <a href="#"><img src="svg/Instagram image.svg" alt="Instagram" /></a>
+                    <a href="#"><img src="svg/YouTube image.svg" alt="YouTube" /></a>
+                    <a href="#"><img src="svg/X image.svg" alt="X" /></a>
+                    <a href="#"><img src="svg/Facebook image.svg" alt="Facebook" /></a>
+                    <a href="#"><img src="svg/Gmail image.svg" alt="Gmail" /></a>
+                    <a href="#"><img src="svg/TikTok image.svg" alt="TikTok" /></a>
+                    <a href="#"><img src="svg/Threads image.svg" alt="Threads" /></a>
+                </div>
+            </div>
+            <div class="f-right-side">
+                <div class="f-navigation-buttons">
+                    <ul>
+                        <li><a href="#">Academic</a></li>
+                        <li><a href="#">Contact</a></li>
                         @Html.Raw(loginButtonHtml)
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
-
-    <main class="container">
-        @RenderBody()
-    </main>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            @Html.Raw(siteSettings?.FooterHtml ?? "© 2025 IT Department")
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/landing.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
     <script>
         const searchInput = document.getElementById("searchInput");
         const suggestionsBox = document.getElementById("suggestionsBox");
 
-        if (searchInput) { // Додано перевірку на існування елемента, щоб не було помилок в консолі
+        if (searchInput) {
             searchInput.addEventListener("input", async () => {
                 const query = searchInput.value.trim();
                 if (query.length < 2) {
                     suggestionsBox.innerHTML = "";
                     return;
                 }
-
                 try {
                     const res = await fetch(`/Pages/SearchSuggestions?term=${encodeURIComponent(query)}`);
                     if (res.ok) {
                         const suggestions = await res.json();
                         suggestionsBox.innerHTML = suggestions.map(item =>
-                            `<a href="/${encodeURIComponent(item.slug)}" class="list-group-item list-group-item-action">${item.title}</a>`
+                            `<a href="/${encodeURIComponent(item.slug)}" style="display:block; padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee;">${item.title}</a>`
                         ).join("");
                     }
-                } catch (e) {
-                    console.error("Помилка пошуку:", e);
-                }
+                } catch (e) { console.error(e); }
             });
-
-            document.addEventListener("click", () => suggestionsBox.innerHTML = "");
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest('#searchForm')) suggestionsBox.innerHTML = "";
+            });
         }
     </script>
 </body>
