@@ -1,4 +1,4 @@
-﻿@model List<string>
+﻿@model List<it_department_site.Entities.Partner>
 
 <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
     <h4 style="margin-bottom: 20px; color: #333;">Управління Партнерами</h4>
@@ -7,13 +7,14 @@
 
         @if (Model != null)
         {
-            foreach (var imgUrl in Model)
+            foreach (var partner in Model)
             {
-                <div class="admin-partner-card" data-filename="@imgUrl">
-                    <img src="@imgUrl" />
+                <div class="admin-partner-card" data-id="@partner.Id">
+
+                    <img src="@partner.LogoFileName" alt="@partner.Name" />
 
                     <form asp-action="DeletePartner" asp-controller="Admin" method="post">
-                        <input type="hidden" name="fileName" value="@imgUrl" />
+                        <input type="hidden" name="id" value="@partner.Id" />
 
                         <button type="submit" class="btn-delete-partner" title="Видалити">
                             &times;

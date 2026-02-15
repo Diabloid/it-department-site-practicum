@@ -8,19 +8,21 @@
         private readonly ILogger<AdminController> _logger;
         private readonly ISiteSettingsService _settingsService;
         private readonly IDbConnection _db; // ✅ Замість Dbhelper
-
+        private readonly IPartnerService _partnerService;
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
             IDbConnection db, // ✅ Інжектимо з'єднання
             ILogger<AdminController> logger,
-            ISiteSettingsService settingsService)
+            ISiteSettingsService settingsService,
+            IPartnerService partnerService)
         {
             _pageService = pageService;
             _menuService = menuService;
             _db = db;
             _logger = logger;
             _settingsService = settingsService;
+            _partnerService = partnerService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -226,7 +228,7 @@
             await _menuService.DeleteMenuItemAsync(id);
             return RedirectToAction("Index", new { section = "menuItems" });
         }
-
+ 
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -239,88 +241,29 @@
             return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
         }
 
-        public IActionResult Partners()
+        public async Task<IActionResult> Partners()
         {
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
-            var orderFilePath = Path.Combine(folderPath, "order.json");
-
-            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
-
-            var dirInfo = new DirectoryInfo(folderPath);
-
-            var allFiles = dirInfo.GetFiles()
-                                    .Where(f => !f.Name.EndsWith("order.json"))
-                                    .OrderBy(f => f.CreationTime)
-                                    .Select(f => "/images/partners/" + f.Name)
-                                    .ToList();
-
-            List<string> orderedFiles = new List<string>();
-
-            if (System.IO.File.Exists(orderFilePath))
-            {
-                try
-                {
-                    var json = System.IO.File.ReadAllText(orderFilePath);
-                    var savedOrder = JsonSerializer.Deserialize<List<string>>(json);
-
-                    orderedFiles = savedOrder.Where(f => allFiles.Contains(f)).ToList();
-                }
-                catch { }
-            }
-
-            foreach (var file in allFiles)
-            {
-                if (!orderedFiles.Contains(file))
-                {
-                    orderedFiles.Add(file);
-                }
-            }
-
-            return PartialView("_Partners", orderedFiles);
+            var partners = await _partnerService.GetAllPartnersAsync();
+            return PartialView("_Partners", partners.ToList());
         }
 
         [HttpPost]
         public async Task<IActionResult> UploadPartner(IFormFile file)
         {
-            if (file != null && file.Length > 0)
-            {
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
-                if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
-
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                var filePath = Path.Combine(folderPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-            }
+            await _partnerService.AddPartnerAsync(file, "New Partner");
             return RedirectToAction("Index", new { section = "Partners" });
         }
 
         [HttpPost]
-        public IActionResult DeletePartner(string fileName)
+        public async Task<IActionResult> DeletePartner(int id)
         {
-            var name = Path.GetFileName(fileName);
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners", name);
-
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
-
+            await _partnerService.DeletePartnerAsync(id);
             return RedirectToAction("Index", new { section = "Partners" });
         }
         [HttpPost]
-        public IActionResult UpdatePartnerOrder([FromBody] List<string> order)
+        public async Task<IActionResult> UpdatePartnerOrder([FromBody] List<int> newOrder)
         {
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
-            var orderFilePath = Path.Combine(folderPath, "order.json");
-
-            // Зберігаємо список імен файлів у JSON
-            var json = JsonSerializer.Serialize(order);
-            System.IO.File.WriteAllText(orderFilePath, json);
-
+            await _partnerService.UpdatePartnerOrderAsync(newOrder);
             return Ok();
         }
     }

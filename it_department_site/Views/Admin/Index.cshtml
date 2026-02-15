@@ -83,7 +83,7 @@
                         var items = el.querySelectorAll('.admin-partner-card');
 
                         items.forEach(function(item) {
-                            newOrder.push(item.getAttribute('data-filename'));
+                            newOrder.push(parseInt(item.getAttribute('data-id')));
                         });
 
                         // Відправляємо на сервер

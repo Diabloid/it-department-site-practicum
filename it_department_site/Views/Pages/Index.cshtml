@@ -99,36 +99,38 @@
                     <h2>Our Partners</h2>
                 </div>
                 <div class="partners-mask-wrapper">
-                <div class="partners-track">
+                    <div class="partners-track">
 
-                    @if (ViewBag.Partners != null)
-                    {
-                        var partners = (List<string>)ViewBag.Partners;
-
-                        foreach (var imgUrl in partners)
+                        @if (ViewBag.Partners != null)
                         {
-                            <div class="partner-logo">
-                                <img src="@imgUrl" alt="Partner" />
-                            </div>
-                        }
+                            var partners = (List<it_department_site.Entities.Partner>)ViewBag.Partners;
 
-                        if (partners.Count > 3)
-                        {
-                            foreach (var imgUrl in partners)
+                            // 2. Основний цикл
+                            foreach (var partner in partners)
                             {
                                 <div class="partner-logo">
-                                    <img src="@imgUrl" alt="Partner" />
+                                    <img src="@partner.LogoFileName" alt="@partner.Name" />
                                 </div>
                             }
+
+                            // 3. Дублікат для безкінечної прокрутки (якщо партнерів більше 3)
+                            if (partners.Count > 3)
+                            {
+                                foreach (var partner in partners)
+                                {
+                                    <div class="partner-logo">
+                                        <img src="@partner.LogoFileName" alt="@partner.Name" />
+                                    </div>
+                                }
+                            }
                         }
-                    }
 
-                    @if (ViewBag.Partners == null || ((List<string>)ViewBag.Partners).Count == 0)
-                    {
-                        <p style="text-align:center; width:100%; color:#999;">Партнерів поки немає</p>
-                    }
+                        @if (ViewBag.Partners == null || ((List<it_department_site.Entities.Partner>)ViewBag.Partners).Count == 0)
+                        {
+                            <p style="text-align:center; width:100%; color:#999; padding: 20px;">Партнерів поки немає</p>
+                        }
 
-                </div>
+                    </div>
                 </div>
             </div>
 
