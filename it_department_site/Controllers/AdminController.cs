@@ -227,7 +227,6 @@
             return RedirectToAction("Index", new { section = "menuItems" });
         }
 
-        // UploadImage метод залишаємо (він вже async у твоєму коді був, просто скопіюй якщо треба, або лиши як є)
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -238,6 +237,91 @@
             var filePath = Path.Combine(uploadsPath, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create)) { await file.CopyToAsync(stream); }
             return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
+        }
+
+        public IActionResult Partners()
+        {
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
+            var orderFilePath = Path.Combine(folderPath, "order.json");
+
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+            var dirInfo = new DirectoryInfo(folderPath);
+
+            var allFiles = dirInfo.GetFiles()
+                                    .Where(f => !f.Name.EndsWith("order.json"))
+                                    .OrderBy(f => f.CreationTime)
+                                    .Select(f => "/images/partners/" + f.Name)
+                                    .ToList();
+
+            List<string> orderedFiles = new List<string>();
+
+            if (System.IO.File.Exists(orderFilePath))
+            {
+                try
+                {
+                    var json = System.IO.File.ReadAllText(orderFilePath);
+                    var savedOrder = JsonSerializer.Deserialize<List<string>>(json);
+
+                    orderedFiles = savedOrder.Where(f => allFiles.Contains(f)).ToList();
+                }
+                catch { }
+            }
+
+            foreach (var file in allFiles)
+            {
+                if (!orderedFiles.Contains(file))
+                {
+                    orderedFiles.Add(file);
+                }
+            }
+
+            return PartialView("_Partners", orderedFiles);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadPartner(IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
+                if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(folderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+            return RedirectToAction("Index", new { section = "Partners" });
+        }
+
+        [HttpPost]
+        public IActionResult DeletePartner(string fileName)
+        {
+            var name = Path.GetFileName(fileName);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners", name);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            return RedirectToAction("Index", new { section = "Partners" });
+        }
+        [HttpPost]
+        public IActionResult UpdatePartnerOrder([FromBody] List<string> order)
+        {
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
+            var orderFilePath = Path.Combine(folderPath, "order.json");
+
+            // Зберігаємо список імен файлів у JSON
+            var json = JsonSerializer.Serialize(order);
+            System.IO.File.WriteAllText(orderFilePath, json);
+
+            return Ok();
         }
     }
 }

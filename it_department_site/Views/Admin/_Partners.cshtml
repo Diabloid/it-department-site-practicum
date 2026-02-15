@@ -1,0 +1,38 @@
+﻿@model List<string>
+
+<div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+    <h4 style="margin-bottom: 20px; color: #333;">Управління Партнерами</h4>
+
+    <div class="admin-partners-container" id="partners-list">
+
+        @if (Model != null)
+        {
+            foreach (var imgUrl in Model)
+            {
+                <div class="admin-partner-card" data-filename="@imgUrl">
+                    <img src="@imgUrl" />
+
+                    <form asp-action="DeletePartner" asp-controller="Admin" method="post">
+                        <input type="hidden" name="fileName" value="@imgUrl" />
+
+                        <button type="submit" class="btn-delete-partner" title="Видалити">
+                            &times;
+                        </button>
+                    </form>
+                </div>
+            }
+        }
+
+        <form id="uploadPartnerForm" asp-action="UploadPartner" asp-controller="Admin" method="post" enctype="multipart/form-data" class="ignore-sort">
+            <input type="file" id="partnerFileInput" name="file" accept="image/*" style="display: none;" onchange="document.getElementById('uploadPartnerForm').submit();">
+            <label for="partnerFileInput" class="add-partner-card" title="Додати нового партнера">
+                +
+            </label>
+        </form>
+
+    </div>
+
+    <p class="text-muted small mt-2">
+        Перетягуйте логотипи, щоб змінити порядок відображення.
+    </p>
+</div>
