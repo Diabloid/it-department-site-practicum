@@ -37,14 +37,7 @@
         loginButtonHtml = @"<li><a href='/Login'>Log In</a></li>";
     }
 
-    var searchHtml = @"
-        <li>
-            <form id='searchForm' autocomplete='off' style='display:flex; align-items:center; margin:0;'>
-                <input type='search' id='searchInput' name='query' placeholder='Search...'
-                       style='padding: 8px; border-radius: 5px; border: 1px solid #ccc;' />
-                <div id='suggestionsBox' style='position:absolute; top:60px; background:white; width:200px; box-shadow:0 4px 8px rgba(0,0,0,0.1); border-radius:5px; z-index:1001;'></div>
-            </form>
-        </li>";
+  
 }
 
 <html lang="en">
@@ -76,9 +69,9 @@
                 <div class="right-side">
                     <div class="navigation-buttons">
                         <ul>
-                            <li><button class="lang-switch" type="button" style="border:none; background:none; cursor:pointer; font-weight:700; color:#4c229bc2;">UA</button></li>
+                           
 
-                            @Html.Raw(searchHtml)
+                          
 
                             @Html.Raw(menuHtml)
 
@@ -130,31 +123,6 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 
-    <script>
-        const searchInput = document.getElementById("searchInput");
-        const suggestionsBox = document.getElementById("suggestionsBox");
-
-        if (searchInput) {
-            searchInput.addEventListener("input", async () => {
-                const query = searchInput.value.trim();
-                if (query.length < 2) {
-                    suggestionsBox.innerHTML = "";
-                    return;
-                }
-                try {
-                    const res = await fetch(`/Pages/SearchSuggestions?term=${encodeURIComponent(query)}`);
-                    if (res.ok) {
-                        const suggestions = await res.json();
-                        suggestionsBox.innerHTML = suggestions.map(item =>
-                            `<a href="/${encodeURIComponent(item.slug)}" style="display:block; padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee;">${item.title}</a>`
-                        ).join("");
-                    }
-                } catch (e) { console.error(e); }
-            });
-            document.addEventListener("click", (e) => {
-                if (!e.target.closest('#searchForm')) suggestionsBox.innerHTML = "";
-            });
-        }
-    </script>
+ 
 </body>
 </html>
