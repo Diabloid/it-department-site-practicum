@@ -321,35 +321,188 @@ main {
 /* ====================================================================== */
 
 .partners-area {
-    /* Об'єднані та оптимізовані стилі для контейнера */
+    width: 100%; /* Розтягуємо на всю ширину */
+    max-width: 1200px;
+    margin: 20px;
+    padding: 20px 0;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    left: 50px;
-    width: 80%;
-    height: 250px; /* З вашого оновленого коду */
-    margin-top: 20px;
-    margin-bottom: 3%;
-    padding: 30px;
-    /* background-color: #f0f0ff; - Видалено, оскільки у вас було закоментовано */
-    border-radius: 15px;
+}
+
+.partners-mask-wrapper {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow: hidden; /* Ховаємо те, що вилазить */
+    /* Накладаємо маску тільки сюди */
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
 }
 
 .partners-general-title {
-    height: 55px; /* З вашого оновленого коду */
+    text-align: left;
+    margin-bottom: 30px;
+    padding-left: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
 }
 
-.partners-logos {
+/* Контейнер, який рухається */
+.partners-track {
     display: flex;
-    gap: 40px;
+    gap: 50px;
+    width: max-content; /* Ширина залежить від контенту */
+    animation: scroll-partners 30s linear infinite; /* Безкінечна анімація */
+}
+
+/* Сама анімація руху */
+@keyframes scroll-partners {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+    /* Рухаємо на половину (бо ми дублюємо контент) */
+}
+
+/* Зупинка при наведенні мишкою */
+.partners-track:hover {
+    animation-play-state: paused;
 }
 
 .partner-logo {
-    width: 130px;
-    height: 130px;
-    border-radius: 15px;
+    /* 1. Фіксований розмір картки */
+    width: 250px;
+    height: 150px;
+    /* 2. Дизайн картки (білий фон, тінь, кути) */
+    background: #fff;
+    border-radius: 15px; /* Трохи більш округлі кути */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
+    /* 3. ВАЖЛИВО: Відступи всередині, щоб картинка не прилипала до країв */
+    padding: 5px;
+    /* 4. Центрування картинки всередині */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    transition: all 0.3s ease;
 }
+
+    .partner-logo:hover {
+        transform: translateY(-5px); /* Картка підстрибує при наведенні */
+        box-shadow: 0 10px 25px rgba(93, 100, 173, 0.2); /* Тінь стає кольоровою */
+        border-color: #5D64AD;
+    }
+
+    /* 5. НАЛАШТУВАННЯ САМОЇ КАРТИНКИ */
+    .partner-logo img {
+        /* Картинка займає весь доступний простір (з урахуванням padding) */
+        width: 100%;
+        height: 100%;
+        /* 🔥 contain: Картинка буде повністю видима і не буде обрізатись */
+        object-fit: contain;
+        /* Робимо чорно-білим, щоб виглядало стильно (якщо хочеш) */
+        filter: grayscale(100%);
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+    .partner-logo:hover img {
+        /* При наведенні стає кольоровою */
+        filter: grayscale(0%);
+        opacity: 1;
+        transform: scale(1.1); /* Трохи збільшується всередині рамки */
+    }
+
+.admin-partners-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto; /* Горизонтальний скрол */
+    padding: 20px 5px;
+    align-items: center;
+    scrollbar-width: thin; /* Для Firefox */
+    scrollbar-color: #5D64AD #f0f0f0; /* Для Firefox */
+}
+
+/* Картка партнера в адмінці */
+.admin-partner-card {
+    width: 140px;
+    height: 140px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0; /* Щоб не стискались */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+    .admin-partner-card:hover {
+        border-color: #5D64AD;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    .admin-partner-card img {
+        max-width: 80%;
+        max-height: 80%;
+        object-fit: contain;
+    }
+
+/* Кнопка видалення (хрестик) */
+.btn-delete-partner {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    opacity: 0; /* Прихована */
+    transition: 0.2s;
+}
+
+.admin-partner-card:hover .btn-delete-partner {
+    opacity: 1; /* З'являється при наведенні */
+}
+
+/* Картка "ПЛЮСИК" */
+.add-partner-card {
+    width: 140px;
+    height: 140px;
+    border: 3px dashed #a5a2f5;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: #f8f9fa;
+    color: #a5a2f5;
+    font-size: 40px;
+    font-weight: bold;
+    flex-shrink: 0;
+    transition: 0.2s;
+}
+
+    .add-partner-card:hover {
+        background: #eef0ff;
+        border-color: #5D64AD;
+        color: #5D64AD;
+        transform: scale(1.02);
+    }
 
 /* Кольори логотипів */
 .logo-1 {
@@ -455,7 +608,7 @@ main {
 
     .reviews-general-title.show,
     .partners-area.show {
-        width: 80%;
+        width: 100%;
         opacity: 1;
     }
 
@@ -498,7 +651,7 @@ main {
 
 /* Стилі для основної секції хедера */
 .header {
-    background-image: linear-gradient(to bottom, #949dff 0%, #ECEDFF 100%);
+    background-color: #ECEDFF;
     padding: 5px 0;
     position: fixed; /* Закріплює хедер у верхній частині екрана */
     top: 0;
@@ -511,6 +664,7 @@ main {
     display: flex;
     will-change: transform;
     align-items: center;
+    background-color
 }
 
     /* Стиль для приховування хедера (при скролінгу вниз) */
@@ -748,4 +902,27 @@ footer {
 
     .f-navigation-buttons a:hover {
         background-color: #ffffff3c;
+    }
+
+::-webkit-scrollbar {
+    width: 8px; /* Ширина вертикального скрола */
+    height: 8px; /* Висота горизонтального скрола */
+}
+
+/* Фон скроллбару */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+/* Сама "ручка" скроллбару */
+::-webkit-scrollbar-thumb {
+    background: #c1c1e0; /* Світло-фіолетовий */
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+    /* Ручка при наведенні */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #5D64AD; /* Твій основний колір */
     }

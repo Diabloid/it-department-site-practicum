@@ -17,8 +17,41 @@
 
         public async Task<IActionResult> Index()
         {
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
+            var orderFilePath = Path.Combine(folderPath, "order.json");
+            List<string> finalPartnerList = new List<string>();
+
+            if (Directory.Exists(folderPath))
+            {
+                var dirInfo = new DirectoryInfo(folderPath);
+
+                var allFiles = dirInfo.GetFiles()
+                                      .Where(f => !f.Name.EndsWith("order.json"))
+                                      .OrderBy(f => f.CreationTime)
+                                      .Select(f => "/images/partners/" + f.Name)
+                                      .ToList();
+
+                if (System.IO.File.Exists(orderFilePath))
+                {
+                    try
+                    {
+                        var json = System.IO.File.ReadAllText(orderFilePath);
+                        var savedOrder = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json);
+                        finalPartnerList = savedOrder.Where(f => allFiles.Contains(f)).ToList();
+                    }
+                    catch { }
+                }
+
+                foreach (var file in allFiles)
+                {
+                    if (!finalPartnerList.Contains(file)) finalPartnerList.Add(file);
+                }
+            }
+
+            ViewBag.Partners = finalPartnerList;
             var pages = await _pageService.GetAllPagesAsync();
             var dtoList = pages.Select(PageMapper.ToDto).ToList();
+
             return View(dtoList);
         }
 

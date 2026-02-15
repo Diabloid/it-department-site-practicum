@@ -94,17 +94,41 @@
                     </div>
                 </div>
             </div>
-
             <div class="partners-area">
                 <div class="partners-general-title">
                     <h2>Our Partners</h2>
                 </div>
+                <div class="partners-mask-wrapper">
+                <div class="partners-track">
 
-                <div class="partners-logos">
-                    <div class="partner-logo logo-1"></div>
-                    <div class="partner-logo logo-2"></div>
-                    <div class="partner-logo logo-3"></div>
-                    <div class="partner-logo logo-4"></div>
+                    @if (ViewBag.Partners != null)
+                    {
+                        var partners = (List<string>)ViewBag.Partners;
+
+                        foreach (var imgUrl in partners)
+                        {
+                            <div class="partner-logo">
+                                <img src="@imgUrl" alt="Partner" />
+                            </div>
+                        }
+
+                        if (partners.Count > 3)
+                        {
+                            foreach (var imgUrl in partners)
+                            {
+                                <div class="partner-logo">
+                                    <img src="@imgUrl" alt="Partner" />
+                                </div>
+                            }
+                        }
+                    }
+
+                    @if (ViewBag.Partners == null || ((List<string>)ViewBag.Partners).Count == 0)
+                    {
+                        <p style="text-align:center; width:100%; color:#999;">Партнерів поки немає</p>
+                    }
+
+                </div>
                 </div>
             </div>
 
