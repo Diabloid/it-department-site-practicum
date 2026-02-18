@@ -413,7 +413,7 @@ main {
         /* При наведенні стає кольоровою */
         filter: grayscale(0%);
         opacity: 1;
-        transform: scale(1.1); /* Трохи збільшується всередині рамки */
+        transform: none;
     }
 
 .admin-partners-container {
@@ -503,6 +503,90 @@ main {
         color: #5D64AD;
         transform: scale(1.02);
     }
+
+.admin-partners-panel {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.admin-partners-title {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.add-partner-trigger {
+    border: none;
+}
+
+.partner-create-box {
+    display: none;
+    margin-top: 12px;
+    padding: 16px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #f3f2ff 0%, #eceaff 100%);
+    border: 1px solid #cbc7ff;
+    box-shadow: 0 8px 20px rgba(99, 106, 192, 0.14);
+}
+
+.partner-create-title {
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #3f458f;
+}
+
+.partner-form-row {
+    margin-bottom: 10px;
+}
+
+.partner-input,
+.partner-file-input {
+    width: 100%;
+    border: 1px solid #b7b2ff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #fff;
+    color: #2c2f5f;
+}
+
+.partner-input:focus,
+.partner-file-input:focus {
+    outline: none;
+    border-color: #6f74d6;
+    box-shadow: 0 0 0 3px rgba(111, 116, 214, 0.2);
+}
+
+.partner-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.partner-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.partner-btn-primary {
+    background: #636ac0;
+    color: #fff;
+}
+
+.partner-btn-primary:hover {
+    background: #545bb0;
+}
+
+.partner-btn-secondary {
+    background: #e6e4ff;
+    color: #4a4f9e;
+}
+
+.partner-btn-secondary:hover {
+    background: #d9d6ff;
+}
 
 /* Кольори логотипів */
 .logo-1 {
@@ -664,7 +748,6 @@ main {
     display: flex;
     will-change: transform;
     align-items: center;
-    background-color
 }
 
     /* Стиль для приховування хедера (при скролінгу вниз) */

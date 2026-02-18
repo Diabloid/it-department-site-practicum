@@ -94,46 +94,7 @@
                     </div>
                 </div>
             </div>
-            <div class="partners-area">
-                <div class="partners-general-title">
-                    <h2>Our Partners</h2>
-                </div>
-                <div class="partners-mask-wrapper">
-                    <div class="partners-track">
-
-                        @if (ViewBag.Partners != null)
-                        {
-                            var partners = (List<it_department_site.Entities.Partner>)ViewBag.Partners;
-
-                            // 2. Основний цикл
-                            foreach (var partner in partners)
-                            {
-                                <div class="partner-logo">
-                                    <img src="@partner.LogoFileName" alt="@partner.Name" />
-                                </div>
-                            }
-
-                            // 3. Дублікат для безкінечної прокрутки (якщо партнерів більше 3)
-                            if (partners.Count > 3)
-                            {
-                                foreach (var partner in partners)
-                                {
-                                    <div class="partner-logo">
-                                        <img src="@partner.LogoFileName" alt="@partner.Name" />
-                                    </div>
-                                }
-                            }
-                        }
-
-                        @if (ViewBag.Partners == null || ((List<it_department_site.Entities.Partner>)ViewBag.Partners).Count == 0)
-                        {
-                            <p style="text-align:center; width:100%; color:#999; padding: 20px;">Партнерів поки немає</p>
-                        }
-
-                    </div>
-                </div>
-            </div>
-
+            @await Html.PartialAsync("Partials/_PartnerSlider", (List<it_department_site.Entities.Partner>)(ViewBag.Partners ?? new List<it_department_site.Entities.Partner>()))
         </div>
     </div>
 
