@@ -1,4 +1,4 @@
-@model List<it_department_site.Entities.Partner>
+﻿@model List<it_department_site.Entities.Partner>
 
 <div class="partners-area">
     <div class="partners-general-title">
@@ -10,8 +10,19 @@
             {
                 foreach (var partner in Model)
                 {
+                    var partnerUrl = partner?.GetType().GetProperty("Link")?.GetValue(partner)?.ToString();
+
                     <div class="partner-logo">
-                        <img src="@partner.LogoFileName" alt="@partner.Name" />
+                        @if (!string.IsNullOrWhiteSpace(partnerUrl))
+                        {
+                            <a href="@partnerUrl" target="_blank" rel="noopener noreferrer" title="@partner.Name">
+                                <img src="@partner.LogoFileName" alt="@partner.Name" />
+                            </a>
+                        }
+                        else
+                        {
+                            <img src="@partner.LogoFileName" alt="@partner.Name" />
+                        }
                     </div>
                 }
 
@@ -19,8 +30,19 @@
                 {
                     foreach (var partner in Model)
                     {
+                        var partnerUrl = partner?.GetType().GetProperty("Link")?.GetValue(partner)?.ToString();
+
                         <div class="partner-logo">
-                            <img src="@partner.LogoFileName" alt="@partner.Name" />
+                            @if (!string.IsNullOrWhiteSpace(partnerUrl))
+                            {
+                                <a href="@partnerUrl" target="_blank" rel="noopener noreferrer" title="@partner.Name">
+                                    <img src="@partner.LogoFileName" alt="@partner.Name" />
+                                </a>
+                            }
+                            else
+                            {
+                                <img src="@partner.LogoFileName" alt="@partner.Name" />
+                            }
                         </div>
                     }
                 }
