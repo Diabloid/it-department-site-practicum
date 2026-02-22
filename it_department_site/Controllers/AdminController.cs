@@ -217,7 +217,7 @@ public async Task<IActionResult> EditPost(int id)
     return PartialView("_EditPost", post);
 }
 
-[HttpPost]
+
 [HttpPost]
 [ValidateAntiForgeryToken]
 public async Task<IActionResult> EditPost(Post post, IFormFile? thumbnailFile)
@@ -311,7 +311,7 @@ public async Task<IActionResult> DeletePost(int id)
         public async Task<IActionResult> DeleteMenuItem(int id)
         {
             await _menuService.DeleteMenuItemAsync(id);
-<<<<<<< HEAD
+
             return RedirectToAction("Index", new { section = "menuItems" });
         }
 
@@ -327,11 +327,7 @@ public async Task<IActionResult> DeletePost(int id)
             using (var stream = new FileStream(filePath, FileMode.Create)) { await file.CopyToAsync(stream); }
             return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
         }
-=======
-            return RedirectToAction(nameof(Index));
-        }
-        
->>>>>>> 3a29f9c (Add news functionality: repository, admin panel views and controller updates)
+
     }
     
 }
