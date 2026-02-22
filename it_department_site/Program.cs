@@ -63,6 +63,9 @@ builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<EncryptionService>();
 
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var app = builder.Build();
 

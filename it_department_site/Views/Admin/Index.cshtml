@@ -4,23 +4,28 @@
 
 <div class="container">
     <div class="row">
-        <!-- Сайдбар меню -->
         <div class="col-md-3">
             <div class="list-group">
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">📄 View All Pages</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MenuItems')">🧩 Manage Menu Items</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">👤 View All Users</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Posts')">📰 Публікації</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Partners')">🤝 Управління Партнерами</a>
+                
                 <a class="list-group-item list-group-item-action" asp-action="LayoutSettings" asp-controller="Admin">
                     ⚙️ Редагувати хедер і футер
                 </a>
+
                 <a class="list-group-item list-group-item-action" asp-action="EditTheme" asp-controller="Admin">
-                    ⚙️ Редагувати тему
+                    🎨 Редагувати тему
                 </a>
-                <a class="btn btn-danger mt-3" asp-controller="Auth" asp-action="Logout">🚪 Вийти</a>
+
+                <a class="btn btn-danger mt-3" asp-controller="Auth" asp-action="Logout">
+                    🚪 Вийти
+                </a>
             </div>
         </div>
 
-        <!-- Контентна область -->
         <div class="col-md-9">
             <div id="contentArea">
                 <h4>Оберіть опцію</h4>
@@ -28,26 +33,31 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
 <script>
+    // Завантаження секції при старті, якщо вона вказана в URL
     document.addEventListener("DOMContentLoaded", () => {
         const section = new URLSearchParams(window.location.search).get("section");
         if (section) {
-            loadContent(section); // наприклад: section=menuItems
+            loadContent(section);
         }
     });
 
-    function loadContent(option, params = '') {
-        const url = `/Admin/${encodeURIComponent(option)}${params}`;
+    function loadContent(action, params = '') {
+        const url = `/Admin/${encodeURIComponent(action)}${params}`;
         fetch(url)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                if (!response.ok) throw new Error('Network response was not ok');
                 return response.text();
             })
             .then(html => {
                 document.getElementById("contentArea").innerHTML = html;
+
+                // Ініціалізація Drag-and-Drop для партнерів, якщо завантажено цю секцію
+                if (action === 'Partners' && typeof initPartnersDragAndDrop === 'function') {
+                    initPartnersDragAndDrop();
+                }
             })
             .catch(error => {
                 console.error("Error loading content:", error);
@@ -55,13 +65,26 @@
             });
     }
 
-    // Приклад пагінації: loadPage(2) завантажить 2-гу сторінку
+    function submitForm(form) {
+        event.preventDefault();
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById("contentArea").innerHTML = html;
+        });
+        return false;
+    }
+
     function loadPage(page) {
         loadContent("Pages", `?page=${page}`);
     }
 
+    // Функції для роботи з модальним вікном меню
     function resetForm() {
-      document.getElementById('menuModalLabel').textContent = 'Створення пункту меню';
+      if(document.getElementById('menuModalLabel')) document.getElementById('menuModalLabel').textContent = 'Створення пункту меню';
       document.getElementById('menuId').value = '';
       document.getElementById('menuName').value = '';
       document.getElementById('parentId').value = '';
@@ -70,7 +93,7 @@
     }
 
     function fillForm(id, name, parentId, pageId, sortOrder) {
-      document.getElementById('menuModalLabel').textContent = 'Редагування пункту меню';
+      if(document.getElementById('menuModalLabel')) document.getElementById('menuModalLabel').textContent = 'Редагування пункту меню';
       document.getElementById('menuId').value = id;
       document.getElementById('menuName').value = name;
       document.getElementById('parentId').value = parentId;

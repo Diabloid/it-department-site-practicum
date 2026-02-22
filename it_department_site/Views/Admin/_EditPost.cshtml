@@ -1,0 +1,49 @@
+@model it_department_site.Entities.Post
+
+<h4>Редагувати публікацію</h4>
+
+<form method="post"
+      asp-action="EditPost"
+      enctype="multipart/form-data"
+      onsubmit="return submitForm(this)">
+
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="Thumbnail" /> <div class="mb-3">
+        <label class="form-label">Назва</label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Slug</label>
+        <input asp-for="Slug" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Короткий опис</label>
+        <input asp-for="Excerpt" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Контент</label>
+        <textarea asp-for="Content" rows="6" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Змінити обкладинку</label>
+        <input type="file" name="thumbnailFile" class="form-control" accept="image/*" />
+           <div class="form-text">
+        Фото повинно мати <b>однакову ширину та висоту</b> (квадрат).
+    </div>
+        @if (!string.IsNullOrEmpty(Model.Thumbnail))
+        {
+            <div class="mt-2">
+                <p>Поточне фото:</p>
+                <img src="@Model.Thumbnail" style="width: 150px; border-radius: 8px;" />
+            </div>
+        }
+    </div>
+
+    <button class="btn btn-primary">Зберегти</button>
+    <button type="button" class="btn btn-secondary" onclick="loadContent('Posts')">Назад</button>
+</form>

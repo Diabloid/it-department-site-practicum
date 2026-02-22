@@ -1,0 +1,50 @@
+@model IEnumerable<it_department_site.Entities.Post>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Публікації</h4>
+
+    <button class="btn btn-success"
+            onclick="loadContent('CreatePost')">
+        + Створити публікацію
+    </button>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Назва</th>
+            <th>Slug</th>
+            <th>Дата створення</th>
+            <th>Оновлено</th>
+            <th style="width:200px">Дії</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    @foreach (var post in Model)
+    {
+        <tr>
+            <td><strong>@post.Title</strong></td>
+            <td>@post.Slug</td>
+            <td>@post.CreatedAt.ToString("yyyy-MM-dd")</td>
+            <td>@post.UpdatedAt.ToString("yyyy-MM-dd")</td>
+            <td class="d-flex align-items-center gap-2">
+                <button class="btn btn-primary btn-sm"
+                        onclick="loadContent('EditPost', '/@post.Id')">
+                    Редагувати
+                </button>
+
+                <form method="post"
+                      asp-action="DeletePost"
+                      asp-route-id="@post.Id"
+                      onsubmit="return confirm('Ви впевнені, що хочете видалити цю публікацію?') && submitForm(this)"
+                      style="margin: 0;">
+                    <button class="btn btn-danger btn-sm">
+                        Видалити
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
