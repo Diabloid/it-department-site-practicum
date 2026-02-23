@@ -477,24 +477,7 @@ main {
 
 /* ====================================================================== */
 
-/* Стилі для кнопки перемикання мови */
-.lang-switch {
-    font-weight: 700;
-    font-size: 16px;
-    background: none;
-    border: none;
-    color: #4c229bc2; /* Фіолетовий колір */
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: color 0.7s, background-color 0.7s;
-    outline: none;
-}
 
-    .lang-switch:hover {
-        background-color: #bbc1f6;
-        color: #222;
-    }
 
 /* Стилі для основної секції хедера */
 .header {
@@ -595,15 +578,6 @@ main {
         align-items: center;
     }
 
-#searchForm input[type="search"] {
-    max-width: 150px; /* Можна змінити на 200px, якщо екран дозволяє */
-    transition: max-width 0.3s;
-}
-
-    /* (Опціонально) Пошук розширюється при фокусі */
-    #searchForm input[type="search"]:focus {
-        max-width: 250px;
-    }
 
 header .navigation-buttons a {
     text-decoration: none;
