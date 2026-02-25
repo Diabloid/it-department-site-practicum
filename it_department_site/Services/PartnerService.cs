@@ -16,7 +16,7 @@
             return await _repository.GetAllAsync();
         }
 
-        public async Task AddPartnerAsync(IFormFile file, string name)
+        public async Task AddPartnerAsync(IFormFile file, string name, string link)
         {
             if (file == null || file.Length == 0) return;
 
@@ -31,15 +31,20 @@
             {
                 await file.CopyToAsync(stream);
             }
-            var originalName = Path.GetFileNameWithoutExtension(file.FileName);
+
+            // Якщо ім'я не передали, беремо з назви файлу
+            var finalName = string.IsNullOrWhiteSpace(name)
+                ? Path.GetFileNameWithoutExtension(file.FileName)
+                : name;
 
             var maxOrder = await _repository.GetMaxSortOrderAsync();
 
             var partner = new Partner
             {
-                Name = originalName,
+                Name = finalName,
                 LogoFileName = webPath,
-                SortOrder = maxOrder + 1
+                SortOrder = maxOrder + 1,
+                Link = link
             };
 
             await _repository.AddAsync(partner);

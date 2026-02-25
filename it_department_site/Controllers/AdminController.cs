@@ -248,9 +248,9 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPartner(IFormFile file)
+        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
         {
-            await _partnerService.AddPartnerAsync(file, "New Partner");
+            await _partnerService.AddPartnerAsync(file, name, link);
             return RedirectToAction("Index", new { section = "Partners" });
         }
 

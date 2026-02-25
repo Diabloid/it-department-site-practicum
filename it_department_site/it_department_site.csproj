@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Database\**" />
     <Compile Remove="Views\Db\**" />
+    <Content Remove="Database\**" />
     <Content Remove="Views\Db\**" />
+    <EmbeddedResource Remove="Database\**" />
     <EmbeddedResource Remove="Views\Db\**" />
+    <None Remove="Database\**" />
     <None Remove="Views\Db\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Database\init.sql" />
   </ItemGroup>
 
   <ItemGroup>

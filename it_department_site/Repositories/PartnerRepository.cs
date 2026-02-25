@@ -12,12 +12,13 @@
         public async Task<IEnumerable<Partner>> GetAllAsync()
         {
             var sql = @"SELECT 
-                        id, 
-                        name, 
-                        logo_file_name AS LogoFileName, 
-                        sort_order AS SortOrder 
-                    FROM partners 
-                    ORDER BY sort_order ASC";
+                    id, 
+                    name, 
+                    logo_file_name AS LogoFileName, 
+                    sort_order AS SortOrder,
+                    link AS Link
+                FROM partners 
+                ORDER BY sort_order ASC";
 
             return await _db.QueryAsync<Partner>(sql);
         }
@@ -28,7 +29,8 @@
                         id, 
                         name, 
                         logo_file_name AS LogoFileName, 
-                        sort_order AS SortOrder 
+                        sort_order AS SortOrder,
+                        link AS Link
                     FROM partners 
                     WHERE id = @Id";
 
@@ -37,9 +39,9 @@
 
         public async Task<int> AddAsync(Partner partner)
         {
-            var sql = @"INSERT INTO partners (name, logo_file_name, sort_order) 
-                    VALUES (@Name, @LogoFileName, @SortOrder);
-                    SELECT LAST_INSERT_ID();";
+            var sql = @"INSERT INTO partners (name, logo_file_name, sort_order, link) 
+                VALUES (@Name, @LogoFileName, @SortOrder, @Link);
+                SELECT LAST_INSERT_ID();";
             return await _db.QuerySingleAsync<int>(sql, partner);
         }
 
