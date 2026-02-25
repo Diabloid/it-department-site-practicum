@@ -293,3 +293,11 @@ UNLOCK TABLES;
 ALTER TABLE partners ADD COLUMN link VARCHAR(255) DEFAULT NULL;
 
 -- Dump completed on 2026-02-18 10:54:48
+INSERT INTO `partners` 
+VALUES 
+(10, 'Чернівецький національний університет імені Юрія Федьковича', '/images/partners/133bd514-6658-48de-998d-b72bf0fad8c0.jpg', 1, 'https://www.chnu.edu.ua/'),
+(11, 'Yukon Software', '/images/partners/d42be15e-beaa-4a91-8b1c-5a138a69d19b.png', 2, 'https://yukon.software/ua/'),
+(12, 'Elogic Commerce', '/images/partners/581dd57a-d469-40c1-a861-405a56dd17ff.png', 3, 'https://elogic.co/'),
+(13, 'SoftServe', '/images/partners/36af068e-18f8-43ac-9a1d-a44d3341b042.png', 4, 'https://www.softserveinc.com/uk-ua'),
+(14, 'Chernivtsi IT Cluster', '/images/partners/3bdbc070-8131-461a-88bc-b9958bb395c7.png', 5, 'https://www.it-cluster.cv.ua/'),
+(15, 'Datawiz.io', '/images/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
