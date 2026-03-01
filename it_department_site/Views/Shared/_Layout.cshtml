@@ -16,6 +16,8 @@
 @{
     var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
     var siteSettings = await SettingsService.GetAsync();
+    var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
+    var isAdminPage = controllerName == "Admin";
 
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
 
@@ -44,11 +46,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - @("IT Department")</title>
+    <title>@ViewData["Title"] -  @(siteSettings?.SiteTitle ?? "IT Department")</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+    @if (isAdminPage)
+    {
+        <link rel="stylesheet" href="~/css/adminStyle.css" asp-append-version="true" />
+    }
 
     <link rel="icon" type="image/x-icon" href="~/logopolytech-1.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -69,12 +75,7 @@
                 <div class="right-side">
                     <div class="navigation-buttons">
                         <ul>
-
-
-                          
-
                             @Html.Raw(menuHtml)
-
                             @Html.Raw(loginButtonHtml)
                         </ul>
                     </div>
