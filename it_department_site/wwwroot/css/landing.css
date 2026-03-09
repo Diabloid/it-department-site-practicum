@@ -524,11 +524,6 @@ main {
 
 /* ====================================================================== */
 
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 /* Стилі для основної секції хедера */
 .header {
     background-image: linear-gradient(to bottom, #949dff 0%, #ECEDFF 100%);
@@ -628,10 +623,6 @@ main {
         align-items: center;
     }
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
 header .navigation-buttons a {
     text-decoration: none;
