@@ -10,7 +10,7 @@
         Task DeletePageAsync(int id);
         Task<List<Page>> GetPagedAsync(int b, int c);
         Task<int> GetTotalAsync(int p);
-        Task<List<Page>> SearchAsync(string query);
+
         Task<bool> HasUserViewedPageAsync(int userId, int pageId);
         Task MarkPageAsViewedAsync(int userId, int pageId);
         Task<int> GetViewsAsync(int pageId);
