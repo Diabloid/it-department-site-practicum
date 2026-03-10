@@ -53,20 +53,6 @@
             return View(dto);
         }
 
-        [HttpGet]
-        public async Task<JsonResult> SearchSuggestions(string term)
-        {
-            if (string.IsNullOrWhiteSpace(term)) return Json(new List<object>());
-
-            var pages = await _pageService.SearchAsync(term);
-            var results = pages
-                .Select(p => new { title = p.Title, slug = p.Slug })
-                .Distinct()
-                .Take(10)
-                .ToList();
-
-            return Json(results);
-        }
 
         // UploadImage залишається таким самим (він вже був async)
         [HttpPost]

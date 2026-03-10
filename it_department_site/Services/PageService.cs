@@ -49,14 +49,6 @@
 
     public async Task<int> GetTotalAsync(int p) => await _pageRepository.GetTotalAsync(p);
 
-    public async Task<List<Page>> SearchAsync(string query)
-    {
-        var pages = await _pageRepository.SearchAsync(query);
-        foreach (var page in pages)
-            DecryptContent(page);
-        return pages;
-    }
-
     public async Task<int> CreatePageAsync(Page page)
     {
         EncryptContent(page);
