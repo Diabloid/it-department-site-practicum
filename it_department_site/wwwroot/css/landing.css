@@ -614,7 +614,6 @@ main {
         display: flex;
         align-items: center; /* Центруємо по вертикалі */
         flex-direction: row;
-        gap: 15px; /* Відступи між пунктами */
         margin: 0;
         padding: 0;
     }
