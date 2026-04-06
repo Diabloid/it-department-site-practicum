@@ -11,7 +11,18 @@
 
         public async Task<User?> LoginAsync(string username, string password)
         {
-            return await _repository.ValidateCredentialsAsync(username, password);
+           string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+           var user = await _repository.FindUserByUsernameAsync(username);
+           password= passwordHash;
+           if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
+           {
+                return user;
+           }
+            else
+            {
+                return null;
+            }
+
         }
 
         public async Task<int> GetUserIdAsync(string username)
