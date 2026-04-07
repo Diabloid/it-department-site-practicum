@@ -9,14 +9,14 @@
             _db = db;
         }
 
-        public async Task<User?> ValidateCredentialsAsync(string username, string password)
+        public async Task<User?> FindUserByUsernameAsync(string username)
         {
             var sql = @"
-                SELECT id, username, email, created_at as CreatedAt 
+                SELECT id, username, email, _password as Password, created_at as CreatedAt 
                 FROM users 
-                WHERE username = @username AND _password = @password";
+                WHERE username = @username";
 
-            return await _db.QueryFirstOrDefaultAsync<User>(sql, new { username, password });
+            return await _db.QueryFirstOrDefaultAsync<User>(sql, new { username});
         }
 
         public async Task<int> GetUserIdAsync(string username)

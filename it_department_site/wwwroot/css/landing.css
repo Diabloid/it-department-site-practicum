@@ -744,127 +744,233 @@ header .navigation-buttons a:hover {
     display: inline-block;
 }
 
-.dropdown-content {
-    display: none; /* Приховано за замовчуванням */
+header .dropdown-content {
+    display: none;
     position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 5px;
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 0px 8px 20px rgba(61, 29, 118, 0.15);
+    z-index: 999;
+    border-radius: 8px;
     top: 100%;
+    left: 0;
+    padding: 0; 
+    border: 1px solid rgba(61, 29, 118, 0.1);
+    overflow: hidden;
 }
 
-    .dropdown-content a {
-        color: #4A4A4A;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        text-align: left;
-    }
-
-.dropdown:hover .dropdown-content {
-    display: block; /* Показати меню при наведенні на батьківський елемент */
+header .dropdown-content a {
+    color: #3d1d76;
+    padding: 10px 16px;
+    display: block;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+    margin: 0;
 }
 
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
+header .dropdown-content a:hover {
+    background-color: rgba(61, 29, 118, 0.08);
+}
+
+header .dropdown:hover .dropdown-content {
+    display: block;
 }
 
 /* ====================================================================== */
 
-footer {
-    padding: 20px 0;
-    background: linear-gradient(to right, #636AC0 3%, #353B7A 30%, #353B7A 70%, #636AC0 100%);
-    color: #ffffff;
+/* --- ЗАГАЛЬНИЙ ФУТЕР ТА ВІДСТУП ВІД КОНТЕНТУ --- */
+.new-footer {
+    width: 100% !important;
+    margin-top: 80px !important; 
+    padding: 0 !important;
+    font-family: 'Inter', sans-serif !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-.footer-content {
-    /*max-width: 1400px;*/
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
+/* --- ВЕРХНЯ ЧАСТИНА (ГРАДІЄНТ) --- */
+.new-footer-top {
+    background: linear-gradient(0deg, rgba(53, 59, 122, 1) 19%, #ECEDFF 100%) !important;
+    padding: 60px 0 !important;
+    width: 100% !important;
 }
 
-.f-left-side,
-.f-center-side,
-.f-right-side {
-    height: 100%;
-    width: 33.33%;
+.new-f-container {
+    max-width: 100% !important; 
+    padding: 0 60px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: stretch !important; /* Тримає всі колонки та лінії однієї висоти */
+    box-sizing: border-box !important;
 }
 
-.f-left-side {
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 3%;
+/* ОНОВЛЕНО: Тепер колонка — це flex-колонки, щоб текст/карта не розліталися */
+.new-f-col { 
+    flex: 1 !important; 
+    padding: 0 25px !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-.f-center-side {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.new-f-col h4 {
+    color: #575979 !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    font-size: 16px !important;
+    
+    /* ОНОВЛЕНО: Збільшено відступ від заголовка до першого поста */
+    margin-bottom: 25px !important; /* Було 20px */
 }
 
-.f-right-side {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 3%;
+/* Збільшений шрифт для тексту в колонках */
+.new-f-col p {
+    color: white !important;
+    font-size: 17px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 15px !important;
 }
 
-.social-media {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 50px;
-    margin-left: -55px;
+/* --- РОЗДІЛЬНІ ЛІНІЇ --- */
+.new-f-line {
+    width: 1px !important;
+    background: white !important;
+    height: auto !important; 
+    opacity: 0.2 !important;
 }
 
-    .social-media a {
-        height: 50px;
-        width: 50px;
-        border-radius: 5px;
-        background-color: #424A99;
-        transition: transform 0.3s ease;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-        .social-media a img {
-            height: 30px;
-            width: 30px;
-        }
-
-        .social-media a:hover {
-            transform: scale(1.1);
-        }
-
-.f-navigation-buttons ul {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    gap: 10px;
+/* --- УНІФІКОВАНИЙ СТИЛЬ (ПОСТИ, КНОПКИ, СОЦМЕРЕЖІ) --- */
+.new-f-action-link, 
+.insta-post-card, 
+.new-f-soc-list a {
+    border: 2px solid white !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    opacity: 0.7 !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: hidden !important;
 }
 
-.f-navigation-buttons a {
-    text-decoration: none;
-    color: #ffffff;
-    font-weight: 500;
-    font-size: 16px;
-    transition: color 0.7s, background-color 0.7s;
-    padding: 10px 15px;
-    border-radius: 5px;
+.new-f-action-link:hover, 
+.insta-post-card:hover, 
+.new-f-soc-list a:hover {
+    opacity: 1 !important;
+    transform: scale(1.02) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
 }
 
-    .f-navigation-buttons a:hover {
-        background-color: #ffffff3c;
-    }
+/* --- КНОПКА КОЛЕДЖУ --- */
+.new-f-action-link {
+    padding: 15px 20px !important;
+    justify-content: center !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 17px !important;
+    margin-top: 10px !important;
+}
+
+/* --- ОНОВЛЕНО: БЛОК ІНСТА-ПОСТІВ --- */
+.new-f-insta-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    
+    /* ОНОВЛЕНО: Збільшено відступ між самими постами */
+    gap: 20px !important; /* Було 15px */
+    width: 100% !important;
+}
+
+.insta-post-card {
+    height: 110px !important; 
+}
+
+.post-img-side {
+    width: 110px !important; 
+    height: 110px !important;
+    flex-shrink: 0 !important;
+}
+
+.post-img-side img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+.post-text-side {
+    padding: 10px 15px !important;
+    flex-grow: 1 !important;
+}
+
+.post-desc {
+    margin: 0 !important;
+    color: white !important;
+    font-size: 17px !important;
+    line-height: 1.3 !important;
+}
+
+/* --- КАРТА (ВИРІВНЮВАННЯ ПО НИЗУ + ФІКС СМУГИ) --- */
+.live-map-container {
+    width: 100% !important;
+    max-width: 400px !important;
+    height: 110px !important; /* Залишаємо ідентичну висоту з постами */
+    border: 2px solid white !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    
+    /* ОНОВЛЕНО: Це притискає карту до низу колонки */
+    margin-top: auto !important; 
+    
+    display: block !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+    background: white !important;
+}
+
+.live-map-container iframe {
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+    border: 0 !important;
+}
+
+/* --- НИЖНЯ ПАНЕЛЬ --- */
+.new-footer-bottom {
+    background: #353B7A !important;
+    padding: 25px 0 !important;
+}
+
+.new-f-bottom-content {
+    max-width: 100% !important;
+    padding: 0 67px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.new-f-info-area p { 
+    color: white !important;
+    margin: 0 !important; 
+    font-size: 17px !important; 
+}
+
+.new-f-soc-list {
+    display: flex !important;
+    gap: 15px !important;
+}
+
+.new-f-soc-list a {
+    width: 50px !important;
+    height: 50px !important;
+    justify-content: center !important;
+}
+
+.new-f-soc-list a img {
+    width: 24px !important;
+    filter: brightness(0) invert(1) !important;
+}
+
+.f-logo-img { height: 70px !important; }
