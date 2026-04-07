@@ -12,7 +12,7 @@
         public async Task<User?> FindUserByUsernameAsync(string username)
         {
             var sql = @"
-                SELECT id, username, email, created_at as CreatedAt 
+                SELECT id, username, email, _password as Password, created_at as CreatedAt 
                 FROM users 
                 WHERE username = @username";
 
