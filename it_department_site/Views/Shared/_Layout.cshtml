@@ -82,35 +82,98 @@
         @RenderBody()
     </main>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="f-left-side">
-                <div class="f-logo">
-                    <img src="~/images/Footer logo.png" alt="Footer Logo" />
+<footer class="new-footer">
+    <div class="new-footer-top">
+        <div class="new-f-container">
+            <div class="new-f-col">
+                <h4>Корисні посилання</h4>
+                <p>Чекаємо вас на нашому офіційному сайті.</p>
+                <div class="new-f-link-wrap">
+                    <a href="https://polytech.cv.ua/" target="_blank" class="new-f-action-link">
+                        Чернівецький політехнічний фаховий коледж
+                    </a>
                 </div>
             </div>
-            <div class="f-center-side">
-                <div class="social-media">
-                    <a href="#"><img src="svg/Instagram image.svg" alt="Instagram" /></a>
-                    <a href="#"><img src="svg/YouTube image.svg" alt="YouTube" /></a>
-                    <a href="#"><img src="svg/X image.svg" alt="X" /></a>
-                    <a href="#"><img src="svg/Facebook image.svg" alt="Facebook" /></a>
-                    <a href="#"><img src="svg/Gmail image.svg" alt="Gmail" /></a>
-                    <a href="#"><img src="svg/TikTok image.svg" alt="TikTok" /></a>
-                    <a href="#"><img src="svg/Threads image.svg" alt="Threads" /></a>
+            
+            <div class="new-f-line"></div>
+            
+            <div class="new-f-col">
+                <h4>Про спеціальність</h4>
+                <p>Інженерія програмного забезпечення — це проектування, розробка та підтримка складних систем. Стань професіоналом майбутнього.</p>
+            </div>
+            
+            <div class="new-f-line"></div>
+
+            
+            <div class="new-f-col">
+                 <h4>Ми у соцмережах</h4>
+                <div class="new-f-insta-grid">
+        
+                 <a href="#" class="insta-post-card">
+                    <div class="post-img-side">
+                        <img src="https://media.istockphoto.com/id/1457290530/photo/asian-teenager-students-doing-robot-arm-and-robotic-cars-homework-project-in-house-using.jpg?s=612x612&w=0&k=20&c=UqJtQbOTZBu6Yw-JB9jHOxpgOCoB5in1W02JuxYlibY=" alt="">
+                    </div>
+                    <div class="post-text-side">
+                        <p class="post-desc">Робота студентів спеціальності ПЗ над проектом.</p>
+                    </div>
+                    </a>
+
+                    <a href="#" class="insta-post-card">
+                     <div class="post-img-side">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm3A06HGYb6XHYZ7lolj6nUV0XPh8YhSQZVA&s" alt="">
+                    </div>
+                    <div class="post-text-side">
+                        <p class="post-desc">Презентація нових розробок в коледжі.</p>
+                    </div>
+                    </a>
+        
                 </div>
             </div>
-            <div class="f-right-side">
-                <div class="f-navigation-buttons">
-                    <ul>
-                        <li><a href="#">Academic</a></li>
-                        <li><a href="#">Contact</a></li>
-                        @Html.Raw(loginButtonHtml)
-                    </ul>
+            
+
+            <div class="new-f-line"></div>
+            
+            <div class="new-f-col">
+                <h4>Контакти</h4>
+                <div class="new-f-contact-info">
+                    <p>58029, Чернівці, вул. Павла Каспрука, 2</p>
+                    <p>+38 (0372) 56-70-47   |   +38 (095) 700-64-51</p>
+                    <p>mail@polytech.cv.ua</p>
+                </div>
+                <div class="live-map-container">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2636.568453535!2d25.9221!3d48.2917!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473408b3f4692599%3A0x16afb3b788bb529d!2z0LLRg9C70LjRhtGPINCf0LDQstC70LAg0JrQsNGB0L_RgNGD0LrQsCwgMiwg0KfQtdGA0L3RltCy0YbRliwg0KfQtdGA0L3RltCy0LXRhtGM0LrQsCDQvtCx0LvQsNGB0YLRjCwgNTgwMDA!5e0!3m2!1suk!2sua!4v1712175000000!5m2!1suk!2sua" 
+                        width="100%" 
+                        height="110" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
+
+    <div class="new-footer-bottom">
+        <div class="new-f-bottom-content">
+            <div class="new-f-logo-area">
+                <img src="~/images/Light logo with text.png" alt="Logo" class="f-logo-img" />
+            </div>
+            
+            <div class="new-f-info-area">
+                <p>© 2026 Чернівецький політехнічний фаховий коледж</p>
+            </div>
+
+            <div class="new-f-social-area">
+                <div class="new-f-soc-list">
+                    <a href="https://www.instagram.com/ckprogr" target="_blank" class="sm-link"><img src="images/instagram-logo-thin-svgrepo-com.svg" alt="Inst" /></a>
+                    <a href="https://www.youtube.com/channel/UC2wIoLJ20hBEZhvrqtOSRBw"  target="_blank" class="sm-link"><img src="images/youtube-svgrepo-com.svg" alt="YT" /></a>
+                     <a href="mailto:ipz@polytech.cv.ua" target="_blank" class="sm-link"><img src="images/envelope-thin-svgrepo-com.svg" alt="Email" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
