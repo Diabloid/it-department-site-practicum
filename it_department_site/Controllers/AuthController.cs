@@ -1,34 +1,41 @@
-﻿
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
-    private readonly IConfiguration _config;
 
-    public AuthController(IAuthService authService, IConfiguration config)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
-        _config = config;
     }
 
     // REFACTOR_HINT: Configure custom login path in Program.cs
-    [HttpGet("Account/Login")]
+    [HttpGet("Login")]
     public IActionResult Login()
     {
         return View();
     }
 
-    [HttpPost("/login")]
+    [HttpPost("Login")]
     public async Task<IActionResult> Login(string username, string password)
     {
-        // ✅ await
         var user = await _authService.LoginAsync(username, password);
 
         if (user != null)
         {
             string role = user.Username.ToLower() == "admin" ? "Admin" : "User";
-        
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, role)
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(claimsIdentity)
+            );
 
             return role == "Admin"
                 ? RedirectToAction("Index", "Admin")
@@ -41,8 +48,8 @@ public class AuthController : Controller
 
     public IActionResult Logout()
     {
+        HttpContext.SignOutAsync();
         return RedirectToAction("Index", "Pages");
     }
 
-    
 }

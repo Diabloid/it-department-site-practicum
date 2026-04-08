@@ -3,7 +3,11 @@ using MySql.Data.MySqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication().AddCookie();
+builder.Services.AddAuthentication().AddCookie(options=>
+{
+    options.Cookie.Name = "IPZAuthCookie";
+    options.LoginPath = "/Login";
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
