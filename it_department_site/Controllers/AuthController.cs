@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿
 using System.Security.Claims;
 
 public class AuthController : Controller
@@ -13,7 +12,8 @@ public class AuthController : Controller
         _config = config;
     }
 
-    [HttpGet("/login")]
+    // REFACTOR_HINT: Configure custom login path in Program.cs
+    [HttpGet("Account/Login")]
     public IActionResult Login()
     {
         return View();
@@ -28,13 +28,7 @@ public class AuthController : Controller
         if (user != null)
         {
             string role = user.Username.ToLower() == "admin" ? "Admin" : "User";
-            var token = GenerateJwtToken(user.Id, user.Username, role);
-
-            Response.Cookies.Append("jwt", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTimeOffset.Now.AddHours(1)
-            });
+        
 
             return role == "Admin"
                 ? RedirectToAction("Index", "Admin")
@@ -47,30 +41,8 @@ public class AuthController : Controller
 
     public IActionResult Logout()
     {
-        Response.Cookies.Delete("jwt");
         return RedirectToAction("Index", "Pages");
     }
 
-    private string GenerateJwtToken(int userId, string username, string role)
-    {
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, role)
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
+    
 }

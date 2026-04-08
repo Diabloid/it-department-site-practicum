@@ -1,7 +1,8 @@
-﻿namespace it_department_site.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+namespace it_department_site.Controllers
 {
     [Route("likes")]
-    [JwtAuthorize("User", "Admin")]
+    [Authorize]
     public class LikeController : Controller
     {
         private readonly ILikeService _likeService;

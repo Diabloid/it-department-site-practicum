@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace it_department_site.Services
 {
@@ -48,21 +47,8 @@ namespace it_department_site.Services
                 return context.User;
             }
 
-            var token = context.Request.Cookies["jwt"];
-            if (!string.IsNullOrEmpty(token))
-            {
-                try
-                {
-                    var handler = new JwtSecurityTokenHandler();
-                    var jwtToken = handler.ReadJwtToken(token);
-                    var identity = new ClaimsIdentity(jwtToken.Claims, "jwt");
-                    return new ClaimsPrincipal(identity);
-                }
-                catch
-                {
-                    return null;
-                }
-            }
+            
+            
 
             return null;
         }

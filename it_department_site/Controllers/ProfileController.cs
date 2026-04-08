@@ -1,5 +1,7 @@
-﻿[Route("profile")]
-[JwtAuthorize("User")]
+﻿using Microsoft.AspNetCore.Authorization;
+
+[Route("profile")]
+[Authorize]
 public class ProfileController : Controller
 {
     private readonly IProfileService _profileService;

@@ -1,4 +1,6 @@
-﻿[Route("comments")]
+﻿using Microsoft.AspNetCore.Authorization;
+
+[Route("comments")]
 public class CommentController : Controller
 {
     private readonly ICommentService _service;
@@ -11,7 +13,7 @@ public class CommentController : Controller
     }
 
     [HttpPost("add")]
-    [JwtAuthorize("User", "Admin")]
+    [Authorize]
     public async Task<IActionResult> Add(int pageId, string content, string slug)
     {
         int userId = _currentUser.UserId.Value;
@@ -27,7 +29,7 @@ public class CommentController : Controller
     }
 
     [HttpPost("delete")]
-    [JwtAuthorize("Admin")]
+    [Authorize]
     public async Task<IActionResult> Delete(int commentId, string returnUrl)
     {
         await _service.DeleteCommentAsync(commentId);

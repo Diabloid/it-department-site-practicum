@@ -1,5 +1,6 @@
-﻿[Route("favorites")]
-[JwtAuthorize("User")]
+﻿using Microsoft.AspNetCore.Authorization;
+[Route("favorites")]
+[Authorize]
 public class FavoriteController : Controller
 {
     private readonly IFavoriteService _favoriteService;
