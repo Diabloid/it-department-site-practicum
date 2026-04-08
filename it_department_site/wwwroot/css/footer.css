@@ -125,7 +125,6 @@
     border-radius: 12px !important;
     overflow: hidden !important;
     margin-top: auto !important; 
-    
     display: block !important;
     line-height: 0 !important;
     font-size: 0 !important;
@@ -139,7 +138,6 @@
     border: 0 !important;
 }
 
-/* --- НИЖНЯ ПАНЕЛЬ --- */
 .footer-bottom {
     background: #353B7A !important;
     padding: 25px 0 !important;
@@ -150,7 +148,12 @@
     padding: 0 67px !important;
     display: flex !important;
     justify-content: space-between !important;
-    align-items: center !important;
+    align-items: center !important; 
+}
+
+.f-info-area {
+    /* Опускаємо копірайт до низу */
+    align-self: flex-end !important;
 }
 
 .f-info-area p { 
@@ -175,4 +178,7 @@
     filter: brightness(0) invert(1) !important;
 }
 
-.f-logo-img { height: 70px !important; }
+.f-logo-img { 
+    height: 70px !important; 
+    display: block !important;
+}
