@@ -46,10 +46,6 @@ namespace it_department_site.Services
             {
                 return context.User;
             }
-
-            
-            
-
             return null;
         }
     }

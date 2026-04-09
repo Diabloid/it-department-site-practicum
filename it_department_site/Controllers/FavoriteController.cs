@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+
 [Route("favorites")]
 [Authorize]
 public class FavoriteController : Controller

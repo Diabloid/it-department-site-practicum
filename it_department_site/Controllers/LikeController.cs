@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+
 namespace it_department_site.Controllers
 {
     [Route("likes")]
