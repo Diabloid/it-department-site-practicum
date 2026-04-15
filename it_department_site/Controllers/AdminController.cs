@@ -18,13 +18,16 @@ namespace it_department_site.Controllers
         private readonly ISiteSettingsService _settingsService;
         private readonly IDbConnection _db; // ✅ Замість Dbhelper
         private readonly IPartnerService _partnerService;
+        private readonly IPostRepository _postRepository;
+
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
             IDbConnection db, // ✅ Інжектимо з'єднання
             ILogger<AdminController> logger,
             ISiteSettingsService settingsService,
-            IPartnerService partnerService)
+            IPartnerService partnerService,
+            IPostRepository postRepository)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -32,6 +35,7 @@ namespace it_department_site.Controllers
             _logger = logger;
             _settingsService = settingsService;
             _partnerService = partnerService;
+            _postRepository = postRepository;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -171,6 +175,7 @@ namespace it_department_site.Controllers
                 HttpContext.Session.SetString("SelectedLayoutType", model.LayoutType);
                 return Ok();
             }
+
             return BadRequest();
         }
 
@@ -193,7 +198,8 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> CreateMenuItem()
         {
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
+            var pages = await _pageService.GetAllPagesAsync();
+            ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
             return View("EditMenuItem", new MenuItem());
         }
@@ -201,7 +207,8 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> EditMenuItem(int id)
         {
             var item = await _menuService.GetMenuItemByIdAsync(id);
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
+            var pages = await _pageService.GetAllPagesAsync();
+            ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
             return View(item);
         }
@@ -223,7 +230,7 @@ namespace it_department_site.Controllers
             await _menuService.DeleteMenuItemAsync(id);
             return RedirectToAction("Index", new { section = "menuItems" });
         }
- 
+
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -232,7 +239,11 @@ namespace it_department_site.Controllers
             if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
             var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(uploadsPath, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create)) { await file.CopyToAsync(stream); }
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
             return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
         }
 
@@ -263,113 +274,106 @@ namespace it_department_site.Controllers
             return Ok();
         }
 
- 
-// =========================
-// POSTS
-// =========================
-
-public async Task<IActionResult> Posts()
-{
-    var posts = await _postRepository.GetAllAsync();
-    return PartialView("_PostsTable", posts);
-}
-
-public IActionResult CreatePost()
-{
-    return PartialView("_CreatePost", new Post());
-}
-
-[HttpPost]
-[ValidateAntiForgeryToken]
-
-public async Task<IActionResult> CreatePost(Post post, IFormFile? thumbnailFile)
-{
-    ModelState.Remove("Author");
-    ModelState.Remove("Thumbnail"); // Видаляємо, бо заповнимо вручну
-
-    if (!ModelState.IsValid) return PartialView("_CreatePost", post);
-
-    try
-    {
-        if (thumbnailFile != null)
+        public async Task<IActionResult> Posts()
         {
-            post.Thumbnail = await SaveImage(thumbnailFile);
+            var posts = await _postRepository.GetAllAsync();
+            return PartialView("_PostsTable", posts);
         }
 
-        post.AuthorId = 1; 
-        post.CreatedAt = DateTime.UtcNow;
-        post.UpdatedAt = DateTime.UtcNow;
-
-        await _postRepository.CreateAsync(post);
-        return await Posts();
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Помилка при створенні");
-        return StatusCode(500, "Помилка сервера");
-    }
-}
-public async Task<IActionResult> EditPost(int id)
-{
-    var post = await _postRepository.GetByIdAsync(id);
-    if (post == null) return NotFound();
-
-    return PartialView("_EditPost", post);
-}
-
-
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> EditPost(Post post, IFormFile? thumbnailFile)
-{
-    ModelState.Remove("Author");
-    ModelState.Remove("Thumbnail");
-
-    if (!ModelState.IsValid) return PartialView("_EditPost", post);
-
-    try
-    {
-        if (thumbnailFile != null)
+        public IActionResult CreatePost()
         {
-            // Якщо завантажили нове фото — зберігаємо його
-            post.Thumbnail = await SaveImage(thumbnailFile);
+            return PartialView("_CreatePost", new Post());
         }
 
-        post.UpdatedAt = DateTime.UtcNow;
-        await _postRepository.UpdateAsync(post);
-        return await Posts();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePost(Post post, IFormFile? thumbnailFile)
+        {
+            ModelState.Remove("Author");
+            ModelState.Remove("Thumbnail"); // Видаляємо, бо заповнимо вручну
+
+            if (!ModelState.IsValid) return PartialView("_CreatePost", post);
+
+            try
+            {
+                if (thumbnailFile != null)
+                {
+                    post.Thumbnail = await SaveImage(thumbnailFile);
+                }
+
+                post.AuthorId = 1;
+                post.CreatedAt = DateTime.UtcNow;
+                post.UpdatedAt = DateTime.UtcNow;
+
+                await _postRepository.CreateAsync(post);
+                return await Posts();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Помилка при створенні");
+                return StatusCode(500, "Помилка сервера");
+            }
+        }
+
+        public async Task<IActionResult> EditPost(int id)
+        {
+            var post = await _postRepository.GetByIdAsync(id);
+            if (post == null) return NotFound();
+
+            return PartialView("_EditPost", post);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPost(Post post, IFormFile? thumbnailFile)
+        {
+            ModelState.Remove("Author");
+            ModelState.Remove("Thumbnail");
+
+            if (!ModelState.IsValid) return PartialView("_EditPost", post);
+
+            try
+            {
+                if (thumbnailFile != null)
+                {
+                    // Якщо завантажили нове фото — зберігаємо його
+                    post.Thumbnail = await SaveImage(thumbnailFile);
+                }
+
+                post.UpdatedAt = DateTime.UtcNow;
+                await _postRepository.UpdateAsync(post);
+                return await Posts();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Помилка при редагуванні");
+                return StatusCode(500, "Помилка сервера");
+            }
+        }
+
+        private async Task<string> SaveImage(IFormFile file)
+        {
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "posts");
+
+            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+
+            var filePath = Path.Combine(rootPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return "/uploads/posts/" + fileName;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            await _postRepository.DeleteAsync(id);
+
+            return await Posts(); // 🔥 Оновлюємо таблицю
+        }
     }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Помилка при редагуванні");
-        return StatusCode(500, "Помилка сервера");
-    }
-}
-
-// Допоміжний метод для збереження картинки
-private async Task<string> SaveImage(IFormFile file)
-{
-    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-    var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "posts");
-
-    if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
-
-    var filePath = Path.Combine(rootPath, fileName);
-    using (var stream = new FileStream(filePath, FileMode.Create))
-    {
-        await file.CopyToAsync(stream);
-    }
-
-    return "/uploads/posts/" + fileName;
-}
-
-[HttpPost]
-public async Task<IActionResult> DeletePost(int id)
-{
-    await _postRepository.DeleteAsync(id);
-
-    return await Posts(); // 🔥 Оновлюємо таблицю
-}
-
-   }
 }

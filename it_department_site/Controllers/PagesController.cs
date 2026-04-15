@@ -1,11 +1,4 @@
-﻿using it_department_site.Repositories.Interfaces;
-using it_department_site.Services.Interfaces;
-using it_department_site.Entities; // Додано для доступу до моделей
-using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Linq;
-
-namespace it_department_site.Controllers
+﻿namespace it_department_site.Controllers
 {
     public class PagesController : Controller
     {
@@ -16,62 +9,30 @@ namespace it_department_site.Controllers
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
 
-        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService, ICurrentUserService currentUser, IPartnerService partnerService)
+        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService,
+            ICurrentUserService currentUser, IPartnerService partnerService, IPostRepository postRepository)
         {
             _pageService = pageService;
             _commentService = commentService;
             _likeService = likeService;
             _currentUser = currentUser;
+            _partnerService = partnerService;
             _postRepository = postRepository;
         }
 
-    public async Task<IActionResult> Index()
-{
-    // 1. --- ЛОГІКА ПАРТНЕРІВ ---
-    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "partners");
-    var orderFilePath = Path.Combine(folderPath, "order.json");
-    List<string> finalPartnerList = new List<string>();
-
-    if (Directory.Exists(folderPath))
-    {
-        var dirInfo = new DirectoryInfo(folderPath);
-        var allFiles = dirInfo.GetFiles()
-                              .Where(f => !f.Name.EndsWith("order.json"))
-                              .OrderBy(f => f.CreationTime)
-                              .Select(f => "/images/partners/" + f.Name)
-                              .ToList();
-
-        if (System.IO.File.Exists(orderFilePath))
+        public async Task<IActionResult> Index()
         {
-            try
-            {
-                var json = System.IO.File.ReadAllText(orderFilePath);
-                var savedOrder = JsonSerializer.Deserialize<List<string>>(json);
-                if (savedOrder != null)
-                {
-                    finalPartnerList = savedOrder.Where(f => allFiles.Contains(f)).ToList();
-                }
-            }
-            catch { }
+            var partners = await _partnerService.GetAllPartnersAsync();
+            ViewBag.Partners = partners.ToList();
+
+            // 2. --- ЛОГІКА НОВИН ---
+            ViewBag.News = await _postRepository.GetLatestAsync(4);
+
+            // 3. --- ЛОГІКА СТОРІНОК ---
+            var pages = await _pageService.GetAllPagesAsync();
+            var dtoList = pages.Select(PageMapper.ToDto).ToList();
+            return View(dtoList);
         }
-
-        foreach (var file in allFiles)
-        {
-            if (!finalPartnerList.Contains(file)) finalPartnerList.Add(file);
-        }
-    }
-
-    ViewBag.Partners = finalPartnerList;
-
-    // 2. --- ЛОГІКА НОВИН ---
-    ViewBag.News = await _postRepository.GetLatestAsync(4);
-
-    // 3. --- ЛОГІКА СТОРІНОК ---
-    var pages = await _pageService.GetAllPagesAsync();
-    
-    // ПОВЕРТАЄМО ВСЕ РАЗОМ В КІНЦІ
-    return View(pages); 
-}
 
         public async Task<IActionResult> Details(string slug)
         {
@@ -93,8 +54,8 @@ namespace it_department_site.Controllers
             ViewBag.Comments = await _commentService.GetCommentsAsync(page.Id);
             ViewBag.Likes = await _likeService.GetLikeCountAsync(page.Id);
             ViewBag.Views = await _pageService.GetViewsAsync(page.Id);
-
-            return View(page); // Повертаємо об'єкт сторінки напряму
+            var dto = PageMapper.ToDto(page);
+            return View(dto);
         }
 
 
@@ -119,6 +80,7 @@ namespace it_department_site.Controllers
 
                 return Json(new { uploaded = true, url = fileUrl });
             }
+
             return Json(new { uploaded = false, error = new { message = "Error" } });
         }
     }

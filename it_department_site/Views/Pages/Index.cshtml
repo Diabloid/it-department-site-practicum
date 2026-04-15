@@ -1,8 +1,5 @@
-﻿@using it_department_site.Entities
-@{
+﻿@{
     ViewData["Title"] = "Головна";
-    
-    // Отримуємо дані з ViewBag та конвертуємо у список
     var newsList = (ViewBag.News as IEnumerable<Post>)?.ToList() ?? new List<Post>();
 }
 
