@@ -2,7 +2,7 @@
 {
     public interface IAuthRepository
     {
-        Task<User?> ValidateCredentialsAsync(string username, string password);
+        Task<User?> FindUserByUsernameAsync(string username);
         Task<int> GetUserIdAsync(string username);
     }
 }
