@@ -11,7 +11,6 @@ public class AuthController : Controller
         _authService = authService;
     }
 
-    // REFACTOR_HINT: Configure custom login path in Program.cs
     [HttpGet("Login")]
     public IActionResult Login()
     {
