@@ -40,17 +40,11 @@ namespace it_department_site.Services
         private ClaimsPrincipal? GetClaimsPrincipal()
         {
             var context = _httpContextAccessor.HttpContext;
-            if (context == null) return null;
-
-            if (context.User.Identity?.IsAuthenticated == true)
+            if (context == null) 
             {
-                return context.User;
+                return null;
             }
-
-            
-            
-
-            return null;
+            return context.User;
         }
     }
 }
