@@ -7,13 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Database\**" />
     <Compile Remove="Views\Db\**" />
+    <Content Remove="Database\**" />
     <Content Remove="Views\Db\**" />
+    <EmbeddedResource Remove="Database\**" />
     <EmbeddedResource Remove="Views\Db\**" />
+    <None Remove="Database\**" />
     <None Remove="Views\Db\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.15" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />

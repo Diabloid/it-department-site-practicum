@@ -87,15 +87,6 @@
         return (int)Math.Ceiling((double)total / pageSize);
     }
 
-    public async Task<List<Page>> SearchAsync(string query)
-    {
-        var sql = $@"{BaseSelectSql} 
-                     WHERE LOWER(title) LIKE CONCAT('%', LOWER(@q), '%') 
-                        OR LOWER(slug) LIKE CONCAT('%', LOWER(@q), '%')";
-
-        var result = await _db.QueryAsync<Page>(sql, new { q = query });
-        return result.ToList();
-    }
 
     // --- Перегляди ---
 

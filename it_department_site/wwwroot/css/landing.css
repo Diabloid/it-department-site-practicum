@@ -141,6 +141,53 @@ main {
     }
 
 /* NEWS CONTENT */
+.main-news-block h3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 2 рядки для заголовка */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.5rem;
+    line-height: 1.3;
+    margin: 10px 0;
+    font-weight: 700;
+    /* Фікс для довгих слів типу "uuuuuuuu" */
+    word-break: break-all; 
+    overflow-wrap: break-word;
+}
+
+.main-news-block p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* 3 рядки для опису */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+    overflow-wrap: break-word;
+}
+
+/* Для маленьких новин збоку */
+.side-news-list div[style*="font-weight: bold"] {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    line-height: 1.2;
+}
+
+/* Старі класи (про всяк випадок, якщо десь лишилися) */
+.news-text h3, .news-item h3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+}
 .news-content-and-title {
     position: relative;
     left: 4%;
@@ -317,87 +364,6 @@ main {
 
 
 /* ====================================================================== */
-/* 5. СТИЛІ PARTNERS (Партнери) */
-/* ====================================================================== */
-
-.partners-area {
-    /* Об'єднані та оптимізовані стилі для контейнера */
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    left: 50px;
-    width: 80%;
-    height: 250px; /* З вашого оновленого коду */
-    margin-top: 20px;
-    margin-bottom: 3%;
-    padding: 30px;
-    /* background-color: #f0f0ff; - Видалено, оскільки у вас було закоментовано */
-    border-radius: 15px;
-}
-
-.partners-general-title {
-    height: 55px; /* З вашого оновленого коду */
-}
-
-.partners-logos {
-    display: flex;
-    gap: 40px;
-}
-
-.partner-logo {
-    width: 130px;
-    height: 130px;
-    border-radius: 15px;
-    flex-shrink: 0;
-}
-
-/* Кольори логотипів */
-.logo-1 {
-    background-color: #9999ff;
-}
-
-.logo-2 {
-    background-color: #7d7dc7;
-}
-
-.logo-3 {
-    background-color: #6363a0;
-}
-
-.logo-4 {
-    background-color: #44446c;
-}
-
-
-/* ====================================================================== */
-/* 6. СТИЛІ ЗАГОЛОВКІВ (Об'єднані) */
-/* ====================================================================== */
-
-.news-general-title h2,
-.reviews-general-title h2,
-.partners-general-title h2 {
-    color: #000000;
-    margin: 0;
-    padding: 0;
-    font-size: 40px;
-    font-weight: 700;
-}
-
-.partners-general-title h2 {
-    /* Перевизначення для заголовка партнерів */
-    font-size: 32px;
-    margin-bottom: 25px;
-}
-
-.name-and-status h3 {
-    margin: 0;
-    padding: 0;
-    font-size: 20px;
-    font-weight: 600;
-}
-
-
-/* ====================================================================== */
 /* 7. CSS-СТИЛІ ДЛЯ АНІМАЦІЙ (Початкові стани та Transition) */
 /* ====================================================================== */
 
@@ -476,25 +442,6 @@ main {
 
 
 /* ====================================================================== */
-
-/* Стилі для кнопки перемикання мови */
-.lang-switch {
-    font-weight: 700;
-    font-size: 16px;
-    background: none;
-    border: none;
-    color: #4c229bc2; /* Фіолетовий колір */
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: color 0.7s, background-color 0.7s;
-    outline: none;
-}
-
-    .lang-switch:hover {
-        background-color: #bbc1f6;
-        color: #222;
-    }
 
 /* Стилі для основної секції хедера */
 .header {
@@ -586,7 +533,6 @@ main {
         display: flex;
         align-items: center; /* Центруємо по вертикалі */
         flex-direction: row;
-        gap: 15px; /* Відступи між пунктами */
         margin: 0;
         padding: 0;
     }
@@ -595,29 +541,34 @@ main {
         align-items: center;
     }
 
-#searchForm input[type="search"] {
-    max-width: 150px; /* Можна змінити на 200px, якщо екран дозволяє */
-    transition: max-width 0.3s;
+header .navigation-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
 }
-
-    /* (Опціонально) Пошук розширюється при фокусі */
-    #searchForm input[type="search"]:focus {
-        max-width: 250px;
-    }
 
 header .navigation-buttons a {
+    display: inline-block;
     text-decoration: none;
-    color: #4c229bc2;
+    color: #3d1d76;
     font-weight: 500;
-    font-size: 16px;
-    transition: color 0.7s, background-color 0.7s;
-    padding: 10px 15px;
+    font-size: 14px;
+    padding: 6px 10px;
     border-radius: 5px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
-    header .navigation-buttons a:hover {
-        background-color: #ffffff3c; /* Легке підсвічування при наведенні */
-    }
+header .navigation-buttons a:hover {
+    background-color: rgba(61, 29, 118, 0.1);
+    color: #5a2eb0;
+}
+
 
 /* Стилі для випадаючого меню (Dropdown) */
 .dropdown {
@@ -625,127 +576,38 @@ header .navigation-buttons a {
     display: inline-block;
 }
 
-.dropdown-content {
-    display: none; /* Приховано за замовчуванням */
+header .dropdown-content {
+    display: none;
     position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 5px;
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 0px 8px 20px rgba(61, 29, 118, 0.15);
+    z-index: 999;
+    border-radius: 8px;
     top: 100%;
+    left: 0;
+    padding: 0; 
+    border: 1px solid rgba(61, 29, 118, 0.1);
+    overflow: hidden;
 }
 
-    .dropdown-content a {
-        color: #4A4A4A;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        text-align: left;
-    }
-
-.dropdown:hover .dropdown-content {
-    display: block; /* Показати меню при наведенні на батьківський елемент */
+header .dropdown-content a {
+    color: #3d1d76;
+    padding: 10px 16px;
+    display: block;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+    margin: 0;
 }
 
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
+header .dropdown-content a:hover {
+    background-color: rgba(61, 29, 118, 0.08);
+}
+
+header .dropdown:hover .dropdown-content {
+    display: block;
 }
 
 /* ====================================================================== */
-
-footer {
-    padding: 20px 0;
-    background: linear-gradient(to right, #636AC0 3%, #353B7A 30%, #353B7A 70%, #636AC0 100%);
-    color: #ffffff;
-}
-
-.footer-content {
-    /*max-width: 1400px;*/
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
-.f-left-side,
-.f-center-side,
-.f-right-side {
-    height: 100%;
-    width: 33.33%;
-}
-
-.f-left-side {
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 3%;
-}
-
-.f-center-side {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.f-right-side {
-    display: flex;
-    justify-content: flex-end;
-    padding-right: 3%;
-}
-
-.social-media {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 50px;
-    margin-left: -55px;
-}
-
-    .social-media a {
-        height: 50px;
-        width: 50px;
-        border-radius: 5px;
-        background-color: #424A99;
-        transition: transform 0.3s ease;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-        .social-media a img {
-            height: 30px;
-            width: 30px;
-        }
-
-        .social-media a:hover {
-            transform: scale(1.1);
-        }
-
-.f-navigation-buttons ul {
-    display: flex;
-    align-items: center;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    gap: 10px;
-}
-
-.f-navigation-buttons a {
-    text-decoration: none;
-    color: #ffffff;
-    font-weight: 500;
-    font-size: 16px;
-    transition: color 0.7s, background-color 0.7s;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-    .f-navigation-buttons a:hover {
-        background-color: #ffffff3c;
-    }

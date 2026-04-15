@@ -13,14 +13,10 @@ namespace it_department_site.Controllers
         private readonly ICommentService _commentService;
         private readonly ILikeService _likeService;
         private readonly ICurrentUserService _currentUser;
+        private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
 
-        public PagesController(
-            IPageService pageService, 
-            ICommentService commentService, 
-            ILikeService likeService, 
-            ICurrentUserService currentUser,
-            IPostRepository postRepository)
+        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService, ICurrentUserService currentUser, IPartnerService partnerService)
         {
             _pageService = pageService;
             _commentService = commentService;
@@ -101,20 +97,6 @@ namespace it_department_site.Controllers
             return View(page); // Повертаємо об'єкт сторінки напряму
         }
 
-        [HttpGet]
-        public async Task<JsonResult> SearchSuggestions(string term)
-        {
-            if (string.IsNullOrWhiteSpace(term)) return Json(new List<object>());
-
-            var pages = await _pageService.SearchAsync(term);
-            var results = pages
-                .Select(p => new { title = p.Title, slug = p.Slug })
-                .Distinct()
-                .Take(10)
-                .ToList();
-
-            return Json(results);
-        }
 
         [HttpPost]
         [Route("ckeditor/upload")]

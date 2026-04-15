@@ -14,38 +14,26 @@ namespace it_department_site.Controllers
     {
         private readonly IPageService _pageService;
         private readonly IMenuService _menuService;
-        private readonly ISiteSettingsService _settingsService;
-        private readonly IPostRepository _postRepository;
-        private readonly IDbConnection _db;
         private readonly ILogger<AdminController> _logger;
-
+        private readonly ISiteSettingsService _settingsService;
+        private readonly IDbConnection _db; // ✅ Замість Dbhelper
+        private readonly IPartnerService _partnerService;
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
+            IDbConnection db, // ✅ Інжектимо з'єднання
+            ILogger<AdminController> logger,
             ISiteSettingsService settingsService,
-            IPostRepository postRepository,
-            IDbConnection db,
-            ILogger<AdminController> logger)
+            IPartnerService partnerService)
         {
             _pageService = pageService;
             _menuService = menuService;
-            _settingsService = settingsService;
-            _postRepository = postRepository;
             _db = db;
             _logger = logger;
+            _settingsService = settingsService;
+            _partnerService = partnerService;
         }
 
-        // =========================
-        // DASHBOARD
-        // =========================
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        // =========================
-        // SITE SETTINGS
-        // =========================
         public async Task<IActionResult> LayoutSettings()
         {
             var settings = await _settingsService.GetAsync();
@@ -71,9 +59,11 @@ namespace it_department_site.Controllers
             return RedirectToAction(nameof(LayoutSettings));
         }
 
-        // =========================
-        // USERS (DAPPER)
-        // =========================
+        public IActionResult Index()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Users()
         {
             var reader = await _db.ExecuteReaderAsync("SELECT * FROM users ORDER BY id");
@@ -83,9 +73,6 @@ namespace it_department_site.Controllers
             return PartialView("_UsersTable", dt);
         }
 
-        // =========================
-        // PAGES
-        // =========================
         public async Task<IActionResult> Pages(int page = 1)
         {
             int pageSize = 5;
@@ -96,6 +83,14 @@ namespace it_department_site.Controllers
             ViewData["TotalPages"] = totalPages;
 
             return PartialView("_PagesTable", pages);
+        }
+
+        public async Task<IActionResult> MenuItems()
+        {
+            var menuItems = await _menuService.GetAllMenuItemsAsync();
+            ViewBag.Pages = await _pageService.GetAllPagesAsync();
+
+            return PartialView("_MenuItemsTable", menuItems);
         }
 
         public IActionResult Create()
@@ -149,10 +144,14 @@ namespace it_department_site.Controllers
             if (model.Id == null)
                 page.Id = await _pageService.CreatePageAsync(page);
             else
+            {
                 await _pageService.UpdatePageAsync(page);
+            }
 
             if (model.ParentMenuItemId.HasValue)
+            {
                 await _menuService.LinkPageToMenuAsync(page.Id, model.ParentMenuItemId, page.Title);
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -164,6 +163,107 @@ namespace it_department_site.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public IActionResult SaveTemplateSelection([FromBody] TemplateSelectionModel model)
+        {
+            if (!string.IsNullOrEmpty(model.LayoutType))
+            {
+                HttpContext.Session.SetString("SelectedLayoutType", model.LayoutType);
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        public class TemplateSelectionModel
+        {
+            public string LayoutType { get; set; }
+        }
+
+        public async Task<IActionResult> AllPages(int page = 1)
+        {
+            int pageSize = 3;
+            var pages = await _pageService.GetPagedAsync(page, pageSize);
+            var totalPages = await _pageService.GetTotalAsync(pageSize);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+
+            return View(pages);
+        }
+
+        public async Task<IActionResult> CreateMenuItem()
+        {
+            ViewBag.Pages = await _pageService.GetAllPagesAsync();
+            ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
+            return View("EditMenuItem", new MenuItem());
+        }
+
+        public async Task<IActionResult> EditMenuItem(int id)
+        {
+            var item = await _menuService.GetMenuItemByIdAsync(id);
+            ViewBag.Pages = await _pageService.GetAllPagesAsync();
+            ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
+            return View(item);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveMenuItem(MenuItem item)
+        {
+            if (item.Id == 0)
+                await _menuService.CreateMenuItemAsync(item);
+            else
+                await _menuService.UpdateMenuItemAsync(item);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteMenuItem(int id)
+        {
+            await _menuService.DeleteMenuItemAsync(id);
+            return RedirectToAction("Index", new { section = "menuItems" });
+        }
+ 
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest("File is empty");
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
+            var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create)) { await file.CopyToAsync(stream); }
+            return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
+        }
+
+        public async Task<IActionResult> Partners()
+        {
+            var partners = await _partnerService.GetAllPartnersAsync();
+            return PartialView("_Partners", partners.ToList());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
+        {
+            await _partnerService.AddPartnerAsync(file, name, link);
+            return RedirectToAction("Index", new { section = "Partners" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePartner(int id)
+        {
+            await _partnerService.DeletePartnerAsync(id);
+            return RedirectToAction("Index", new { section = "Partners" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePartnerOrder([FromBody] List<int> newOrder)
+        {
+            await _partnerService.UpdatePartnerOrderAsync(newOrder);
+            return Ok();
+        }
+
+ 
 // =========================
 // POSTS
 // =========================
@@ -262,6 +362,7 @@ private async Task<string> SaveImage(IFormFile file)
 
     return "/uploads/posts/" + fileName;
 }
+
 [HttpPost]
 public async Task<IActionResult> DeletePost(int id)
 {
@@ -270,64 +371,5 @@ public async Task<IActionResult> DeletePost(int id)
     return await Posts(); // 🔥 Оновлюємо таблицю
 }
 
-
-
-
-        // =========================
-        // MENU
-        // =========================
-        public async Task<IActionResult> MenuItems()
-        {
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
-            return PartialView("_MenuItemsTable", await _menuService.GetAllMenuItemsAsync());
-        }
-
-        public async Task<IActionResult> CreateMenuItem()
-        {
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
-            ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
-            return View("EditMenuItem", new MenuItem());
-        }
-
-        public async Task<IActionResult> EditMenuItem(int id)
-        {
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
-            ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
-            return View(await _menuService.GetMenuItemByIdAsync(id));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveMenuItem(MenuItem item)
-        {
-            if (item.Id == 0)
-                await _menuService.CreateMenuItemAsync(item);
-            else
-                await _menuService.UpdateMenuItemAsync(item);
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> DeleteMenuItem(int id)
-        {
-            await _menuService.DeleteMenuItemAsync(id);
-
-            return RedirectToAction("Index", new { section = "menuItems" });
-        }
-
-        // UploadImage метод залишаємо (він вже async у твоєму коді був, просто скопіюй якщо треба, або лиши як є)
-        [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file)
-        {
-            if (file == null || file.Length == 0) return BadRequest("File is empty");
-            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
-            var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(uploadsPath, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create)) { await file.CopyToAsync(stream); }
-            return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
-        }
-
-    }
-    
+   }
 }

@@ -3,15 +3,6 @@ window.onbeforeunload = function () {
     window.scrollTo(0, 0);
 };
 
-document.addEventListener('DOMContentLoaded', function () {
-    var langBtn = document.querySelector('.lang-switch');
-    if (langBtn) {
-        langBtn.addEventListener('click', function () {
-            // Перемикає текст кнопки між 'UA' та 'EN'
-            langBtn.textContent = langBtn.textContent === 'UA' ? 'EN' : 'UA';
-        });
-    }
-});
 
 // -------------------------------------------------------------
 // --- Header hide/show on scroll (ОНОВЛЕНО: завжди видно на верху) ---
@@ -117,10 +108,10 @@ if (reviewsTitle) {
 }
 
 // partners-area (з'являється нізвідки)
-const partnersArea = document.querySelector('.partners-area');
-if (partnersArea) {
+const partnersAreas = document.querySelectorAll('.partners-area');
+partnersAreas.forEach((partnersArea) => {
     observer.observe(partnersArea);
-}
+});
 
 
 // -----------------------------------
