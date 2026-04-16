@@ -1,28 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Налаштування JWT
-builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication().AddCookie(options=>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    var jwtSettings = builder.Configuration.GetSection("Jwt");
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-    };
+    options.Cookie.Name = "IPZAuthCookie";
+    options.LoginPath = "/login";
 });
 
 builder.Services.AddControllersWithViews();

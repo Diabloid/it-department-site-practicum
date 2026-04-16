@@ -1,15 +1,8 @@
-﻿using System.Data;
-using System.Text.Json;
-using Dapper;
-using it_department_site.Entities;
-using it_department_site.Repositories.Interfaces;
-using it_department_site.Services;
-using it_department_site.ViewModels;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace it_department_site.Controllers
 {
-    [JwtAuthorize]
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly IPageService _pageService;

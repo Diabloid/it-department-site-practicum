@@ -14,7 +14,6 @@
 }
 
 @{
-    var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
     var siteSettings = await SettingsService.GetAsync();
     var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
     var isAdminPage = controllerName == "Admin";
@@ -36,7 +35,7 @@
     }
     else
     {
-        loginButtonHtml = @"<li><a href='/Login'>Log In</a></li>";
+        loginButtonHtml = @"<li><a href='/login'>Log In</a></li>";
     }
 }
 
