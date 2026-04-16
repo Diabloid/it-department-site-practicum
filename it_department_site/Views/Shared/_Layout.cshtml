@@ -14,7 +14,6 @@
 }
 
 @{
-    var isJwtLoggedIn = Context.Request.Cookies["jwt"] != null;
     var siteSettings = await SettingsService.GetAsync();
 
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
@@ -34,7 +33,7 @@
     }
     else
     {
-        loginButtonHtml = @"<li><a href='/Login'>Log In</a></li>";
+        loginButtonHtml = @"<li><a href='/login'>Log In</a></li>";
     }
 }
 
