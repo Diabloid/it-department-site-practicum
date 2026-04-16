@@ -1,6 +1,8 @@
-﻿namespace it_department_site.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace it_department_site.Controllers
 {
-    [JwtAuthorize]
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly IPageService _pageService;

@@ -1,31 +1,13 @@
 ﻿@model it_department_site.DTOs.PageDto
-@using System.IdentityModel.Tokens.Jwt
 @using System.Security.Claims
 @inject IFavoriteService FavoriteService
 
 @{
-    var jwt = Context.Request.Cookies["jwt"];
     bool showFavoriteButton = false;
     bool isAdmin = false;
     int userId = 0;
 
-    if (!string.IsNullOrEmpty(jwt))
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(jwt);
-        var role = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-        var userIdClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        isAdmin = role == "Admin";
-        int.TryParse(userIdClaim, out userId);
-
-        if (role == "User" && userId > 0)
-        {
-            var alreadyFavorite = await FavoriteService.IsAlreadyFavoriteAsync(userId, Model.Id);
-            showFavoriteButton = !alreadyFavorite;
-        }
-    }
-
+    
     ViewData["Title"] = Model.Title;
     Layout = "_Layout";
 }
@@ -40,7 +22,7 @@
             </p>
 
             <div class="d-flex align-items-center gap-2 mt-2 mb-3">
-                @if (!string.IsNullOrEmpty(jwt) && !isAdmin)
+                @if ( !isAdmin)
                 {
                     <button type="button"
                             id="favorite-btn"
@@ -99,18 +81,6 @@
             <div class="card-footer">
                 <h4>Коментарі</h4>
 
-                @if (!string.IsNullOrEmpty(jwt))
-                {
-                    <form asp-controller="Comment" asp-action="Add" method="post" class="mb-4">
-                        <input type="hidden" name="pageId" value="@Model.Id" />
-                        <input type="hidden" name="slug" value="@Model.Slug" />
-
-                        <label for="commentEditor" class="form-label">Залишити коментар:</label>
-                        <textarea id="commentEditor" name="content" class="form-control" rows="5"></textarea>
-
-                        <button type="submit" class="btn btn-primary mt-2">Надіслати</button>
-                    </form>
-                }
 
                 @if (ViewBag.Comments is List<Comment> comments)
                 {
