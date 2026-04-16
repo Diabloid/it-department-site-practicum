@@ -39,12 +39,7 @@ namespace it_department_site.Services
 
         private ClaimsPrincipal? GetClaimsPrincipal()
         {
-            var context = _httpContextAccessor.HttpContext;
-            if (context == null) 
-            {
-                return null;
-            }
-            return context.User;
+            return _httpContextAccessor.HttpContext?.User;
         }
     }
 }
