@@ -11,13 +11,13 @@ public class AuthController : Controller
         _authService = authService;
     }
 
-    [HttpGet("Login")]
+    [HttpGet("/login")]
     public IActionResult Login()
     {
         return View();
     }
 
-    [HttpPost("Login")]
+    [HttpPost("/login")]
     public async Task<IActionResult> Login(string username, string password)
     {
         var user = await _authService.LoginAsync(username, password);

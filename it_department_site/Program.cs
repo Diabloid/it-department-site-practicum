@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication().AddCookie(options=>
 {
     options.Cookie.Name = "IPZAuthCookie";
-    options.LoginPath = "/Login";
+    options.LoginPath = "/login";
 });
 
 builder.Services.AddControllersWithViews();

@@ -23,7 +23,7 @@ public class ProfileController : Controller
         int userId = _currentUser.UserId.Value;
 
         var user = await _profileService.GetUserInfoAsync(userId);
-        if (user == null) return RedirectToAction("Login", "Auth");
+        if (user == null) return RedirectToAction("login", "Auth");
 
         ViewBag.Username = user.Username;
         ViewBag.Email = user.Email;
