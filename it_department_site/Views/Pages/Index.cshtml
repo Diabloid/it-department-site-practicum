@@ -26,11 +26,11 @@
                <div class="ourlife-area">
                    <div class="ourlife-square">
                        <div class="text-field">
-                           <h2>OUR LIFE</h2>
+                           <h2>НАШЕ ЖИТТЯ</h2>
                            <p>Студентське життя сповнене подій та емоцій. Тут ми ділимося найяскравішими моментами нашого навчання та відпочинку.</p>
                        </div>
                        <div class="image-field">
-                           <img src="~/images/image 7.png" alt="Our Life Image" />
+                           <img src="~/images/banner_photo_3.JPG" alt="Our Life Image" />
                        </div>
                    </div>
                </div>
@@ -39,7 +39,7 @@
                <div class="news-area">
                    <div class="news-content-and-title">
                        <div class="news-general-title">
-                           <h2 style="margin-left: 6px;">News</h2>
+                           <h2>Новини</h2>
                        </div>
                        <div class="news-content">
                            @if (newsList.Any())
@@ -91,18 +91,19 @@
 
 
            <div class="reviews-area">
-               <div class="reviews-field">
-                   <div class="reviews-general-title">
-                       <h2>Reviews</h2>
+                    <div class="news-general-title">
+                       <h2>Відгуки</h2>
                    </div>
+            <!-- <div class="slider-container"> -->
+               <div class="reviews-field ">
                    <div class="reviews-content">
                        <div class="pfp-name-status">
                            <div class="profile-picture">
-                               <img src="~/images/pfp1.jpg" alt="Student" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
+                               <img src="~/images/banner_photo_2.jpg" alt="Student" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
                            </div>
                            <div class="name-and-status">
                                <h3>Олександр Петренко</h3>
-                               <p>Student</p>
+                               <p>Студент</p>
                            </div>
                        </div>
 
@@ -121,12 +122,13 @@
                        <div class="comments">
                            <p><b>Чудове місце!</b> Якісна освіта, сучасні підходи та дружній колектив. Рекомендую!</p>
                        </div>
-                   </div>
+                   <!-- </div> -->
+                    </div>
                </div>
-           </div>
+            </div>
            @await Html.PartialAsync("Partials/_PartnerSlider", (List<it_department_site.Entities.Partner>)(ViewBag.Partners ?? new List<it_department_site.Entities.Partner>()))
        </div>
    </div>
-
+</div>
 
 </div>

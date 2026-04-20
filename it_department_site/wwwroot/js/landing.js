@@ -148,3 +148,34 @@ const sequenceObserver = new IntersectionObserver((entries, obs) => {
 if (reviewElements.length > 0) {
     sequenceObserver.observe(reviewElements[0]);
 }
+//----------------------------------------------
+// 4. слайдер для відгуків 
+//----------------------------------------------
+// let slideIndex = 1; // Починаємо з 1
+
+// function showSlides(n) {
+//     let slides = document.getElementsByClassName("reviews-field");
+//     let dots = document.getElementsByClassName("dot");
+    
+//     if (n > slides.length) { slideIndex = 1; }
+//     if (n < 1) { slideIndex = slides.length; }
+    
+//     for (let i = 0; i < slides.length; i++) {
+//         slides[i].classList.remove("active");
+//         dots[i].classList.remove("active");
+//     }
+    
+//     slides[slideIndex-1].classList.add("active");
+//     dots[slideIndex-1].classList.add("active");
+// }
+
+// function currentSlide(n) {
+//     showSlides(slideIndex = n);
+// }
+
+// setInterval(function() {
+//     slideIndex++;
+//     showSlides(slideIndex);
+// }, 5000);
+
+// showSlides(slideIndex);

@@ -74,11 +74,18 @@
 
 .f-action-link {
     padding: 15px 20px ;
-    justify-content: center;
+    justify-content: flex-start;
     color: white !important;
     font-weight: 700 ;
     font-size: 17px ;
     margin-top: 10px ;
+    gap: 15px
+}
+.f-link-wrap-icon {
+    width: 40px;         
+    height: 40px;
+    object-fit: contain;  
+    flex-shrink: 0;       
 }
 
 .f-insta-grid {
