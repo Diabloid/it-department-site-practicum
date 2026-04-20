@@ -278,40 +278,41 @@ h3 { margin: 0 0 15px 0 !important; font-size: 24px; }
 }
 
 /* ====================================================================== */
-/* 4. СТИЛІ REVIEWS (Відгуки) */
+/* 4. СТИЛІ REVIEWS (ВІДГУКИ)  */
 /* ====================================================================== */
 
+.reviews-area {
+    width: 100% !important;
+    margin-top: 50px !important;
+}
+
 .reviews-general-title {
-    display: block !important;
     margin-bottom: 25px !important;
-    margin-left: 10px !important;
+    padding-left: 15px !important;
 }
 
 .reviews-general-title h2 {
     font-size: 32px !important;
     color: #2D2F45 !important;
     font-weight: 700 !important;
-    margin: 0 !important;
-    position: static !important; /* Виводимо зі стану відносності */
 }
 
-/* ====================================================================== */
-/* 2. СКЛЯНА КАРТКА З ВІДГУКОМ */
-/* ====================================================================== */
 .reviews-field {
     position: relative !important;
+    display: none; 
+    width: 100% !important;
     background: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(25px) !important;
     -webkit-backdrop-filter: blur(25px) !important;
     border-radius: 40px !important;
-    padding: 50px !important;
+    padding: 50px 80px !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     box-shadow: 0 15px 50px rgba(118, 125, 207, 0.1) !important;
     overflow: hidden !important; 
     z-index: 1 !important;
+    box-sizing: border-box !important;
 }
 
-/* Шар для "вау" анімації (фон всередині картки) */
 .reviews-field::before {
     content: "" !important;
     position: absolute !important;
@@ -340,19 +341,42 @@ h3 { margin: 0 0 15px 0 !important; font-size: 24px; }
     100% { background-position: 0% 0%; }
 }
 
-/* ====================================================================== */
-/* 3. КОНТЕНТ КАРТКИ (Аватарка, ім'я, зірки) */
-/* ====================================================================== */
-.reviews-content {
+.reviews-field.active {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    animation: slideFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
+}
+
+.reviews-field.active .pfp-name-status,
+.reviews-field.active .rating-stars,
+.reviews-field.active .comments {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: contentAppear 0.5s ease-out forwards !important;
     position: relative !important;
-    z-index: 2 !important;
+    z-index: 10 !important;
+}
+
+.reviews-field.active .pfp-name-status { animation-delay: 0.2s !important; }
+.reviews-field.active .rating-stars { animation-delay: 0.4s !important; }
+.reviews-field.active .comments { animation-delay: 0.6s !important; }
+
+@keyframes contentAppear {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideFadeIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .pfp-name-status {
     display: flex !important;
+    flex-direction: row !important;
     align-items: center !important;
     gap: 20px !important;
-    margin-bottom: 25px !important;
+    margin-bottom: 20px !important;
 }
 
 .profile-picture {
@@ -360,53 +384,56 @@ h3 { margin: 0 0 15px 0 !important; font-size: 24px; }
     height: 70px !important;
     border-radius: 50% !important;
     overflow: hidden !important;
-    border: 3px solid rgba(255, 255, 255, 0.8) !important;
+    border: 3px solid white !important;
     flex-shrink: 0 !important;
 }
 
-.small-avatar {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    border-radius: 50% !important;
+.name-and-status {
+    display: flex !important;
+    flex-direction: column !important;
 }
 
-.name-and-status h3 { margin: 0 !important; color: #2D2F45 !important; }
-.name-and-status p { margin: 5px 0 0 0 !important; color: #575979 !important; }
-.comments p { font-size: 18px !important; line-height: 1.8 !important; color: #2D2F45 !important; margin: 0 !important; }
-.rating-stars { margin-bottom: 20px !important; }
-
-
-
-
-/* .reviews-field {
-    display: none; 
-}  */
-
-/* .reviews-field.active {
-    display: block; 
-    animation: fadeEffect 1s; 
+.name-and-status h3 { 
+    margin: 0 !important; 
+    color: #2D2F45 !important; 
+    font-size: 24px !important;
+    white-space: nowrap !important; 
 }
 
-@keyframes fadeEffect {
-    from {opacity: 0;}
-    to {opacity: 1;}
+.name-and-status p { 
+    margin: 2px 0 0 0 !important; 
+    color: #575979 !important; 
+    font-size: 16px !important;
 }
 
-.dot {
-    cursor: pointer;
-    height: 15px;
-    width: 15px;
-    margin: 0 5px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
+/* ТЕКСТ ВІДГУКУ */
+.comments p { 
+    font-size: 18px !important; 
+    line-height: 1.7 !important; 
+    color: #2D2F45 !important; 
+    text-align: left !important;
+    margin: 0 !important;
 }
 
-.dot.active {
-    background-color: #717171;
-} */
-
+/* КРАПКИ СЛАЙДЕРА */
+.slider-dots { 
+   text-align: center !important; 
+   margin-top: 30px !important; 
+}
+.dot { 
+   cursor: pointer; 
+   height: 12px; 
+   width: 12px; 
+   margin: 0 8px; 
+   background-color: #cbd0e6; 
+   border-radius: 50%; 
+   display: inline-block; 
+   transition: 0.3s; 
+}
+.dot.active { 
+   background-color: #575979; 
+   transform: scale(1.4); 
+}
 
 
 /* ====================================================================== */
