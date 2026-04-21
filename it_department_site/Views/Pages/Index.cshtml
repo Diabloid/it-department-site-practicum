@@ -50,7 +50,7 @@
 
                        <div class="news-grid-container">
                            <div class="main-news-block">
-                               <a href="/Posts/Details/@mainPost.Id">
+                               <a href="/posts/@(mainPost.Slug)-@(mainPost.Id)">
                                  <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default-news.jpg" : mainPost.Thumbnail)');"></div>
                                   <span class="news-date">
                                        <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
@@ -65,7 +65,7 @@
                                <div class="side-news-list">
                                        @foreach (var item in sidePosts)
                                    {
-                                       <a href="/Posts/Details/@item.Id">
+                                       <a href="/posts/@(item.Slug)-@(item.Id)">
                                            <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default-news.jpg" : item.Thumbnail)');"></div>
                                                <div class="news-info-container">
                                                    <small>
