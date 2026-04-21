@@ -1,0 +1,190 @@
+.footer {
+  width: 100%;
+  margin-top: 80px;
+  padding: 0 !important;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-top {
+  background: linear-gradient(0deg, rgba(53, 59, 122, 1) 19%, #ecedff 100%);
+  padding: 60px 0;
+  width: 100%;
+}
+
+.f-container {
+  max-width: 100%;
+  padding: 0 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.f-col {
+  flex: 1;
+  padding: 0 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.f-col h4 {
+  color: #575979;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.f-col p {
+  color: white;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.f-line {
+  width: 1px;
+  background: white;
+  height: auto;
+  opacity: 0.2;
+}
+
+.f-action-link,
+.insta-post-card,
+.f-soc-list a {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.f-action-link:hover,
+.insta-post-card:hover,
+.f-soc-list a:hover {
+  opacity: 1;
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.f-action-link {
+  padding: 15px 20px;
+  justify-content: flex-start;
+  color: white !important;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 10px;
+  gap: 15px;
+}
+.f-link-wrap-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.f-insta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.insta-post-card {
+  height: 110px;
+}
+
+.post-img-side {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.post-img-side img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.post-text-side {
+  padding: 10px 15px;
+  flex-grow: 1;
+}
+
+.post-desc {
+  margin: 0;
+  color: white;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.live-map-container {
+  width: 100%;
+  max-width: 400px;
+  height: 110px;
+  border: 2px solid white;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: auto;
+  display: block;
+  line-height: 0;
+  font-size: 0;
+  background: white;
+}
+
+.live-map-container iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.footer-bottom {
+  background: #353b7a;
+  padding: 25px 0;
+}
+
+.f-bottom-content {
+  max-width: 100%;
+  padding: 0 67px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.f-info-area {
+  align-self: flex-end;
+}
+
+.f-info-area p {
+  color: white;
+  margin: 0;
+  font-size: 15px;
+}
+
+.f-soc-list {
+  display: flex;
+  gap: 15px;
+}
+
+.f-soc-list a {
+  width: 50px;
+  height: 50px;
+  justify-content: center;
+}
+
+.f-soc-list a img {
+  width: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.f-logo-img {
+  height: 70px;
+  display: block;
+}
