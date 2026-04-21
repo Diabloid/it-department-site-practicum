@@ -2,16 +2,16 @@
 {
     public class AuthService : IAuthService
     {
-        private readonly IAuthRepository _repository;
+        private readonly IUserService _userService;
 
-        public AuthService(IAuthRepository repository)
+        public AuthService(IUserService userService)
         {
-            _repository = repository;
+            _userService = userService;
         }
 
         public async Task<User?> LoginAsync(string username, string password)
         {
-            var user = await _repository.FindUserByUsernameAsync(username);
+            var user = await _userService.FindUserByUsernameAsync(username);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 return user;
@@ -25,7 +25,7 @@
 
         public async Task<int> GetUserIdAsync(string username)
         {
-            return await _repository.GetUserIdAsync(username);
+            return await _userService.GetUserIdAsync(username);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using MySql.Data.MySqlClient;
+﻿using it_department_site.Data;
+using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IDbConnection>(sp =>
     new MySqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 // 4. Реєстрація Репозиторіїв та Сервісів (Всі Scoped)
 builder.Services.AddScoped<IPageRepository, PageRepository>();
 builder.Services.AddScoped<IPageService, PageService>();
@@ -25,7 +29,7 @@ builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
