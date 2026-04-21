@@ -94,20 +94,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="partners-area">
-                <div class="partners-general-title">
-                    <h2>Our Partners</h2>
-                </div>
-
-                <div class="partners-logos">
-                    <div class="partner-logo logo-1"></div>
-                    <div class="partner-logo logo-2"></div>
-                    <div class="partner-logo logo-3"></div>
-                    <div class="partner-logo logo-4"></div>
-                </div>
-            </div>
-
+            @await Html.PartialAsync("Partials/_PartnerSlider", (List<it_department_site.Entities.Partner>)(ViewBag.Partners ?? new List<it_department_site.Entities.Partner>()))
         </div>
     </div>
 

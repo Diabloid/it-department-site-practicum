@@ -2,14 +2,18 @@
     ViewData["Title"] = "Admin Panel";
 }
 
-<div class="container">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+<div class="container mt-5">
     <div class="row">
-        <!-- Сайдбар меню -->
         <div class="col-md-3">
             <div class="list-group">
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">📄 View All Pages</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MenuItems')">🧩 Manage Menu Items</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">👤 View All Users</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Partners')">
+                    🤝 Управління партнерами
+                </a>
                 <a class="list-group-item list-group-item-action" asp-action="LayoutSettings" asp-controller="Admin">
                     ⚙️ Редагувати хедер і футер
                 </a>
@@ -20,7 +24,6 @@
             </div>
         </div>
 
-        <!-- Контентна область -->
         <div class="col-md-9">
             <div id="contentArea">
                 <h4>Оберіть опцію</h4>
@@ -28,54 +31,101 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const section = new URLSearchParams(window.location.search).get("section");
-        if (section) {
-            loadContent(section); // наприклад: section=menuItems
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const section = new URLSearchParams(window.location.search).get("section");
+            if (section) {
+                loadContent(section);
+            }
+        });
+
+        function loadContent(option, params = '') {
+            const url = `/Admin/${encodeURIComponent(option)}${params}`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    document.getElementById("contentArea").innerHTML = html;
+
+                    // 2. Якщо завантажили партнерів - вмикаємо перетягування
+                    if (option === 'Partners') {
+                        initPartnersDragAndDrop();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading content:", error);
+                    document.getElementById("contentArea").innerHTML = "<div class='alert alert-danger'>Помилка завантаження вмісту.</div>";
+                });
         }
-    });
 
-    function loadContent(option, params = '') {
-        const url = `/Admin/${encodeURIComponent(option)}${params}`;
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(html => {
-                document.getElementById("contentArea").innerHTML = html;
-            })
-            .catch(error => {
-                console.error("Error loading content:", error);
-                document.getElementById("contentArea").innerHTML = "<div class='alert alert-danger'>Помилка завантаження вмісту.</div>";
-            });
-    }
+        // 3. Функція ініціалізації перетягування
+        function initPartnersDragAndDrop() {
+            var el = document.getElementById('partners-list');
 
-    // Приклад пагінації: loadPage(2) завантажить 2-гу сторінку
-    function loadPage(page) {
-        loadContent("Pages", `?page=${page}`);
-    }
+            // Перевіряємо, чи існує список і чи завантажилась бібліотека
+            if (el && typeof Sortable !== 'undefined') {
+                Sortable.create(el, {
+                    animation: 150,
+                    filter: '.ignore-sort', // Ігноруємо кнопку "+"
+                    onMove: function (evt) {
+                        // Забороняємо перетягувати за кнопку "+"
+                        return evt.related.className.indexOf('ignore-sort') === -1;
+                    },
+                    onEnd: function () {
+                        // Збираємо новий порядок
+                        var newOrder = [];
+                        var items = el.querySelectorAll('.admin-partner-card');
 
-    function resetForm() {
-      document.getElementById('menuModalLabel').textContent = 'Створення пункту меню';
-      document.getElementById('menuId').value = '';
-      document.getElementById('menuName').value = '';
-      document.getElementById('parentId').value = '';
-      document.getElementById('pageId').value = '';
-      document.getElementById('sortOrder').value = '';
-    }
+                        items.forEach(function(item) {
+                            newOrder.push(parseInt(item.getAttribute('data-id')));
+                        });
 
-    function fillForm(id, name, parentId, pageId, sortOrder) {
-      document.getElementById('menuModalLabel').textContent = 'Редагування пункту меню';
-      document.getElementById('menuId').value = id;
-      document.getElementById('menuName').value = name;
-      document.getElementById('parentId').value = parentId;
-      document.getElementById('pageId').value = pageId;
-      document.getElementById('sortOrder').value = sortOrder;
-    }
-</script>
+                        // Відправляємо на сервер
+                        fetch('/Admin/UpdatePartnerOrder', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(newOrder)
+                        }).then(res => {
+                            if (res.ok) console.log("Порядок збережено!");
+                        });
+                    }
+                });
+            }
+        }
+
+        // Приклад пагінації: loadPage(2) завантажить 2-гу сторінку
+        function loadPage(page) {
+            loadContent("Pages", `?page=${page}`);
+        }
+
+        function resetForm() {
+          const modalLabel = document.getElementById('menuModalLabel');
+          if(modalLabel) modalLabel.textContent = 'Створення пункту меню';
+
+          if(document.getElementById('menuId')) document.getElementById('menuId').value = '';
+          if(document.getElementById('menuName')) document.getElementById('menuName').value = '';
+          if(document.getElementById('parentId')) document.getElementById('parentId').value = '';
+          if(document.getElementById('pageId')) document.getElementById('pageId').value = '';
+          if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = '';
+        }
+
+        function fillForm(id, name, parentId, pageId, sortOrder) {
+          const modalLabel = document.getElementById('menuModalLabel');
+          if(modalLabel) modalLabel.textContent = 'Редагування пункту меню';
+
+          if(document.getElementById('menuId')) document.getElementById('menuId').value = id;
+          if(document.getElementById('menuName')) document.getElementById('menuName').value = name;
+          if(document.getElementById('parentId')) document.getElementById('parentId').value = parentId;
+          if(document.getElementById('pageId')) document.getElementById('pageId').value = pageId;
+          if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = sortOrder;
+        }
+    </script>
 }

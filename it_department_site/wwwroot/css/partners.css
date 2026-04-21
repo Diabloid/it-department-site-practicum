@@ -1,0 +1,155 @@
+/* ====================================================================== */
+/* 1. СТИЛІ PARTNERS (Партнери) */
+/* ====================================================================== */
+
+
+.partners-area {
+width: 100vw !important;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    padding: 40px 67px !important; 
+    box-sizing: border-box;
+}
+
+.partners-general-title {
+   text-align: center;
+    margin-bottom: 40px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
+}
+
+.partners-mask-wrapper {
+width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: -20px;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+
+.partners-track {
+    display: flex;
+    gap: 50px;
+    width: max-content;
+    animation: scroll-partners 30s linear infinite;
+    padding: 10px 0;
+}
+
+/* Сама анімація руху */
+@keyframes scroll-partners {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+    /* Рухаємо на половину (бо ми дублюємо контент) */
+}
+
+/* Зупинка при наведенні мишкою */
+.partners-track:hover {
+    animation-play-state: paused;
+}
+
+.partner-logo {
+    /* 1. Фіксований розмір картки */
+    width: 250px;
+    height: 150px;
+    /* 2. Дизайн картки (білий фон, тінь, кути) */
+    background: #fff;
+    border-radius: 15px; /* Трохи більш округлі кути */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #f0f0f0;
+    /* 3. ВАЖЛИВО: Відступи всередині, щоб картинка не прилипала до країв */
+    padding: 5px;
+    /* 4. Центрування картинки всередині */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+    .partner-logo a {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+    .partner-logo:hover {
+        transform: translateY(-5px); /* Картка підстрибує при наведенні */
+        box-shadow: 0 10px 25px rgba(93, 100, 173, 0.2); /* Тінь стає кольоровою */
+        border-color: #5D64AD;
+    }
+
+    /* 5. НАЛАШТУВАННЯ САМОЇ КАРТИНКИ */
+    .partner-logo img {
+        /* Картинка масштабується в межах картки */
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        /* 🔥 contain: Картинка буде повністю видима і не буде обрізатись */
+        object-fit: contain;
+        /* Робимо чорно-білим, щоб виглядало стильно (якщо хочеш) */
+        filter: grayscale(100%);
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+    .partner-logo:hover img {
+        /* При наведенні стає кольоровою */
+        filter: grayscale(0%);
+        opacity: 1;
+        transform: none;
+    }
+
+/* Кольори логотипів */
+.logo-1 {
+    background-color: #9999ff;
+}
+
+.logo-2 {
+    background-color: #7d7dc7;
+}
+
+.logo-3 {
+    background-color: #6363a0;
+}
+
+.logo-4 {
+    background-color: #44446c;
+}
+/* ====================================================================== */
+/* 2. СТИЛІ ЗАГОЛОВКІВ (Об'єднані) */
+/* ====================================================================== */
+
+.news-general-title h2,
+.reviews-general-title h2,
+.partners-general-title h2 {
+    color: #575979;
+    margin: 0;
+    padding: 0;
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.partners-general-title h2 {
+    font-size: 32px;
+    margin-bottom: 25px;
+}
+
+.name-and-status h3 {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+

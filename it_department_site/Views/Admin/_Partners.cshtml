@@ -1,0 +1,68 @@
+﻿@model List<it_department_site.Entities.Partner>
+
+<div class="admin-partners-panel">
+    <h4 class="admin-partners-title">Управління партнерами</h4>
+
+    <div class="admin-partners-container" id="partners-list">
+
+        @if (Model != null)
+        {
+            foreach (var partner in Model)
+            {
+                <div class="admin-partner-card" data-id="@partner.Id">
+
+                    <img src="@partner.LogoFileName" alt="@partner.Name" />
+
+                    <form asp-action="DeletePartner" asp-controller="Admin" method="post">
+                        <input type="hidden" name="id" value="@partner.Id" />
+
+                        <button type="submit" class="btn-delete-partner" title="Видалити">
+                            &times;
+                        </button>
+                    </form>
+                </div>
+            }
+        }
+
+        <button type="button"
+                id="showPartnerFormBtn"
+                class="add-partner-card ignore-sort add-partner-trigger"
+                title="Додати нового партнера"
+                onclick="document.getElementById('partnerCreateBox').style.display='block'; this.style.display='none';">
+            +
+        </button>
+
+    </div>
+
+    <p class="text-muted small mt-2">
+        Перетягуйте логотипи, щоб змінити порядок відображення.
+    </p>
+
+    <div id="partnerCreateBox" class="partner-create-box">
+        <div class="partner-create-title">Додати нового партнера</div>
+        <form id="uploadPartnerForm"
+              asp-action="UploadPartner"
+              asp-controller="Admin"
+              method="post"
+              enctype="multipart/form-data"
+              class="ignore-sort">
+            <div class="partner-form-row">
+                <input type="text" name="name" class="partner-input" placeholder="Назва партнера" />
+            </div>
+            <div class="partner-form-row">
+                <input type="url" name="link" class="partner-input" placeholder="Посилання (https://...)" />
+            </div>
+            <div class="partner-form-row">
+                <input type="file" name="file" class="partner-file-input" accept="image/*" required />
+            </div>
+            <div class="partner-actions">
+                <button type="submit" class="partner-btn partner-btn-primary">Зберегти</button>
+                <button type="button"
+                        class="partner-btn partner-btn-secondary"
+                        onclick="document.getElementById('partnerCreateBox').style.display='none'; document.getElementById('showPartnerFormBtn').style.display='flex'; document.getElementById('uploadPartnerForm').reset();">
+                    Скасувати
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
