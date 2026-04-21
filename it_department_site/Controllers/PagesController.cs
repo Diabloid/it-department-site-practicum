@@ -6,19 +6,25 @@
         private readonly ICommentService _commentService;
         private readonly ILikeService _likeService;
         private readonly ICurrentUserService _currentUser;
+        private readonly IPartnerService _partnerService;
 
-        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService, ICurrentUserService currentUser)
+        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService, ICurrentUserService currentUser, IPartnerService partnerService)
         {
             _pageService = pageService;
             _commentService = commentService;
             _likeService = likeService;
             _currentUser = currentUser;
+            _partnerService = partnerService;
         }
 
         public async Task<IActionResult> Index()
         {
+            var partners = await _partnerService.GetAllPartnersAsync();
+
+            ViewBag.Partners = partners.ToList();
             var pages = await _pageService.GetAllPagesAsync();
             var dtoList = pages.Select(PageMapper.ToDto).ToList();
+
             return View(dtoList);
         }
 

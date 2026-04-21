@@ -108,10 +108,10 @@ if (reviewsTitle) {
 }
 
 // partners-area (з'являється нізвідки)
-const partnersArea = document.querySelector('.partners-area');
-if (partnersArea) {
+const partnersAreas = document.querySelectorAll('.partners-area');
+partnersAreas.forEach((partnersArea) => {
     observer.observe(partnersArea);
-}
+});
 
 
 // -----------------------------------

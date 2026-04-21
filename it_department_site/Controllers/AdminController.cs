@@ -10,19 +10,21 @@ namespace it_department_site.Controllers
         private readonly ILogger<AdminController> _logger;
         private readonly ISiteSettingsService _settingsService;
         private readonly IDbConnection _db; // ✅ Замість Dbhelper
-
+        private readonly IPartnerService _partnerService;
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
             IDbConnection db, // ✅ Інжектимо з'єднання
             ILogger<AdminController> logger,
-            ISiteSettingsService settingsService)
+            ISiteSettingsService settingsService,
+            IPartnerService partnerService)
         {
             _pageService = pageService;
             _menuService = menuService;
             _db = db;
             _logger = logger;
             _settingsService = settingsService;
+            _partnerService = partnerService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -228,8 +230,7 @@ namespace it_department_site.Controllers
             await _menuService.DeleteMenuItemAsync(id);
             return RedirectToAction("Index", new { section = "menuItems" });
         }
-
-        // UploadImage метод залишаємо (він вже async у твоєму коді був, просто скопіюй якщо треба, або лиши як є)
+ 
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -240,6 +241,32 @@ namespace it_department_site.Controllers
             var filePath = Path.Combine(uploadsPath, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create)) { await file.CopyToAsync(stream); }
             return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
+        }
+
+        public async Task<IActionResult> Partners()
+        {
+            var partners = await _partnerService.GetAllPartnersAsync();
+            return PartialView("_Partners", partners.ToList());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
+        {
+            await _partnerService.AddPartnerAsync(file, name, link);
+            return RedirectToAction("Index", new { section = "Partners" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePartner(int id)
+        {
+            await _partnerService.DeletePartnerAsync(id);
+            return RedirectToAction("Index", new { section = "Partners" });
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdatePartnerOrder([FromBody] List<int> newOrder)
+        {
+            await _partnerService.UpdatePartnerOrderAsync(newOrder);
+            return Ok();
         }
     }
 }
