@@ -11,13 +11,16 @@ namespace it_department_site.Controllers
         private readonly ISiteSettingsService _settingsService;
         private readonly IDbConnection _db; // ✅ Замість Dbhelper
         private readonly IPartnerService _partnerService;
+        private readonly IPostRepository _postRepository;
+
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
             IDbConnection db, // ✅ Інжектимо з'єднання
             ILogger<AdminController> logger,
             ISiteSettingsService settingsService,
-            IPartnerService partnerService)
+            IPartnerService partnerService,
+            IPostRepository postRepository)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -25,6 +28,7 @@ namespace it_department_site.Controllers
             _logger = logger;
             _settingsService = settingsService;
             _partnerService = partnerService;
+            _postRepository = postRepository;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -39,7 +43,7 @@ namespace it_department_site.Controllers
             if (string.IsNullOrWhiteSpace(model.SiteTitle))
             {
                 TempData["Error"] = "Назва сайту не може бути порожньою!";
-                return RedirectToAction("LayoutSettings");
+                return RedirectToAction(nameof(LayoutSettings));
             }
 
             var current = await _settingsService.GetAsync();
@@ -49,7 +53,7 @@ namespace it_department_site.Controllers
             await _settingsService.SaveAsync(current);
 
             TempData["Success"] = "Зміни збережено!";
-            return RedirectToAction("LayoutSettings");
+            return RedirectToAction(nameof(LayoutSettings));
         }
 
         public IActionResult Index()
@@ -59,12 +63,6 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> Users()
         {
-            // ✅ Dapper замість dbHelper.ExecuteQuery
-            // Оскільки View очікує DataTable (старий код), краще поки передати список,
-            // АЛЕ щоб не ламати View "_UsersTable", зробимо трюк з IDataReader або змінимо View.
-            // Найпростіше: отримати список і передати його, але View "_UsersTable" працює з DataTable.
-            // Щоб не переписувати View, зробимо Load:
-
             var reader = await _db.ExecuteReaderAsync("SELECT * FROM users ORDER BY id");
             var dt = new DataTable();
             dt.Load(reader);
@@ -99,34 +97,29 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> PageEditor(int? id)
         {
-            PageEditorViewModel model;
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
 
             if (id == null)
             {
                 var layoutType = HttpContext.Session.GetString("SelectedLayoutType") ?? "no-sidebar";
-                model = new PageEditorViewModel { LayoutType = layoutType };
+                return View(new PageEditorViewModel { LayoutType = layoutType });
             }
-            else
+
+            var page = await _pageService.GetPageByIdAsync(id.Value);
+            if (page == null) return NotFound();
+
+            return View(new PageEditorViewModel
             {
-                var page = await _pageService.GetPageByIdAsync(id.Value);
-                if (page == null) return NotFound();
-
-                model = new PageEditorViewModel
-                {
-                    Id = page.Id,
-                    Title = page.Title,
-                    Slug = page.Slug,
-                    Status = page.Status.ToString(),
-                    LayoutType = page.LayoutType,
-                    ContentSections = page.Content,
-                    CreatedAt = page.CreatedAt,
-                    UpdatedAt = page.UpdatedAt,
-                    AllowComments = page.AllowComments
-                };
-            }
-
-            return View(model);
+                Id = page.Id,
+                Title = page.Title,
+                Slug = page.Slug,
+                Status = page.Status.ToString(),
+                LayoutType = page.LayoutType,
+                ContentSections = page.Content,
+                CreatedAt = page.CreatedAt,
+                UpdatedAt = page.UpdatedAt,
+                AllowComments = page.AllowComments
+            });
         }
 
         [HttpPost]
@@ -141,15 +134,12 @@ namespace it_department_site.Controllers
                 Status = Enum.TryParse(model.Status, out PageStatus status) ? status : PageStatus.Draft,
                 LayoutType = model.LayoutType,
                 AllowComments = model.AllowComments,
-                CreatedAt = (DateTime)(model.CreatedAt != default ? model.CreatedAt : DateTime.Now),
+                CreatedAt = model.CreatedAt ?? DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
 
             if (model.Id == null)
-            {
-                int newPageId = await _pageService.CreatePageAsync(page);
-                page.Id = newPageId;
-            }
+                page.Id = await _pageService.CreatePageAsync(page);
             else
             {
                 await _pageService.UpdatePageAsync(page);
@@ -160,14 +150,14 @@ namespace it_department_site.Controllers
                 await _menuService.LinkPageToMenuAsync(page.Id, model.ParentMenuItemId, page.Title);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         public async Task<IActionResult> DeletePage(int id)
         {
             await _pageService.DeletePageAsync(id);
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -178,6 +168,7 @@ namespace it_department_site.Controllers
                 HttpContext.Session.SetString("SelectedLayoutType", model.LayoutType);
                 return Ok();
             }
+
             return BadRequest();
         }
 
@@ -200,7 +191,8 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> CreateMenuItem()
         {
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
+            var pages = await _pageService.GetAllPagesAsync();
+            ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
             return View("EditMenuItem", new MenuItem());
         }
@@ -208,7 +200,8 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> EditMenuItem(int id)
         {
             var item = await _menuService.GetMenuItemByIdAsync(id);
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
+            var pages = await _pageService.GetAllPagesAsync();
+            ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
             return View(item);
         }
@@ -221,7 +214,7 @@ namespace it_department_site.Controllers
             else
                 await _menuService.UpdateMenuItemAsync(item);
 
-            return RedirectToAction("Index", new { section = "menuItems" });
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -230,7 +223,7 @@ namespace it_department_site.Controllers
             await _menuService.DeleteMenuItemAsync(id);
             return RedirectToAction("Index", new { section = "menuItems" });
         }
- 
+
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
@@ -239,7 +232,11 @@ namespace it_department_site.Controllers
             if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
             var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(uploadsPath, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create)) { await file.CopyToAsync(stream); }
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
             return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
         }
 
@@ -262,11 +259,114 @@ namespace it_department_site.Controllers
             await _partnerService.DeletePartnerAsync(id);
             return RedirectToAction("Index", new { section = "Partners" });
         }
+
         [HttpPost]
         public async Task<IActionResult> UpdatePartnerOrder([FromBody] List<int> newOrder)
         {
             await _partnerService.UpdatePartnerOrderAsync(newOrder);
             return Ok();
+        }
+
+        public async Task<IActionResult> Posts()
+        {
+            var posts = await _postRepository.GetAllAsync();
+            return PartialView("_PostsTable", posts);
+        }
+
+        public IActionResult CreatePost()
+        {
+            return PartialView("_CreatePost", new Post());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreatePost(Post post, IFormFile? thumbnailFile)
+        {
+            ModelState.Remove("Author");
+            ModelState.Remove("Thumbnail"); // Видаляємо, бо заповнимо вручну
+
+            if (!ModelState.IsValid) return PartialView("_CreatePost", post);
+
+            try
+            {
+                if (thumbnailFile != null)
+                {
+                    post.Thumbnail = await SaveImage(thumbnailFile);
+                }
+
+                post.AuthorId = 1;
+                post.CreatedAt = DateTime.UtcNow;
+                post.UpdatedAt = DateTime.UtcNow;
+
+                await _postRepository.CreateAsync(post);
+                return await Posts();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Помилка при створенні");
+                return StatusCode(500, "Помилка сервера");
+            }
+        }
+
+        public async Task<IActionResult> EditPost(int id)
+        {
+            var post = await _postRepository.GetByIdAsync(id);
+            if (post == null) return NotFound();
+
+            return PartialView("_EditPost", post);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPost(Post post, IFormFile? thumbnailFile)
+        {
+            ModelState.Remove("Author");
+            ModelState.Remove("Thumbnail");
+
+            if (!ModelState.IsValid) return PartialView("_EditPost", post);
+
+            try
+            {
+                if (thumbnailFile != null)
+                {
+                    // Якщо завантажили нове фото — зберігаємо його
+                    post.Thumbnail = await SaveImage(thumbnailFile);
+                }
+
+                post.UpdatedAt = DateTime.UtcNow;
+                await _postRepository.UpdateAsync(post);
+                return await Posts();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Помилка при редагуванні");
+                return StatusCode(500, "Помилка сервера");
+            }
+        }
+
+        private async Task<string> SaveImage(IFormFile file)
+        {
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "posts");
+
+            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+
+            var filePath = Path.Combine(rootPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return "/uploads/posts/" + fileName;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            await _postRepository.DeleteAsync(id);
+
+            return await Posts(); // 🔥 Оновлюємо таблицю
         }
     }
 }

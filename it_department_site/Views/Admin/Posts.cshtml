@@ -1,0 +1,25 @@
+@model IEnumerable<it_department_site.Entities.Post>
+
+<h2>Новини</h2>
+
+<a href="/Admin/CreatePost">+ Додати публікацію</a>
+
+<table>
+    <tr>
+        <th>Заголовок</th>
+        <th>Дата</th>
+        <th></th>
+    </tr>
+
+@foreach (var post in Model)
+{
+    <tr>
+        <td>@post.Title</td>
+        <td>@post.CreatedAt.ToString("dd.MM.yyyy")</td>
+        <td>
+            <a href="/Admin/EditPost/@post.Id">Редагувати</a> |
+            <a href="/Admin/DeletePost/@post.Id">Видалити</a>
+        </td>
+    </tr>
+}
+</table>

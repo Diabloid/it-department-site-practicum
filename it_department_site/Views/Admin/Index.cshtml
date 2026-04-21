@@ -11,9 +11,8 @@
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">📄 View All Pages</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MenuItems')">🧩 Manage Menu Items</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">👤 View All Users</a>
-                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Partners')">
-                    🤝 Управління партнерами
-                </a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Posts')">📰 Публікації</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Partners')">🤝 Управління партнерами</a>
                 <a class="list-group-item list-group-item-action" asp-action="LayoutSettings" asp-controller="Admin">
                     ⚙️ Редагувати хедер і футер
                 </a>
@@ -100,6 +99,19 @@
                 });
             }
         }
+
+    function submitForm(form) {
+        event.preventDefault();
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById("contentArea").innerHTML = html;
+        });
+        return false;
+    }
 
         // Приклад пагінації: loadPage(2) завантажить 2-гу сторінку
         function loadPage(page) {

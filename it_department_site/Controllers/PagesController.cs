@@ -7,24 +7,30 @@
         private readonly ILikeService _likeService;
         private readonly ICurrentUserService _currentUser;
         private readonly IPartnerService _partnerService;
+        private readonly IPostRepository _postRepository;
 
-        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService, ICurrentUserService currentUser, IPartnerService partnerService)
+        public PagesController(IPageService pageService, ICommentService commentService, ILikeService likeService,
+            ICurrentUserService currentUser, IPartnerService partnerService, IPostRepository postRepository)
         {
             _pageService = pageService;
             _commentService = commentService;
             _likeService = likeService;
             _currentUser = currentUser;
             _partnerService = partnerService;
+            _postRepository = postRepository;
         }
 
         public async Task<IActionResult> Index()
         {
             var partners = await _partnerService.GetAllPartnersAsync();
-
             ViewBag.Partners = partners.ToList();
+
+            // 2. --- ЛОГІКА НОВИН ---
+            ViewBag.News = await _postRepository.GetLatestAsync(4);
+
+            // 3. --- ЛОГІКА СТОРІНОК ---
             var pages = await _pageService.GetAllPagesAsync();
             var dtoList = pages.Select(PageMapper.ToDto).ToList();
-
             return View(dtoList);
         }
 
@@ -48,13 +54,11 @@
             ViewBag.Comments = await _commentService.GetCommentsAsync(page.Id);
             ViewBag.Likes = await _likeService.GetLikeCountAsync(page.Id);
             ViewBag.Views = await _pageService.GetViewsAsync(page.Id);
-
             var dto = PageMapper.ToDto(page);
             return View(dto);
         }
 
 
-        // UploadImage залишається таким самим (він вже був async)
         [HttpPost]
         [Route("ckeditor/upload")]
         public async Task<IActionResult> UploadImage(IFormFile upload)
@@ -76,6 +80,7 @@
 
                 return Json(new { uploaded = true, url = fileUrl });
             }
+
             return Json(new { uploaded = false, error = new { message = "Error" } });
         }
     }

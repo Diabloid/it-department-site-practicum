@@ -49,6 +49,9 @@ builder.Services.AddScoped<EncryptionService>();
 builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
