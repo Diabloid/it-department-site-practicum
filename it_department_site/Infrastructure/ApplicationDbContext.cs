@@ -11,30 +11,5 @@ namespace it_department_site.Data
             : base(options)
         {
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.ToTable("users");
-
-                entity.HasKey(u => u.Id);
-
-                entity.Property(u => u.Id)
-                    .HasColumnName("id");
-
-                entity.Property(u => u.Username)
-                    .HasColumnName("username");
-
-                entity.Property(u => u.Email)
-                    .HasColumnName("email");
-
-                entity.Property(u => u.Password)
-                    .HasColumnName("_password");
-
-                entity.Property(u => u.CreatedAt)
-                    .HasColumnName("created_at");
-            });
-        }
     }
 }
