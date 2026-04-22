@@ -148,3 +148,45 @@ const sequenceObserver = new IntersectionObserver((entries, obs) => {
 if (reviewElements.length > 0) {
     sequenceObserver.observe(reviewElements[0]);
 }
+//----------------------------------------------
+// 4. слайдер для відгуків 
+//----------------------------------------------
+let slideIndex = 1;
+
+window.currentSlide = function(n) {
+    showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+    let slides = document.getElementsByClassName("reviews-field");
+    let dots = document.getElementsByClassName("dot");
+
+    if (slides.length === 0) {
+        console.error("Бро, скрипт не знайшов блоки з класом .reviews-field!");
+        return;
+    }
+
+    if (n > slides.length) slideIndex = 1;
+    if (n < 1) slideIndex = slides.length;
+
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].classList.remove("active");
+        slides[i].style.display = "none"; 
+    }
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].classList.remove("active");
+    }
+
+    slides[slideIndex - 1].classList.add("active");
+    slides[slideIndex - 1].style.display = "flex";
+    dots[slideIndex - 1].classList.add("active");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    showSlides(slideIndex);
+    
+    setInterval(() => {
+        slideIndex++;
+        showSlides(slideIndex);
+    }, 5000);
+});
