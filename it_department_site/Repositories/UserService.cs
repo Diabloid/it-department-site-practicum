@@ -1,7 +1,6 @@
 ﻿namespace it_department_site.Repositories;
 
-using it_department_site.Data;
-using it_department_site.Repositories.Interfaces;
+using it_department_site.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 public class UserService : IUserService

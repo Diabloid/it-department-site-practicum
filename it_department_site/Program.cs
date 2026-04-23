@@ -1,4 +1,4 @@
-﻿using it_department_site.Data;
+﻿using it_department_site.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
