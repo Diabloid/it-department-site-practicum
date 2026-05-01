@@ -3,7 +3,7 @@
 -- Host: localhost    Database: website
 -- ------------------------------------------------------
 -- Server version	8.0.39
-
+use website;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -277,7 +277,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','admin@example.com','123','2025-02-13 19:26:22'),(2,'user2','user2@example.com','321','2025-02-13 19:26:22'),(3,'user1','jimmykeker@gmail.com','111','2025-06-16 13:51:00'),(4,'kosmach06','kosmach06@gmail.com','vlad2006','2025-06-16 20:19:42'),(5,'user3','user3@example.com','123','2025-06-20 00:55:54'),(6,'user4','user4@example.com','123','2025-06-20 01:07:15');
+INSERT INTO `users` VALUES (1,'admin','admin@example.com','$2a$11$Fcmgk/lA.JA1k8A8BPtjVu7bKcy/l/33gcQDbI3xH39T/qFtvm43e','2025-02-13 19:26:22'),(2,'user2','user2@example.com','321','2025-02-13 19:26:22'),(3,'user1','jimmykeker@gmail.com','111','2025-06-16 13:51:00'),(4,'kosmach06','kosmach06@gmail.com','vlad2006','2025-06-16 20:19:42'),(5,'user3','user3@example.com','123','2025-06-20 00:55:54'),(6,'user4','user4@example.com','123','2025-06-20 01:07:15');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
