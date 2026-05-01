@@ -1,8 +1,8 @@
 ﻿namespace it_department_site.Repositories.Interfaces
 {
-    public interface IAuthRepository
+    public interface IUserService
     {
         Task<User?> FindUserByUsernameAsync(string username);
-        Task<int> GetUserIdAsync(string username);
+       
     }
 }
