@@ -17,6 +17,4 @@ public class UserService : IUserService
         return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    
-
 }

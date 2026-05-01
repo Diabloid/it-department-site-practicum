@@ -2,7 +2,6 @@
 {
     public interface IUserService
     {
-
         Task<User?> FindUserByUsernameAsync(string username);
        
     }
