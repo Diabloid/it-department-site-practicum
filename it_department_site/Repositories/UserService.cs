@@ -17,10 +17,6 @@ public class UserService : IUserService
         return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    public async Task<int> GetUserIdAsync(string username)
-    {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        return user?.Id ?? 0;
-    }
+    
 
 }
