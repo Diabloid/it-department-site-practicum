@@ -252,24 +252,6 @@ INSERT INTO `site_settings` VALUES (1,'<header>     <nav class=\"navbar navbar-e
 /*!40000 ALTER TABLE `site_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `users`
@@ -301,3 +283,19 @@ VALUES
 (13, 'SoftServe', '/images/partners/36af068e-18f8-43ac-9a1d-a44d3341b042.png', 4, 'https://www.softserveinc.com/uk-ua'),
 (14, 'Chernivtsi IT Cluster', '/images/partners/3bdbc070-8131-461a-88bc-b9958bb395c7.png', 5, 'https://www.it-cluster.cv.ua/'),
 (15, 'Datawiz.io', '/images/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
+
+CREATE TABLE posts (
+  id int NOT NULL AUTO_INCREMENT,
+  author_id int DEFAULT NULL,
+  page_id int DEFAULT NULL,
+  slug varchar(150) NOT NULL,
+  title varchar(200) NOT NULL,
+  excerpt varchar(300) NOT NULL,
+  thumbnail text,
+  created_at datetime DEFAULT CURRENT_TIMESTAMP,
+  updated_at datetime DEFAULT CURRENT_TIMESTAMP,
+  content text,
+  PRIMARY KEY (id),
+  KEY posts_user_id_fk (author_id),
+  CONSTRAINT posts_user_id_fk FOREIGN KEY (author_id) REFERENCES users (id)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -12,7 +12,7 @@
             id, 
             title, 
             slug, 
-            status_ as Status, 
+            status as Status, 
             content as ContentJson, 
             layout_type as LayoutType, 
             created_at as CreatedAt, 
@@ -43,7 +43,7 @@
     {
         var sql = @"
             INSERT INTO pages 
-            (title, slug, status_, content, layout_type, created_at, updated_at, allow_comments, Views)
+            (title, slug, status, content, layout_type, created_at, updated_at, allow_comments, Views)
             VALUES 
             (@Title, @Slug, @Status, @ContentJson, @LayoutType, NOW(), NOW(), @AllowComments, 0);
             SELECT LAST_INSERT_ID();";
@@ -57,7 +57,7 @@
             UPDATE pages SET 
                 title = @Title,
                 slug = @Slug,
-                status_ = @Status,
+                status = @Status,
                 content = @ContentJson,
                 layout_type = @LayoutType,
                 allow_comments = @AllowComments,

@@ -12,6 +12,7 @@ namespace it_department_site.Controllers
         private readonly IDbConnection _db; // ✅ Замість Dbhelper
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
+        private readonly IGraduateService _graduateService;
 
         public AdminController(
             IPageService pageService,
@@ -20,7 +21,8 @@ namespace it_department_site.Controllers
             ILogger<AdminController> logger,
             ISiteSettingsService settingsService,
             IPartnerService partnerService,
-            IPostRepository postRepository)
+            IPostRepository postRepository,
+            IGraduateService graduateService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -29,6 +31,7 @@ namespace it_department_site.Controllers
             _settingsService = settingsService;
             _partnerService = partnerService;
             _postRepository = postRepository;
+            _graduateService = graduateService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -60,7 +63,71 @@ namespace it_department_site.Controllers
         {
             return View();
         }
+        public IActionResult Teacher()
+        {
+            return PartialView("_TeacherTable");
+        }
+        public IActionResult CreateGraduate()
+        {
+            return PartialView("_CreateGraduate", new Graduate());
+        }
+        public async Task<IActionResult> Graduates()
+        {
+            var graduates = await _graduateService.GetAllAsync();
+            return PartialView("_GraduatesTable", graduates);
+        }
+        public async Task<IActionResult> EditGraduate(int id)
+        {
+            var graduate = await _graduateService.GetByIdAsync(id);
+            if (graduate == null) return NotFound();
+            return PartialView("_EditGraduate", graduate);
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateGraduate(Graduate graduate, IFormFile? photoFile)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid) return PartialView("_CreateGraduate", graduate);
+
+            if (photoFile != null)
+                graduate.PhotoUrl = await SaveGraduateImage(photoFile);
+
+            await _graduateService.CreateAsync(graduate);
+            return await Graduates();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditGraduate(Graduate graduate, IFormFile? photoFile)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid) return PartialView("_EditGraduate", graduate);
+
+            if (photoFile != null)
+                graduate.PhotoUrl = await SaveGraduateImage(photoFile);
+
+            await _graduateService.UpdateAsync(graduate.Id, graduate);
+            return await Graduates();
+        }
+
+
+        public async Task<IActionResult> DeleteGraduate(int id)
+        {
+            await _graduateService.DeleteAsync(id);
+            return await Graduates();
+        }
+
+        private async Task<string> SaveGraduateImage(IFormFile file)
+        {
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "graduates");
+            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+            var filePath = Path.Combine(rootPath, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+                await file.CopyToAsync(stream);
+            return "/uploads/graduates/" + fileName;
+        }
         public async Task<IActionResult> Users()
         {
             var reader = await _db.ExecuteReaderAsync("SELECT * FROM users ORDER BY id");
