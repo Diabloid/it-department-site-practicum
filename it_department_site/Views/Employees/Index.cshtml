@@ -1,0 +1,41 @@
+@model IEnumerable<it_department_site.ViewModels.EmployeeInfoViewModel>
+
+@{
+    ViewData["Title"] = "Співробітники";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
+}
+
+<section class="employees-page container py-5">
+    <div class="employees-hero mb-5">
+        <p class="employees-kicker mb-2">Спеціальність інженерії програмного забезпечення</p>
+        <h1 class="employees-title mb-2">Співробітники спеціальності</h1>
+        <p class="employees-subtitle mb-0">
+            Профіль викладачів та фахівців, які забезпечують навчальний процес, наукову роботу та розвиток ІТ-напряму.
+        </p>
+    </div>
+
+    <div class="employees-grid">
+        @foreach (var employee in Model)
+{
+    <article class="employee-card">
+        <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id" class="employee-card-link">
+            <div class="employee-photo-wrap">
+                <img src="@employee.PhotoUrl" alt="@employee.LastName" class="employee-photo" />
+            </div>
+            
+            <div class="employee-body">
+                <h2 class="employee-name">
+                    <span class="last-name">@employee.LastName</span>
+                    <span class="first-patronymic">@employee.FirstName @employee.PatronymicName</span>
+                </h2>
+                
+                <p class="employee-meta">@employee.Specialization</p>
+            </div>
+        </a>
+    </article>
+}
+    </div>
+</section>
