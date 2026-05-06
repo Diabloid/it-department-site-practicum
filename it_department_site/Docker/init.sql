@@ -174,7 +174,7 @@ CREATE TABLE `pages` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `slug` varchar(255) NOT NULL,
-  `status_` enum('Draft','Published') NOT NULL DEFAULT 'Draft',
+  `status` enum('Draft','Published') NOT NULL DEFAULT 'Draft',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `layout_type` varchar(50) NOT NULL DEFAULT 'no-sidebar',

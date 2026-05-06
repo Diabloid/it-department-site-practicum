@@ -31,7 +31,7 @@ public class GraduateService : IGraduateService
 
     public async Task UpdateAsync(int id, Graduate graduate)
 {
-    var existing = await _context.Graduates.FirstOrDefaultAsync(g => g.Id == id);
+    var existing = GetByIdAsync(id).Result;
     if (existing == null) return;
 
     existing.FirstName = graduate.FirstName;
@@ -50,7 +50,7 @@ public class GraduateService : IGraduateService
 
     public async Task DeleteAsync(int id)
     {
-        var existing = await _context.Graduates.FirstOrDefaultAsync(g => g.Id == id);
+        var existing = GetByIdAsync(id).Result;
         if (existing == null) return;
 
         _context.Graduates.Remove(existing);

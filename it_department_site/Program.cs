@@ -33,7 +33,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGraduateService, GraduateService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
 builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 

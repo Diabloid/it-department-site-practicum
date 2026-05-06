@@ -63,19 +63,18 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-        public IActionResult Teacher()
-        {
-            return PartialView("_TeacherTable");
-        }
+        
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
         }
+
         public async Task<IActionResult> Graduates()
         {
             var graduates = await _graduateService.GetAllAsync();
             return PartialView("_GraduatesTable", graduates);
         }
+
         public async Task<IActionResult> EditGraduate(int id)
         {
             var graduate = await _graduateService.GetByIdAsync(id);
@@ -91,7 +90,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_CreateGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveGraduateImage(photoFile);
+                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
 
             await _graduateService.CreateAsync(graduate);
             return await Graduates();
@@ -105,12 +104,11 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_EditGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveGraduateImage(photoFile);
+                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
 
             await _graduateService.UpdateAsync(graduate.Id, graduate);
             return await Graduates();
         }
-
 
         public async Task<IActionResult> DeleteGraduate(int id)
         {
@@ -118,16 +116,6 @@ namespace it_department_site.Controllers
             return await Graduates();
         }
 
-        private async Task<string> SaveGraduateImage(IFormFile file)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "graduates");
-            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
-            var filePath = Path.Combine(rootPath, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-                await file.CopyToAsync(stream);
-            return "/uploads/graduates/" + fileName;
-        }
         public async Task<IActionResult> Users()
         {
             var reader = await _db.ExecuteReaderAsync("SELECT * FROM users ORDER BY id");
@@ -358,7 +346,7 @@ namespace it_department_site.Controllers
             {
                 if (thumbnailFile != null)
                 {
-                    post.Thumbnail = await SaveImage(thumbnailFile);
+                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
                 }
 
                 post.AuthorId = 1;
@@ -398,7 +386,7 @@ namespace it_department_site.Controllers
                 if (thumbnailFile != null)
                 {
                     // Якщо завантажили нове фото — зберігаємо його
-                    post.Thumbnail = await SaveImage(thumbnailFile);
+                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
                 }
 
                 post.UpdatedAt = DateTime.UtcNow;
@@ -412,10 +400,10 @@ namespace it_department_site.Controllers
             }
         }
 
-        private async Task<string> SaveImage(IFormFile file)
+        private async Task<string> SaveImage(IFormFile file, string folderName)
         {
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "posts");
+            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
 
             if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
 
@@ -425,7 +413,7 @@ namespace it_department_site.Controllers
                 await file.CopyToAsync(stream);
             }
 
-            return "/uploads/posts/" + fileName;
+            return $"/uploads/{folderName}/{fileName}";
         }
 
         [HttpPost]
