@@ -62,6 +62,9 @@
 
                             @Html.Raw(menuHtml)
 
+                            @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
+                                <li><a href='/Admin/Index'>Admin Panel</a></li>
+                            }
                            
                         </ul>
                     </div>
