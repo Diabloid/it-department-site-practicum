@@ -15,36 +15,9 @@ use website;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---
--- Table structure for table `comments`
---
 
-DROP TABLE IF EXISTS `comments`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `comments` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `page_id` int DEFAULT NULL,
-  `content` text,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `page_id` (`page_id`),
-  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`page_id`) REFERENCES `pages` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `comments`
---
 
-LOCK TABLES `comments` WRITE;
-/*!40000 ALTER TABLE `comments` DISABLE KEYS */;
-INSERT INTO `comments` VALUES (7,5,2,'<p>крута сторінка!!!</p>','2025-06-20 03:56:15'),(8,6,1,'<p>це також супер крута сторінка!!!</p>','2025-06-20 04:07:35');
-/*!40000 ALTER TABLE `comments` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `favorites`
