@@ -11,8 +11,8 @@ using it_department_site.Infrastructure;
 namespace it_department_site.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260501081354_AddGraduates")]
-    partial class AddGraduates
+    [Migration("20260511054333_ChangeGraduateTableName")]
+    partial class ChangeGraduateTableName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,7 +67,7 @@ namespace it_department_site.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Graduates");
+                    b.ToTable("graduates");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>

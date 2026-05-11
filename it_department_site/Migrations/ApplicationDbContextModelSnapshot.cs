@@ -64,7 +64,7 @@ namespace it_department_site.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Graduates");
+                    b.ToTable("graduates");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>
