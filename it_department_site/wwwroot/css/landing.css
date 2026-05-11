@@ -394,20 +394,10 @@ h3 { margin: 0 0 15px 0 !important; font-size: 24px; }
        }
 
 
-.comments {
-   min-height: 33%;
-   flex-grow: 1;
-   width: 50%;
-   border-radius: 10px;
-   align-items: stretch;
-}
 
 
-   .comments p {
-       margin-top: -1px;
-       text-align: justify;
-       font-size: 16px;
-   }
+
+   
 
 
 
@@ -424,7 +414,6 @@ h3 { margin: 0 0 15px 0 !important; font-size: 24px; }
 .reviews-general-title,
 .pfp-name-status,
 .rating-stars,
-.comments,
 .partners-area {
    transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* */
    will-change: opacity, transform;
@@ -487,18 +476,12 @@ h3 { margin: 0 0 15px 0 !important; font-size: 24px; }
 /* --- 7.4. Scroll Reveal: Елементи відгуків (Зліва, послідовно) --- */
 .pfp-name-status,
 .rating-stars,
-.comments {
-   opacity: 0;
-   transform: translateX(-30px);
-}
+
 
 
    .pfp-name-status.show,
    .rating-stars.show,
-   .comments.show {
-       opacity: 1;
-       transform: translateX(0);
-   }
+   
 
 
 
