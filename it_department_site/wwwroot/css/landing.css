@@ -475,12 +475,17 @@ h3 { margin: 0 0 15px 0 !important; font-size: 24px; }
 
 /* --- 7.4. Scroll Reveal: Елементи відгуків (Зліва, послідовно) --- */
 .pfp-name-status,
-.rating-stars,
+.rating-stars {
+   opacity: 0;
+   transform: translateX(-30px);
+}
 
 
-
-   .pfp-name-status.show,
-   .rating-stars.show,
+.pfp-name-status.show,
+.rating-stars.show {
+   opacity: 1;
+   transform: translateX(0);
+}
    
 
 
