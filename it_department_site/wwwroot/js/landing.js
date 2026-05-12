@@ -120,8 +120,7 @@ partnersAreas.forEach((partnersArea) => {
 
 const reviewElements = [
     document.querySelector('.pfp-name-status'),
-    document.querySelector('.rating-stars'),
-    document.querySelector('.comments')
+    document.querySelector('.rating-stars')
 ].filter(el => el);
 
 // Створюємо окремий Observer для послідовної появи
