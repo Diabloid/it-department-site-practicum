@@ -1,9 +1,7 @@
 ﻿@model it_department_site.DTOs.PageDto
 @using System.Security.Claims
-@inject IFavoriteService FavoriteService
 
 @{
-    bool showFavoriteButton = false;
     bool isAdmin = false;
     int userId = 0;
 
@@ -25,10 +23,7 @@
                 @if ( !isAdmin)
                 {
                     <button type="button"
-                            id="favorite-btn"
-                            class="btn btn-sm @(showFavoriteButton ? "btn-outline-danger" : "btn-outline-success")"
                             data-page-id="@Model.Id">
-                        @(showFavoriteButton ? "🔖" : "✅")
                     </button>
                 }
 
@@ -100,25 +95,5 @@
                 });
             });
         }
-
-        const favBtn = document.getElementById("favorite-btn");
-        favBtn?.addEventListener("click", () => {
-            const pageId = favBtn.dataset.pageId;
-            const isFavorite = favBtn.classList.contains("btn-outline-danger");
-            fetch("/favorites/toggle", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `pageId=${pageId}`
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const nowFavorite = !isFavorite;
-                    favBtn.innerHTML = nowFavorite ? "🔖" : "✅";
-                    favBtn.classList.toggle("btn-outline-danger", nowFavorite);
-                    favBtn.classList.toggle("btn-outline-success", !nowFavorite);
-                }
-            });
-        });   
     });
 </script>

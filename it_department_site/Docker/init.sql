@@ -15,37 +15,6 @@ use website;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
-
-
-
---
--- Table structure for table `favorites`
---
-
-DROP TABLE IF EXISTS `favorites`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `favorites` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `page_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `page_id` (`page_id`),
-  CONSTRAINT `favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `favorites_ibfk_2` FOREIGN KEY (`page_id`) REFERENCES `pages` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `favorites`
---
-
-LOCK TABLES `favorites` WRITE;
-/*!40000 ALTER TABLE `favorites` DISABLE KEYS */;
-INSERT INTO `favorites` VALUES (52,3,2),(53,5,2);
-/*!40000 ALTER TABLE `favorites` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --

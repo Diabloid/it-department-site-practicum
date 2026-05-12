@@ -26,27 +26,6 @@ public class ProfileController : Controller
         ViewBag.Username = user.Username;
         ViewBag.Email = user.Email;
         ViewBag.Registered = user.CreatedAt.ToString("dd.MM.yyyy HH:mm");
-
-        var favorites = await _profileService.GetFavoritesAsync(userId);
-        var favoriteViewModels = new List<FavoritePageViewModel>();
-
-        foreach (var fav in favorites)
-        {
-            var page = await _pageService.GetPageByIdAsync(fav.PageId);
-            if (page != null)
-            {
-                favoriteViewModels.Add(new FavoritePageViewModel
-                {
-                    PageId = page.Id,
-                    PageTitle = page.Title,
-                    PageSlug = page.Slug,
-                    CreatedAt = page.CreatedAt,
-                    Views = page.Views
-                });
-            }
-        }
-
-        ViewBag.Favorites = favoriteViewModels;
         return View();
     }
 }
