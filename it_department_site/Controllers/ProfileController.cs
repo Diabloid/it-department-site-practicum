@@ -5,14 +5,12 @@
 public class ProfileController : Controller
 {
     private readonly IProfileService _profileService;
-    private readonly ILikeService _likeService;
     private readonly IPageService _pageService;
     private readonly ICurrentUserService _currentUser;
 
-    public ProfileController(IProfileService profileService, ILikeService likeService, IPageService pageService, ICurrentUserService currentUser)
+    public ProfileController(IProfileService profileService, IPageService pageService, ICurrentUserService currentUser)
     {
         _profileService = profileService;
-        _likeService = likeService;
         _pageService = pageService;
         _currentUser = currentUser;
     }
@@ -43,8 +41,7 @@ public class ProfileController : Controller
                     PageTitle = page.Title,
                     PageSlug = page.Slug,
                     CreatedAt = page.CreatedAt,
-                    Views = page.Views,
-                    Likes = await _likeService.GetLikeCountAsync(page.Id)
+                    Views = page.Views
                 });
             }
         }
