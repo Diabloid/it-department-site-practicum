@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using it_department_site.Data;
+using it_department_site.Infrastructure;
 
 #nullable disable
 
@@ -20,6 +20,7 @@ namespace it_department_site.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
+            modelBuilder.Entity("it_department_site.Entities.Graduate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,6 +43,26 @@ namespace it_department_site.Migrations
                         .HasMaxLength(220)
                         .HasColumnType("varchar(220)")
                         .HasColumnName("fullname");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("first_name");
+
+                    b.Property<int>("GraduationYear")
+                        .HasColumnType("int")
+                        .HasColumnName("graduation_year");
+
+                    b.Property<string>("JobDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("job_description");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
@@ -56,6 +77,14 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("employees");
+                    b.Property<string>("Testimonial")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("testimonial");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("graduates");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>

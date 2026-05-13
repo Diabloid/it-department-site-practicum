@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using it_department_site.Entities;
 
-namespace it_department_site.Data
+namespace it_department_site.Infrastructure
 {
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Graduate> Graduates { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

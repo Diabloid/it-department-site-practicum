@@ -76,59 +76,13 @@
             }
         </div>
 
-        @if (Model.AllowComments)
-        {
-            <div class="card-footer">
-                <h4>Коментарі</h4>
-
-
-                @if (ViewBag.Comments is List<Comment> comments)
-                {
-                    foreach (var c in comments)
-                    {
-                        <div class="border rounded p-3 mb-3 position-relative">
-                            <strong>@c.Username</strong>
-                            <small class="text-muted">(@c.CreatedAt.ToString("dd.MM.yyyy HH:mm"))</small>
-                            <div class="mt-2">@Html.Raw(c.Content)</div>
-
-                            @if (isAdmin)
-                            {
-                                <form asp-controller="Comment" asp-action="Delete" asp-route-commentId="@c.Id"
-                                      asp-route-returnUrl="@Url.Action("Details", "Pages", new { slug = Model.Slug })"
-                                      method="post" class="position-absolute top-0 end-0 m-2 delete-comment-form">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle border-0" title="Видалити">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                </form>
-                            }
-                        </div>
-                    }
-                }
-            </div>
-        }
+        
     </div>
 </div>
 
 <script src="~/ckeditor/ckeditor.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        FullEditor
-            .create(document.querySelector('#commentEditor'), {
-                ckfinder: { uploadUrl: '/ckeditor/upload' }
-            })
-            .then(editor => {
-                document.querySelector('form').addEventListener('submit', function (e) {
-                    const content = editor.getData().trim();
-                    if (!content) {
-                        e.preventDefault();
-                        alert("Коментар не може бути порожнім.");
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("❌ CKEditor не ініціалізувався:", error);
-            });
-
         const likeBtn = document.getElementById("like-btn");
         if (likeBtn) {
             likeBtn.addEventListener("click", () => {
@@ -165,26 +119,6 @@
                     favBtn.classList.toggle("btn-outline-success", !nowFavorite);
                 }
             });
-        });
-
-        document.querySelectorAll('.delete-comment-form').forEach(form => {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const container = this.closest('.border');
-                fetch(this.action, {
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
-                    },
-                })
-                .then(response => {
-                    if (response.ok) {
-                        container.remove();
-                    } else {
-                        alert("Помилка при видаленні.");
-                    }
-                });
-            });
-        });
+        });   
     });
 </script>

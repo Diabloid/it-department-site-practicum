@@ -1,0 +1,65 @@
+@model it_department_site.Entities.Graduate
+
+<h4>Додати випускника</h4>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form method="post"
+      asp-action="CreateGraduate"
+      enctype="multipart/form-data"
+      onsubmit="return submitForm(this)">
+
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label class="form-label">Ім'я</label>
+        <input asp-for="FirstName" class="form-control" required />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Прізвище</label>
+        <input asp-for="LastName" class="form-control" required />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Рік випуску</label>
+        <input asp-for="GraduationYear" type="number" class="form-control" min="1900" max="2100" required />
+        <span asp-validation-for="GraduationYear" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Спеціалізація</label>
+        <input asp-for="Specialization" class="form-control" />
+        <span asp-validation-for="Specialization" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Фото</label>
+        <input type="file" name="photoFile" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Місце роботи</label>
+        <input asp-for="JobDescription" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Відгук</label>
+        <textarea asp-for="Testimonial" rows="4" class="form-control"></textarea>
+    </div>
+
+    <button class="btn btn-success">Зберегти</button>
+    <button type="button" class="btn btn-secondary" onclick="loadContent('Graduates')">Назад</button>
+</form>

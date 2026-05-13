@@ -1,0 +1,57 @@
+@model it_department_site.Entities.Graduate
+
+<h4>Редагувати випускника</h4>
+
+<form method="post"
+      asp-action="EditGraduate"
+      enctype="multipart/form-data"
+      onsubmit="return submitForm(this)">
+
+    @Html.AntiForgeryToken()
+
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label class="form-label">Ім'я</label>
+        <input asp-for="FirstName" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Прізвище</label>
+        <input asp-for="LastName" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Рік випуску</label>
+        <input asp-for="GraduationYear" type="number" class="form-control" required min="1945" max="2100" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Спеціалізація</label>
+        <input asp-for="Specialization" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Фото</label>
+        @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+        {
+            <div class="mb-2">
+                <img src="@Model.PhotoUrl" alt="Фото" style="height:80px; border-radius:8px;" />
+            </div>
+        }
+        <input type="file" name="photoFile" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Місце роботи</label>
+        <input asp-for="JobDescription" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Відгук</label>
+        <textarea asp-for="Testimonial" rows="4" class="form-control"></textarea>
+    </div>
+
+    <button class="btn btn-success">Зберегти</button>
+    <button type="button" class="btn btn-secondary" onclick="loadContent('Graduates')">Назад</button>
+</form>

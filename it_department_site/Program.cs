@@ -1,4 +1,4 @@
-﻿using it_department_site.Data;
+﻿using it_department_site.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
@@ -30,6 +30,7 @@ builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGraduateService, GraduateService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
@@ -40,9 +41,6 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
-
-builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddScoped<ILikeRepository, LikeRepository>();
 builder.Services.AddScoped<ILikeService, LikeService>();

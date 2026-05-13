@@ -23,9 +23,5 @@
 
         }
 
-        public async Task<int> GetUserIdAsync(string username)
-        {
-            return await _userService.GetUserIdAsync(username);
-        }
     }
 }
