@@ -7,6 +7,7 @@ namespace it_department_site.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Graduate> Graduates { get; set; }
         public DbSet<Partner> Partners { get; set; }
+        public DbSet<Page> Pages { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
