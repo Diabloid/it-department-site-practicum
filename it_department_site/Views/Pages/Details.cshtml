@@ -2,10 +2,6 @@
 @using System.Security.Claims
 
 @{
-    bool isAdmin = false;
-    int userId = 0;
-
-    
     ViewData["Title"] = Model.Title;
     Layout = "_Layout";
 }
@@ -20,12 +16,6 @@
             </p>
 
             <div class="d-flex align-items-center gap-2 mt-2 mb-3">
-                @if ( !isAdmin)
-                {
-                    <button type="button"
-                            data-page-id="@Model.Id">
-                    </button>
-                }
 
                 <button type="button"
                         id="like-btn"
