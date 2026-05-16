@@ -19,7 +19,7 @@ namespace it_department_site.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("it_department_site.Entities.Employee", b =>
+
             modelBuilder.Entity("it_department_site.Entities.Graduate", b =>
                 {
                     b.Property<int>("Id")
@@ -74,9 +74,6 @@ namespace it_department_site.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("specialization");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("employees");
                     b.Property<string>("Testimonial")
                         .IsRequired()
                         .HasColumnType("longtext")
@@ -86,7 +83,56 @@ namespace it_department_site.Migrations
 
                     b.ToTable("graduates");
                 });
+            modelBuilder.Entity("it_department_site.Entities.Employee", b =>
+            {
+                b.Property<int>("Id")
+                     .ValueGeneratedOnAdd()
+                     .HasColumnType("int")
+                     .HasColumnName("id");
 
+                b.Property<string>("Bio")
+                     .IsRequired()
+                     .HasColumnType("longtext")
+                    .HasColumnName("bio");
+
+                b.Property<string>("Email")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("varchar(100)")
+                    .HasColumnName("email");
+
+                b.Property<string>("FirstName")
+                    .HasMaxLength(220)
+                    .IsRequired()
+                    .HasColumnType("varchar(220)")
+                    .HasColumnName("firstname");
+
+                b.Property<string>("LastName")
+                    .IsRequired()
+                    .HasMaxLength(220)
+                    .HasColumnType("varchar(220)")
+                    .HasColumnName("lastname");
+
+                b.Property<string>("PatronymicName")
+                    .IsRequired()
+                    .HasMaxLength(220)
+                    .HasColumnType("varchar(220)")
+                    .HasColumnName("patronymic_name");
+
+                b.Property<string>("PhotoUrl")
+                    .IsRequired()
+                    .HasColumnType("longtext")
+                    .HasColumnName("photo_url");
+
+                b.Property<string>("Specialization")
+                    .IsRequired()
+                    .HasColumnType("longtext")
+                    .HasColumnName("specialization");
+
+                b.HasKey("Id");
+
+                b.ToTable("employees");
+            });
             modelBuilder.Entity("it_department_site.Entities.User", b =>
                 {
                     b.Property<int>("Id")
