@@ -3,17 +3,14 @@
     public class PagesController : Controller
     {
         private readonly IPageService _pageService;
-
-        private readonly ILikeService _likeService;
         private readonly ICurrentUserService _currentUser;
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
 
-        public PagesController(IPageService pageService, ILikeService likeService,
+        public PagesController(IPageService pageService, 
             ICurrentUserService currentUser, IPartnerService partnerService, IPostRepository postRepository)
         {
             _pageService = pageService;
-            _likeService = likeService;
             _currentUser = currentUser;
             _partnerService = partnerService;
             _postRepository = postRepository;
@@ -49,8 +46,7 @@
                     await _pageService.MarkPageAsViewedAsync(userId, page.Id);
                 }
             }
-
-            ViewBag.Likes = await _likeService.GetLikeCountAsync(page.Id);
+            
             ViewBag.Views = await _pageService.GetViewsAsync(page.Id);
             var dto = PageMapper.ToDto(page);
             return View(dto);
