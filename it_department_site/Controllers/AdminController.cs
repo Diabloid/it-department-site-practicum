@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using ZstdSharp.Unsafe;
 
 namespace it_department_site.Controllers
 {
@@ -13,6 +14,7 @@ namespace it_department_site.Controllers
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
         private readonly IGraduateService _graduateService;
+        private readonly IEmployeeService _employeeService;
 
         public AdminController(
             IPageService pageService,
@@ -22,7 +24,8 @@ namespace it_department_site.Controllers
             ISiteSettingsService settingsService,
             IPartnerService partnerService,
             IPostRepository postRepository,
-            IGraduateService graduateService)
+            IGraduateService graduateService,
+            IEmployeeService employeeService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -32,6 +35,7 @@ namespace it_department_site.Controllers
             _partnerService = partnerService;
             _postRepository = postRepository;
             _graduateService = graduateService;
+            _employeeService = employeeService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -114,6 +118,59 @@ namespace it_department_site.Controllers
         {
             await _graduateService.DeleteAsync(id);
             return await Graduates();
+        }
+
+        //===========================================
+        public IActionResult CreateEmployee()
+        {
+            return PartialView("_CreateEmployee", new Employee());
+        }
+
+        public async Task<IActionResult> Employees()
+        {
+            var employees = await _employeeService.GetAllAsync();
+            return PartialView("_EmployeesTable", employees);
+        }
+
+        public async Task<IActionResult> EditEmployee(int id)
+        {
+            var employee = await _employeeService.GetByIdAsync(id);
+            if (employee == null) return NotFound();
+            return PartialView("_EditEmployee", employee);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
+
+            if (photoFile != null)
+                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+
+            await _employeeService.CreateAsync(employee);
+            return await Employees();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEmployee(Employee employee, IFormFile? photoFile)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid) return PartialView("_EditEmployee", employee);
+
+            if (photoFile != null)
+                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+
+            await _employeeService.UpdateAsync(employee.Id, employee);
+            return await Employees();
+        }
+
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            await _employeeService.DeleteAsync(id);
+            return await Employees();
         }
 
         public async Task<IActionResult> Users()

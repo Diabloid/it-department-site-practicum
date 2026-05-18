@@ -1,0 +1,48 @@
+@model IEnumerable<it_department_site.Entities.Employee>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Викладачі</h4>
+    <button class="btn btn-success" onclick="loadContent('CreateEmployee')">
+        + Додати викладача
+    </button>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Ім'я</th>
+            <th>Прізвище</th>
+            <th>Побатькові</th>
+            <th>Пошта</th>
+            <th>Спеціалізація</th>
+            <th>Біографія</th>
+            <th style="width:200px">Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Employee in Model)
+        {
+            <tr>
+                <td>@Employee.FirstName</td>
+                <td>@Employee.LastName</td>
+                <td>@Employee.PatronymicName</td>
+                <td>@Employee.Email</td>
+                <td>@Employee.Specialization</td>
+                <td>@Employee.Bio</td>
+                <td class="d-flex align-items-center gap-2">
+                    <button class="btn btn-primary btn-sm"
+                            onclick="loadContent('EditEmployee', '/@Employee.Id')">
+                        Редагувати
+                    </button>
+                    <form method="post"
+                          asp-action="DeleteEmployee"
+                          asp-route-id="@Employee.Id"
+                          onsubmit="return confirm('Видалити викладача?') && submitForm(this)"
+                          style="margin: 0;">
+                        <button class="btn btn-danger btn-sm">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
