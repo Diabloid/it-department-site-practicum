@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace it_department_site.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateEmployees : Migration
+    public partial class update_employee : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,11 @@ namespace it_department_site.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    fullname = table.Column<string>(type: "varchar(220)", maxLength: 220, nullable: false)
+                    firstname = table.Column<string>(type: "varchar(220)", maxLength: 220, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    lastname = table.Column<string>(type: "varchar(220)", maxLength: 220, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    patronymic_name = table.Column<string>(type: "varchar(220)", maxLength: 220, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     email = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),

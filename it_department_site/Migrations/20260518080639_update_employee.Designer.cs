@@ -11,8 +11,8 @@ using it_department_site.Infrastructure;
 namespace it_department_site.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260428075033_CreateEmployees")]
-    partial class CreateEmployees
+    [Migration("20260518080639_update_employee")]
+    partial class update_employee
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,11 +40,23 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(220)
                         .HasColumnType("varchar(220)")
-                        .HasColumnName("fullname");
+                        .HasColumnName("firstname");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(220)
+                        .HasColumnType("varchar(220)")
+                        .HasColumnName("lastname");
+
+                    b.Property<string>("PatronymicName")
+                        .IsRequired()
+                        .HasMaxLength(220)
+                        .HasColumnType("varchar(220)")
+                        .HasColumnName("patronymic_name");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
@@ -59,6 +71,54 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("employees");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Graduate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("first_name");
+
+                    b.Property<int>("GraduationYear")
+                        .HasColumnType("int")
+                        .HasColumnName("graduation_year");
+
+                    b.Property<string>("JobDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("job_description");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("last_name");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("photo_url");
+
+                    b.Property<string>("Specialization")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("specialization");
+
+                    b.Property<string>("Testimonial")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("testimonial");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("graduates");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>

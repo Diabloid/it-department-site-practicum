@@ -9,42 +9,58 @@
 }
 
 <section class="employees-page employees-details-page container py-5">
+
     <div class="employees-details-header">
-       <a asp-controller="Employees" asp-action="Index" class="employees-back-link">
-         <span class="arrow">←</span> Назад до списку співробітників
+        <a href="/Employees/Index" class="employees-back-link">
+            ← Назад до списку співробітників
         </a>
     </div>
 
-    <article class="employees-details-card">
-        <div class="employees-details-top">
-            <div class="employees-details-photo-wrap">
-                <img src="@Model.PhotoUrl" alt="@Model.LastName @Model.FirstName @Model.PatronymicName" class="employees-details-photo" />
-            </div>
-            <div class="employees-details-intro">
-                <h1 class="employees-title">
-                    <span class="last-name">@Model.LastName</span>
-                    <span class="first-patronymic">@Model.FirstName @Model.PatronymicName</span>
-                </h1>
-                <p class="employee-meta mb-3">@Model.Specialization</p>
-                <ul class="employee-contact-list">
-                    <li>
-                         <strong> Email:</strong> 
-                         <a href="mailto:@Model.Email" class="employee-contact-link">@Model.Email</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="employees-main-wrapper">
+        <article class="employees-details-layout">
 
-        <div class="employees-divider"></div>
+            <div class="sticky-sidebar-wrapper">
+                <aside class="employees-left-sticky-panel">
+                    <div class="employees-details-photo-wrap">
+                        <img src="@Model.PhotoUrl" alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
+                             class="employees-details-photo" />
+                    </div>
 
-        <div class="employees-details-content">
-            <h2 class="employees-section-title">Професійні інтереси та напрям роботи</h2>
-            <p class="mb-4">@Model.Specialization</p>
+                    <div class="employees-details-intro-box">
+                        <h1 class="employees-title">
+                            <span class="last-name">@Model.LastName</span>
+                            <span class="first-patronymic">@Model.FirstName @Model.PatronymicName</span>
+                        </h1>
 
-            <h2 class="employees-section-title">Біографічна довідка</h2>
-            <div class="bio-text">
-                @Model.Bio
+                        <span class="employee-meta">@Model.Specialization</span>
+
+                        <div class="employee-card-contact-box">
+                            <span class="contact-label">Email для зв'язку</span>
+                            <a href="mailto:@Model.Email" class="employee-contact-link">@Model.Email</a>
+                        </div>
+                    </div>
+                </aside>
             </div>
-        </div>
-    </article>
+
+            <main class="employees-right-scroll-content">
+                <h2 class="employees-section-title">
+                    <span class="title-icon">🎯</span> Професійні інтереси та напрям роботи
+                </h2>
+                <div class="info-text-block">
+                    <p>@Model.Specialization</p>
+                </div>
+
+                <div class="employees-divider"></div>
+
+                <h2 class="employees-section-title">
+                    <span class="title-icon">📖</span> Біографічна довідка
+                </h2>
+                <div class="bio-text">
+                    @Model.Bio
+                </div>
+            </main>
+
+        </article>
+    </div>
+
 </section>

@@ -148,6 +148,13 @@ namespace it_department_site.Controllers
 
             if (photoFile != null)
                 employee.PhotoUrl = await SaveImage(photoFile, "employees");
+            else
+                employee.PhotoUrl = "/images/banner_photo_2.jpg";
+
+            employee.PatronymicName ??= string.Empty;
+            employee.Email ??= string.Empty;
+            employee.Specialization ??= string.Empty;
+            employee.Bio ??= string.Empty;
 
             await _employeeService.CreateAsync(employee);
             return await Employees();
@@ -167,6 +174,8 @@ namespace it_department_site.Controllers
             return await Employees();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             await _employeeService.DeleteAsync(id);

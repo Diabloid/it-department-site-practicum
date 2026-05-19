@@ -43,5 +43,9 @@ namespace it_department_site.Entities
         [Required]
         [Column("photo_url")]
         public string PhotoUrl { get; set; }
+
+        // [Required]
+        // [Column("photo_url_certificate")]
+        // public string Certificate { get; set; }
     }
 }
