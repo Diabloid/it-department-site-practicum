@@ -67,6 +67,52 @@ namespace it_department_site.Migrations
                     b.ToTable("graduates");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.SiteSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("CustomCss")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("CustomCss");
+
+                    b.Property<string>("FooterCss")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("FooterCss");
+
+                    b.Property<string>("FooterHtml")
+                        .HasColumnType("longtext")
+                        .HasColumnName("FooterHtml");
+
+                    b.Property<string>("HeaderCss")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("HeaderCss");
+
+                    b.Property<string>("HeaderHtml")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("HeaderHtml");
+
+                    b.Property<string>("SiteLogoUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("SiteLogoUrl");
+
+                    b.Property<string>("SiteTitle")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("SiteTitle");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("site_settings");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.User", b =>
                 {
                     b.Property<int>("Id")

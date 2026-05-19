@@ -1,22 +1,55 @@
-﻿namespace it_department_site.Services
+namespace it_department_site.Services
 {
     public class SiteSettingsService : ISiteSettingsService
     {
-        private readonly ISiteSettingsRepository _repository;
+        private readonly ApplicationDbContext _context;
 
-        public SiteSettingsService(ISiteSettingsRepository repository)
+        public SiteSettingsService(ApplicationDbContext context)
         {
-            _repository = repository;
+            _context = context;
         }
 
         public async Task<SiteSettings> GetAsync()
         {
-            return await _repository.GetAsync();
+            var settings = await _context.SiteSettings.FindAsync(1);
+
+            if (settings == null)
+            {
+                return new SiteSettings
+                {
+                    Id = 1,
+                    HeaderHtml = "<header></header>",
+                    FooterHtml = "<footer></footer>",
+                    HeaderCss = "",
+                    FooterCss = "",
+                    CustomCss = ""
+                };
+            }
+
+            return settings;
         }
 
         public async Task SaveAsync(SiteSettings settings)
         {
-            await _repository.SaveAsync(settings);
+            var existingSettings = await _context.SiteSettings.FindAsync(1);
+
+            if (existingSettings == null)
+            {
+                settings.Id = 1;
+                _context.SiteSettings.Add(settings);
+            }
+            else
+            {
+                existingSettings.HeaderHtml = settings.HeaderHtml;
+                existingSettings.HeaderCss = settings.HeaderCss;
+                existingSettings.FooterHtml = settings.FooterHtml;
+                existingSettings.FooterCss = settings.FooterCss;
+                existingSettings.CustomCss = settings.CustomCss;
+                existingSettings.SiteTitle = settings.SiteTitle;
+                existingSettings.SiteLogoUrl = settings.SiteLogoUrl;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }
