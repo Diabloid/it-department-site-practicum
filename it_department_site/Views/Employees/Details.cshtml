@@ -17,50 +17,69 @@
     </div>
 
     <div class="employees-main-wrapper">
-        <article class="employees-details-layout">
-
-            <div class="sticky-sidebar-wrapper">
-                <aside class="employees-left-sticky-panel">
-                    <div class="employees-details-photo-wrap">
-                        <img src="@Model.PhotoUrl" alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
-                             class="employees-details-photo" />
+        <header class="employees-hero employee-detail-hero">
+            <div class="employee-profile-photo-wrap employee-detail-photo-wrap">
+                <img src="@Model.PhotoUrl"
+                     alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
+                     class="employee-profile-photo" />
+            </div>
+            <div class="employees-hero-inner employee-detail-hero-inner">
+                <div class="employee-detail-hero-content">
+                    <p class="employees-kicker">
+                        <span class="employees-kicker-dot" aria-hidden="true"></span>
+                        Профіль викладача
+                    </p>
+                    <h1 class="employees-title-main employee-detail-title">
+                        <span class="employees-title-line">@Model.LastName</span>
+                        <span class="employees-title-accent">@Model.FirstName @Model.PatronymicName</span>
+                    </h1>
+                    <p class="employees-subtitle employee-detail-subtitle">@Model.Specialization</p>
+                    <div class="employee-card-contact-box mt-3">
+                        <span class="contact-label">Email для зв'язку</span>
+                        <a href="mailto:@Model.Email" class="employee-contact-link">@Model.Email</a>
                     </div>
+                </div>
+            </div>
+        </header>
 
-                    <div class="employees-details-intro-box">
-                        <h1 class="employees-title">
-                            <span class="last-name">@Model.LastName</span>
-                            <span class="first-patronymic">@Model.FirstName @Model.PatronymicName</span>
-                        </h1>
+        <div class="employees-divider"></div>
 
-                        <span class="employee-meta">@Model.Specialization</span>
+        <section>
+                            @Html.Raw(Model.Bio)
+       
+            @* <h2 class="employees-section-title">
+                <span class="title-icon">📖</span> Біографія
+            </h2>
+            <div class="bio-text">
+                @Model.Bio
+            </div> *@
+        </section>
 
-                        <div class="employee-card-contact-box">
-                            <span class="contact-label">Email для зв'язку</span>
-                            <a href="mailto:@Model.Email" class="employee-contact-link">@Model.Email</a>
+        @if (Model.Certificates.Count > 0)
+        {
+            <div class="employees-divider"></div>
+            <section class="certificates-section">
+                <h2 class="employees-section-title">Сертифікати</h2>
+                <div class="certificates-slider-wrap">
+                    <div class="certificates-mask-wrapper">
+                        <div class="certificates-track">
+                            @for (var i = 0; i < Model.Certificates.Count; i++)
+                            {
+                                @await Html.PartialAsync("_CertificateDisplay", Model.Certificates[i])
+                            }
+
+                            @if (Model.Certificates.Count > 1)
+                            {
+                                @for (var i = 0; i < Model.Certificates.Count; i++)
+                                {
+                                    @await Html.PartialAsync("_CertificateDisplay", Model.Certificates[i])
+                                }
+                            }
                         </div>
                     </div>
-                </aside>
-            </div>
-
-            <main class="employees-right-scroll-content">
-                <h2 class="employees-section-title">
-                    <span class="title-icon">🎯</span> Професійні інтереси та напрям роботи
-                </h2>
-                <div class="info-text-block">
-                    <p>@Model.Specialization</p>
                 </div>
-
-                <div class="employees-divider"></div>
-
-                <h2 class="employees-section-title">
-                    <span class="title-icon">📖</span> Біографічна довідка
-                </h2>
-                <div class="bio-text">
-                    @Model.Bio
-                </div>
-            </main>
-
-        </article>
+            </section>
+        }
     </div>
 
 </section>

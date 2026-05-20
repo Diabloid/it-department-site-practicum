@@ -453,6 +453,195 @@ body {
   margin: 30px 0;
 }
 
+.employee-detail-hero {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 0;
+}
+
+.employee-detail-hero-inner {
+  width: 100%;
+  max-width: none;
+}
+
+.employee-detail-hero-content {
+  width: 100%;
+}
+
+.employee-detail-title {
+  margin-bottom: 10px;
+}
+
+.employee-detail-subtitle {
+  max-width: min(100%, 680px);
+}
+
+.employee-profile-photo-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+.employee-detail-photo-wrap {
+  width: min(240px, 100%);
+  justify-self: start;
+}
+
+.employee-profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.certificates-section {
+  text-align: center;
+}
+
+.certificates-section .employees-section-title {
+  justify-content: center;
+}
+
+.certificates-slider-wrap {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto;
+}
+
+.certificates-mask-wrapper {
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 96%,
+    transparent
+  );
+}
+
+.certificates-track {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: scroll-certificates 26s linear infinite;
+}
+
+.certificates-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-certificates {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.certificate-card {
+  width: min(360px, 42vw);
+  height: 240px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.certificate-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(93, 100, 173, 0.2);
+  border-color: #5d64ad;
+}
+
+.certificate-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.certificate-card--pdf {
+  background: linear-gradient(145deg, #fff 0%, #fef2f2 100%);
+}
+
+.certificate-card-pdf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 0.5rem;
+}
+
+.certificate-card-image--pdf-thumb {
+  max-height: 70%;
+  object-fit: contain;
+}
+
+.certificate-card-pdf-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 88px;
+  border-radius: 10px;
+  background: #dc2626;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+}
+
+.certificate-card-pdf-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 0.25rem;
+}
+
+.drive-cert-pdf-preview {
+  position: relative;
+  min-height: 100px;
+}
+
+.drive-cert-pdf-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+  border-radius: 8px;
+  background: #dc2626;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
 @media (max-width: 1200px) {
   .employees-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -469,6 +658,16 @@ body {
   .employees-left-sticky-panel {
     position: relative;
     top: 0;
+  }
+  .employee-detail-hero {
+    grid-template-columns: minmax(160px, 200px) minmax(0, 1fr);
+  }
+  .employee-detail-photo-wrap {
+    width: min(200px, 100%);
+  }
+  .certificate-card {
+    width: min(320px, 45vw);
+    height: 210px;
   }
 }
 
@@ -512,5 +711,24 @@ body {
   }
   .employees-details-intro-box .employee-meta {
     align-self: center;
+  }
+  .employee-detail-hero {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .employee-detail-photo-wrap {
+    justify-self: center;
+    width: min(210px, 100%);
+  }
+  .employee-detail-hero-content {
+    text-align: center;
+  }
+  .employee-card-contact-box {
+    border-top: none;
+    padding-top: 0;
+  }
+  .certificate-card {
+    width: 220px;
+    height: 150px;
   }
 }

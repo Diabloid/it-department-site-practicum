@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Entities
@@ -44,8 +45,10 @@ namespace it_department_site.Entities
         [Column("photo_url")]
         public string PhotoUrl { get; set; }
 
-        // [Required]
-        // [Column("photo_url_certificate")]
-        // public string Certificate { get; set; }
+        [MaxLength(500)]
+        [Column("google_drive_folder_url")]
+        public string? GoogleDriveFolderUrl { get; set; }
+
+        public ICollection<EmployeeCertificate> Certificates { get; set; } = new List<EmployeeCertificate>();
     }
 }

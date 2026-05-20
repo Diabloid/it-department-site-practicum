@@ -48,7 +48,8 @@
 
     <div class="mb-3">
         <label class="form-label">Фото</label>
-        <input type="file" name="photoFile" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+        <input type="file" name="photoFile" class="form-control" accept="image/*" />
+        <div class="form-text">Або файл <code>photo.png</code> / <code>фото.jpg</code> у папці Drive.</div>
     </div>
 
     <div class="mb-3">
@@ -61,6 +62,13 @@
         <label class="form-label">Електронна пошта</label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Папка сертифікатів (Google Drive)</label>
+        <input asp-for="GoogleDriveFolderUrl" class="form-control"
+               placeholder="https://drive.google.com/drive/folders/..." />
+        <div class="form-text">Після збереження підтягнеться фото з папки. Сертифікати (до 15) оберіть у редагуванні викладача.</div>
     </div>
 
     <button class="btn btn-success">Зберегти</button>
