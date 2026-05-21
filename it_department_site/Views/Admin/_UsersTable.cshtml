@@ -1,22 +1,26 @@
-﻿@model System.Data.DataTable
+﻿@model IEnumerable<it_department_site.Entities.User>
 
-<table class="table table-bordered">
-    <thead>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Користувачі</h4>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
         <tr>
-            @foreach (System.Data.DataColumn col in Model.Columns)
-            {
-                <th>@col.ColumnName</th>
-            }
+            <th>Id</th>
+            <th>Ім'я</th>
+            <th>Електронна пошта</th>
+            <th>Дата створення</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (System.Data.DataRow row in Model.Rows)
+        @foreach (var user in Model)
         {
             <tr>
-                @foreach (var item in row.ItemArray)
-                {
-                    <td>@item</td>
-                }
+                <td>@user.Id</td>
+                <td>@user.Username</td>
+                <td>@user.Email</td>
+                <td>@user.CreatedAt</td>
             </tr>
         }
     </tbody>
