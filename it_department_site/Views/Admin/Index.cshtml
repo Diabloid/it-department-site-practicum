@@ -3,6 +3,7 @@
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="~/ckeditor/ckeditor.js"></script>
 
 <div class="container mt-5">
     <div class="row">
@@ -58,6 +59,8 @@
                     if (option === 'Partners') {
                         initPartnersDragAndDrop();
                     }
+
+                    initRichTextEditors();
                 })
                 .catch(error => {
                     console.error("Error loading content:", error);
@@ -102,8 +105,28 @@
             }
         }
 
+    function initRichTextEditors() {
+        if (typeof FullEditor === 'undefined') return;
+        document.querySelectorAll('#contentArea textarea.editor').forEach(textarea => {
+            if (textarea.dataset.ckeReady === '1') return;
+            textarea.dataset.ckeReady = '1';
+            FullEditor.create(textarea, { ckfinder: { uploadUrl: '/ckeditor/upload' } })
+                .then(editor => { textarea.ckeditorInstance = editor; })
+                .catch(err => console.error("CKEditor init error:", err));
+        });
+    }
+
+    function syncRichTextEditors(form) {
+        form.querySelectorAll('textarea.editor').forEach(textarea => {
+            if (textarea.ckeditorInstance) {
+                textarea.value = textarea.ckeditorInstance.getData();
+            }
+        });
+    }
+
     function submitForm(form, e) {
         if (e) e.preventDefault();
+        syncRichTextEditors(form);
         fetch(form.action, {
             method: 'POST',
             body: new FormData(form)
@@ -114,6 +137,7 @@
         })
         .then(html => {
             document.getElementById("contentArea").innerHTML = html;
+            initRichTextEditors();
         })
         .catch(error => {
             console.error("Error submitting form:", error);

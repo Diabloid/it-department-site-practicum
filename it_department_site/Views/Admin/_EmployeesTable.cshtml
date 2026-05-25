@@ -53,7 +53,6 @@
             <th>Побатькові</th>
             <th>Пошта</th>
             <th>Спеціалізація</th>
-            <th>Біографія</th>
             <th>Сертифікати</th>
             <th>Drive папка</th>
             <th style="width:200px">Дії</th>
@@ -68,7 +67,6 @@
                 <td>@employee.PatronymicName</td>
                 <td>@employee.Email</td>
                 <td>@employee.Specialization</td>
-                <td>@employee.Bio</td>
                 <td>@(certificateCounts.TryGetValue(employee.Id, out var count) ? count : 0)</td>
                 <td>
                     @if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
