@@ -10,6 +10,7 @@ namespace it_department_site.Entities
         [Column("id")]
         public int Id { get; set; }
 
+        [Required]
         [MaxLength(100)]
         [Column("name")]
         public string Name { get; set; }
@@ -19,8 +20,9 @@ namespace it_department_site.Entities
         [Column("logo_file_name")]
         public string LogoFileName { get; set; }
 
+        [Required]
         [Column("sort_order")]
-        public int SortOrder { get; set; }
+        public int SortOrder { get; set; } = 0;
 
         [MaxLength(255)]
         [Column("link")]
