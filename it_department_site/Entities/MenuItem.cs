@@ -13,7 +13,7 @@ namespace it_department_site.Entities
         [Required]
         [MaxLength(255)]
         [Column("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Column("parent_id")]
         public int? ParentId { get; set; } // NULL, якщо це кореневий елемент
