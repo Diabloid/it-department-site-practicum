@@ -55,7 +55,6 @@ namespace it_department_site.Services
                 Link = link
             };
 
-            // Додаємо в контекст і зберігаємо в БД
             _context.Partners.Add(partner);
             await _context.SaveChangesAsync();
         }
@@ -95,7 +94,6 @@ namespace it_department_site.Services
                 }
             }
 
-            // Entity Framework сам згенерує оптимальні UPDATE запити для змінених записів
             await _context.SaveChangesAsync();
         }
     }
