@@ -17,13 +17,6 @@
 
             <div class="d-flex align-items-center gap-2 mt-2 mb-3">
 
-                <button type="button"
-                        id="like-btn"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
-                        data-page-id="@Model.Id">
-                    ❤️ <span id="like-count">@ViewBag.Likes</span>
-                </button>
-
                 <div class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" style="cursor: default;">
                     👁 <span>@ViewBag.Views</span>
                 </div>
@@ -66,24 +59,3 @@
 </div>
 
 <script src="~/ckeditor/ckeditor.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const likeBtn = document.getElementById("like-btn");
-        if (likeBtn) {
-            likeBtn.addEventListener("click", () => {
-                const pageId = likeBtn.dataset.pageId;
-                fetch("/likes/toggle", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `pageId=${pageId}`
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById("like-count").textContent = data.likeCount;
-                    }
-                });
-            });
-        }
-    });
-</script>
