@@ -1,7 +1,6 @@
 ﻿@using it_department_site.ViewModels
 @{
     ViewData["Title"] = "Профіль користувача";
-    var favorites = (List<FavoritePageViewModel>)ViewBag.Favorites;
 }
 
 <h2>Ваш профіль</h2>
@@ -18,43 +17,5 @@
         </div>
 
         <a class="btn btn-outline-danger w-100" asp-controller="Auth" asp-action="Logout">Вийти</a>
-    </div>
-
-    <!-- Права колонка: Обрані сторінки -->
-    <div class="col-md-8">
-        <h4>Обрані сторінки</h4>
-
-        @if (favorites.Any())
-        {
-            <div class="list-group mt-2">
-                @foreach (var fav in favorites)
-                {
-                    <div class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h5 class="mb-1">
-                                    <a href="/@fav.PageSlug">@fav.PageTitle</a>
-                                </h5>
-                                <small class="text-muted">
-                                    Створено: @fav.CreatedAt.ToString("dd.MM.yyyy HH:mm") |
-                                    👁 @fav.Views | ❤️ @fav.Likes
-                                </small>
-                            </div>
-
-                            <form asp-controller="Favorite" asp-action="Remove" method="post" class="ms-3">
-                                <input type="hidden" name="pageId" value="@fav.PageId" />
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Видалити">
-                                    ✖
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <p class="text-muted mt-3">Немає обраного.</p>
-        }
     </div>
 </div>

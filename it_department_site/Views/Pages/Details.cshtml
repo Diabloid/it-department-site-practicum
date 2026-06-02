@@ -1,13 +1,7 @@
 ﻿@model it_department_site.DTOs.PageDto
 @using System.Security.Claims
-@inject IFavoriteService FavoriteService
 
 @{
-    bool showFavoriteButton = false;
-    bool isAdmin = false;
-    int userId = 0;
-
-    
     ViewData["Title"] = Model.Title;
     Layout = "_Layout";
 }
@@ -22,15 +16,6 @@
             </p>
 
             <div class="d-flex align-items-center gap-2 mt-2 mb-3">
-                @if ( !isAdmin)
-                {
-                    <button type="button"
-                            id="favorite-btn"
-                            class="btn btn-sm @(showFavoriteButton ? "btn-outline-danger" : "btn-outline-success")"
-                            data-page-id="@Model.Id">
-                        @(showFavoriteButton ? "🔖" : "✅")
-                    </button>
-                }
 
                 <div class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" style="cursor: default;">
                     👁 <span>@ViewBag.Views</span>
@@ -74,24 +59,3 @@
 </div>
 
 <script src="~/ckeditor/ckeditor.js"></script>
-<script>
-        const favBtn = document.getElementById("favorite-btn");
-        favBtn?.addEventListener("click", () => {
-            const pageId = favBtn.dataset.pageId;
-            const isFavorite = favBtn.classList.contains("btn-outline-danger");
-            fetch("/favorites/toggle", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `pageId=${pageId}`
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const nowFavorite = !isFavorite;
-                    favBtn.innerHTML = nowFavorite ? "🔖" : "✅";
-                    favBtn.classList.toggle("btn-outline-danger", nowFavorite);
-                    favBtn.classList.toggle("btn-outline-success", !nowFavorite);
-                }
-            });
-    });
-</script>
