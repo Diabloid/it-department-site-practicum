@@ -1,13 +1,7 @@
 ﻿@model it_department_site.DTOs.PageDto
 @using System.Security.Claims
-@inject IFavoriteService FavoriteService
 
 @{
-    bool showFavoriteButton = false;
-    bool isAdmin = false;
-    int userId = 0;
-
-    
     ViewData["Title"] = Model.Title;
     Layout = "_Layout";
 }
@@ -22,22 +16,6 @@
             </p>
 
             <div class="d-flex align-items-center gap-2 mt-2 mb-3">
-                @if ( !isAdmin)
-                {
-                    <button type="button"
-                            id="favorite-btn"
-                            class="btn btn-sm @(showFavoriteButton ? "btn-outline-danger" : "btn-outline-success")"
-                            data-page-id="@Model.Id">
-                        @(showFavoriteButton ? "🔖" : "✅")
-                    </button>
-                }
-
-                <button type="button"
-                        id="like-btn"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
-                        data-page-id="@Model.Id">
-                    ❤️ <span id="like-count">@ViewBag.Likes</span>
-                </button>
 
                 <div class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" style="cursor: default;">
                     👁 <span>@ViewBag.Views</span>
@@ -76,115 +54,8 @@
             }
         </div>
 
-        @if (Model.AllowComments)
-        {
-            <div class="card-footer">
-                <h4>Коментарі</h4>
-
-
-                @if (ViewBag.Comments is List<Comment> comments)
-                {
-                    foreach (var c in comments)
-                    {
-                        <div class="border rounded p-3 mb-3 position-relative">
-                            <strong>@c.Username</strong>
-                            <small class="text-muted">(@c.CreatedAt.ToString("dd.MM.yyyy HH:mm"))</small>
-                            <div class="mt-2">@Html.Raw(c.Content)</div>
-
-                            @if (isAdmin)
-                            {
-                                <form asp-controller="Comment" asp-action="Delete" asp-route-commentId="@c.Id"
-                                      asp-route-returnUrl="@Url.Action("Details", "Pages", new { slug = Model.Slug })"
-                                      method="post" class="position-absolute top-0 end-0 m-2 delete-comment-form">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle border-0" title="Видалити">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                </form>
-                            }
-                        </div>
-                    }
-                }
-            </div>
-        }
+        
     </div>
 </div>
 
 <script src="~/ckeditor/ckeditor.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        FullEditor
-            .create(document.querySelector('#commentEditor'), {
-                ckfinder: { uploadUrl: '/ckeditor/upload' }
-            })
-            .then(editor => {
-                document.querySelector('form').addEventListener('submit', function (e) {
-                    const content = editor.getData().trim();
-                    if (!content) {
-                        e.preventDefault();
-                        alert("Коментар не може бути порожнім.");
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("❌ CKEditor не ініціалізувався:", error);
-            });
-
-        const likeBtn = document.getElementById("like-btn");
-        if (likeBtn) {
-            likeBtn.addEventListener("click", () => {
-                const pageId = likeBtn.dataset.pageId;
-                fetch("/likes/toggle", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `pageId=${pageId}`
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById("like-count").textContent = data.likeCount;
-                    }
-                });
-            });
-        }
-
-        const favBtn = document.getElementById("favorite-btn");
-        favBtn?.addEventListener("click", () => {
-            const pageId = favBtn.dataset.pageId;
-            const isFavorite = favBtn.classList.contains("btn-outline-danger");
-            fetch("/favorites/toggle", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `pageId=${pageId}`
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const nowFavorite = !isFavorite;
-                    favBtn.innerHTML = nowFavorite ? "🔖" : "✅";
-                    favBtn.classList.toggle("btn-outline-danger", nowFavorite);
-                    favBtn.classList.toggle("btn-outline-success", !nowFavorite);
-                }
-            });
-        });
-
-        document.querySelectorAll('.delete-comment-form').forEach(form => {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const container = this.closest('.border');
-                fetch(this.action, {
-                    method: 'POST',
-                    headers: {
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
-                    },
-                })
-                .then(response => {
-                    if (response.ok) {
-                        container.remove();
-                    } else {
-                        alert("Помилка при видаленні.");
-                    }
-                });
-            });
-        });
-    });
-</script>
