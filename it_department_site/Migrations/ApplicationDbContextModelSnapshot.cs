@@ -67,6 +67,87 @@ namespace it_department_site.Migrations
                     b.ToTable("graduates");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("PageId")
+                        .HasColumnType("int")
+                        .HasColumnName("page_id");
+
+                    b.Property<string>("PageSlug")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("page_slug");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int")
+                        .HasColumnName("parent_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int")
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("menu_items");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Page", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<bool>("AllowComments")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LayoutType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Views")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("pages");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Partner", b =>
                 {
                     b.Property<int>("Id")
@@ -99,46 +180,6 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("partners");
-                });
-
-            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int?>("MenuItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
-
-                    b.Property<int?>("PageId")
-                        .HasColumnType("int")
-                        .HasColumnName("page_id");
-
-                    b.Property<string>("PageSlug")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("page_slug");
-
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int")
-                        .HasColumnName("parent_id");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int")
-                        .HasColumnName("sort_order");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.ToTable("menu_items");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>
@@ -176,6 +217,57 @@ namespace it_department_site.Migrations
                         .IsUnique();
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Page", "Page")
+                        .WithMany()
+                        .HasForeignKey("PageId");
+
+                    b.HasOne("it_department_site.Entities.MenuItem", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Page");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Page", b =>
+                {
+                    b.OwnsOne("it_department_site.Entities.ContentSections", "Content", b1 =>
+                        {
+                            b1.Property<int>("PageId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("left")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("main")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("right")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("PageId");
+
+                            b1.ToTable("pages");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PageId");
+                        });
+
+                    b.Navigation("Content")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

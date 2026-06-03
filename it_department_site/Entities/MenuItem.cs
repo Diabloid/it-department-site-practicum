@@ -16,10 +16,14 @@ namespace it_department_site.Entities
         public string Name { get; set; } = string.Empty;
 
         [Column("parent_id")]
-        public int? ParentId { get; set; } // NULL, якщо це кореневий елемент
+        [ForeignKey(nameof(Parent))]
+        public int? ParentId { get; set; }
+        public MenuItem? Parent { get; set; }
 
         [Column("page_id")]
-        public int? PageId { get; set; } // NULL, якщо це просто контейнер, як "Blog"
+        [ForeignKey(nameof(Page))]
+        public int? PageId { get; set; }
+        public Page? Page { get; set; }
 
         [Required]
         [Column("sort_order")]
@@ -27,9 +31,9 @@ namespace it_department_site.Entities
 
         [MaxLength(255)]
         [Column("page_slug")]
-        public string? PageSlug { get; set; } // Додаємо нову колонку в БД, робимо її nullable
+        public string? PageSlug { get; set; }
 
-        // EF Core автоматично зрозуміє зв'язок через ParentId, оскільки типи збігаються.
+        [InverseProperty(nameof(Parent))]
         public List<MenuItem> Children { get; set; } = new List<MenuItem>();
     }
 

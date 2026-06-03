@@ -1,5 +1,9 @@
-﻿namespace it_department_site.Entities
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace it_department_site.Entities
 {
+    [Table("pages")]
     public class Page
     {
         public int Id { get; set; }
@@ -37,6 +41,8 @@
         Draft,
         Published
     }
+
+    [Owned]
     public class ContentSections
     {
         public string main { get; set; } = "";
