@@ -20,26 +20,33 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Дата публікації</label>
+        <input type="datetime-local"
+               name="CreatedAt"
+               class="form-control"
+               value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm")"
+               required />
+    </div>
+
+    <div class="mb-3">
         <label class="form-label">Короткий опис</label>
-        <input asp-for="Excerpt" class="form-control" />
+        <textarea asp-for="Excerpt" id="PostExcerptCreate" class="form-control editor" rows="4"></textarea>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Контент</label>
-        <textarea asp-for="Content" rows="6" class="form-control" required></textarea>
+        <textarea asp-for="Content" id="PostContentCreate" rows="8" class="form-control editor" required></textarea>
     </div>
 
-   <div class="mb-3">
-    <label class="form-label">Обкладинка </label>
-    <input type="file" name="thumbnailFile" class="form-control" 
-           accept=".jpg,.jpeg,.png,.webp" 
-           onchange="checkSquareImage(this)" />
-    <div class="form-text">
-        Фото повинно мати <b>однакову ширину та висоту</b> (квадрат).
+    <div class="mb-3">
+        <label class="form-label">Обкладинка</label>
+        <input type="file" name="thumbnailFile" class="form-control"
+               accept=".jpg,.jpeg,.png,.webp"
+               onchange="checkSquareImage(this)" />
+        <div class="form-text">
+            Фото повинно мати <b>однакову ширину та висоту</b> (квадрат).
+        </div>
     </div>
-</div>
-
-
 
     <button class="btn btn-success">Зберегти</button>
     <button type="button" class="btn btn-secondary" onclick="loadContent('Posts')">Назад</button>

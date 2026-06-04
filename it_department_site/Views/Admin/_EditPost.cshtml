@@ -9,7 +9,9 @@
 
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="Thumbnail" /> <div class="mb-3">
+    <input type="hidden" asp-for="Thumbnail" />
+
+    <div class="mb-3">
         <label class="form-label">Назва</label>
         <input asp-for="Title" class="form-control" />
     </div>
@@ -20,26 +22,35 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Дата публікації</label>
+        <input type="datetime-local"
+               name="CreatedAt"
+               class="form-control"
+               value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm")"
+               required />
+    </div>
+
+    <div class="mb-3">
         <label class="form-label">Короткий опис</label>
-        <input asp-for="Excerpt" class="form-control" />
+        <textarea asp-for="Excerpt" id="PostExcerptEdit" class="form-control editor" rows="4"></textarea>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Контент</label>
-        <textarea asp-for="Content" rows="6" class="form-control"></textarea>
+        <textarea asp-for="Content" id="PostContentEdit" rows="8" class="form-control editor"></textarea>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Змінити обкладинку</label>
         <input type="file" name="thumbnailFile" class="form-control" accept="image/*" />
-           <div class="form-text">
-        Фото повинно мати <b>однакову ширину та висоту</b> (квадрат).
-    </div>
+        <div class="form-text">
+            Фото повинно мати <b>однакову ширину та висоту</b> (квадрат).
+        </div>
         @if (!string.IsNullOrEmpty(Model.Thumbnail))
         {
             <div class="mt-2">
                 <p>Поточне фото:</p>
-                <img src="@Model.Thumbnail" style="width: 150px; border-radius: 8px;" />
+                <img src="@Model.Thumbnail" style="width: 150px; border-radius: 8px;" alt="" />
             </div>
         }
     </div>

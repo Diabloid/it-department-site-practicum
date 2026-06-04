@@ -13,7 +13,6 @@ namespace it_department_site.Entities
         [Required(ErrorMessage = "Заголовок є обов'язковим"), MaxLength(200)]
         public string Title { get; set; } = null!;
 
-        [MaxLength(300)]
         public string? Excerpt { get; set; }
 
         [Required(ErrorMessage = "Контент не може бути порожнім")]

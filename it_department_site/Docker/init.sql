@@ -202,7 +202,7 @@ CREATE TABLE posts (
   page_id int DEFAULT NULL,
   slug varchar(150) NOT NULL,
   title varchar(200) NOT NULL,
-  excerpt varchar(300) NOT NULL,
+  excerpt text NOT NULL,
   thumbnail text,
   created_at datetime DEFAULT CURRENT_TIMESTAMP,
   updated_at datetime DEFAULT CURRENT_TIMESTAMP,

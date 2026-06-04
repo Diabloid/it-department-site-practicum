@@ -58,6 +58,7 @@ namespace it_department_site.Repositories
                     excerpt = @Excerpt,
                     content = @Content,
                     thumbnail = @Thumbnail,
+                    created_at = @CreatedAt,
                     updated_at = NOW()
                 WHERE id = @Id
             ", post);

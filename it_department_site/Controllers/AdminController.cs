@@ -330,7 +330,7 @@ namespace it_department_site.Controllers
 
         public IActionResult CreatePost()
         {
-            return PartialView("_CreatePost", new Post());
+            return PartialView("_CreatePost", new Post { CreatedAt = DateTime.Now });
         }
 
         [HttpPost]
@@ -350,8 +350,10 @@ namespace it_department_site.Controllers
                 }
 
                 post.AuthorId = 1;
-                post.CreatedAt = DateTime.UtcNow;
-                post.UpdatedAt = DateTime.UtcNow;
+                if (post.CreatedAt == default)
+                    post.CreatedAt = DateTime.Now;
+                post.UpdatedAt = DateTime.Now;
+                post.Excerpt ??= string.Empty;
 
                 await _postRepository.CreateAsync(post);
                 return await Posts();
@@ -389,7 +391,8 @@ namespace it_department_site.Controllers
                     post.Thumbnail = await SaveImage(thumbnailFile, "posts");
                 }
 
-                post.UpdatedAt = DateTime.UtcNow;
+                post.UpdatedAt = DateTime.Now;
+                post.Excerpt ??= string.Empty;
                 await _postRepository.UpdateAsync(post);
                 return await Posts();
             }
