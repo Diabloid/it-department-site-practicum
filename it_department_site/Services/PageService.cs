@@ -1,84 +1,12 @@
-﻿public class PageService : IPageService
+﻿public class PageService 
 {
-    private readonly IPageRepository _pageRepository;
     private readonly EncryptionService _encryption;
 
-    public PageService(IPageRepository pageRepository, EncryptionService encryption)
+    public PageService( EncryptionService encryption)
     {
-        _pageRepository = pageRepository;
         _encryption = encryption;
     }
 
-    public async Task<Page?> GetPageBySlugAsync(string slug, bool isAdmin)
-    {
-        var page = await _pageRepository.GetBySlugAsync(slug);
-        if (page == null) return null;
-
-        if (page.Status == PageStatus.Draft && !isAdmin)
-            return null;
-
-        DecryptContent(page);
-        return page;
-    }
-
-    public async Task<Page?> GetPageByIdAsync(int id)
-    {
-        var page = await _pageRepository.GetByIdAsync(id);
-        if (page != null)
-        {
-            DecryptContent(page);
-        }
-        return page;
-    }
-
-    public async Task<List<Page>> GetAllPagesAsync()
-    {
-        var pages = await _pageRepository.GetAllAsync();
-        foreach (var page in pages)
-            DecryptContent(page);
-        return pages;
-    }
-
-    public async Task<List<Page>> GetPagedAsync(int pageNumber, int pageSize)
-    {
-        var pages = await _pageRepository.GetPagedAsync(pageNumber, pageSize);
-        foreach (var page in pages)
-            DecryptContent(page);
-        return pages;
-    }
-
-    public async Task<int> GetTotalAsync(int p) => await _pageRepository.GetTotalAsync(p);
-
-    public async Task<int> CreatePageAsync(Page page)
-    {
-        EncryptContent(page);
-        return await _pageRepository.CreateAsync(page);
-    }
-
-    public async Task UpdatePageAsync(Page page)
-    {
-        EncryptContent(page);
-        await _pageRepository.UpdateAsync(page);
-    }
-
-    public async Task DeletePageAsync(int id) => await _pageRepository.DeleteAsync(id);
-
-    // Логіка переглядів
-    public async Task<bool> HasUserViewedPageAsync(int userId, int pageId)
-    {
-        return await _pageRepository.HasPageViewAsync(userId, pageId);
-    }
-
-    public async Task MarkPageAsViewedAsync(int userId, int pageId)
-    {
-        await _pageRepository.AddPageViewAsync(userId, pageId);
-        await _pageRepository.IncrementViewsAsync(pageId);
-    }
-
-    public async Task<int> GetViewsAsync(int pageId)
-    {
-        return await _pageRepository.GetViewsAsync(pageId);
-    }
 
     // --- Private Methods (Encryption) ---
     // Вони лишаються синхронними, бо це робота з пам'яттю/CPU

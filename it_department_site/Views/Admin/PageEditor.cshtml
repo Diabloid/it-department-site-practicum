@@ -95,13 +95,6 @@
                                 }
                             </select>
                         </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="allowComments" name="AllowComments" value="true"
-                            @(Model.AllowComments ? "checked" : "") />
-                            <label class="form-check-label" for="allowComments">
-                                Дозволити коментарі
-                            </label>
-                        </div>
                         <div class="mb-3">
                             <label class="form-label">Дата створення</label>
                             <input class="form-control" disabled value="@(Model.CreatedAt?.ToString("dd.MM.yyyy HH:mm:ss") ?? "-")" />

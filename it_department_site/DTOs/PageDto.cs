@@ -10,7 +10,6 @@
         public string MainContent { get; set; }
         public string LeftSidebar { get; set; }
         public string RightSidebar { get; set; }
-        public bool AllowComments { get; set; }
         public int Views { get; set; }
     }
 }

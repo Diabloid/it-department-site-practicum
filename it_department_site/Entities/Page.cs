@@ -9,16 +9,18 @@ namespace it_department_site.Entities
         [Key]
         [Column("id")]
         public int Id { get; set; }
-
+        
+        [Required]
         [MaxLength(50)]
         [Column("title")]
         public string Title { get; set; }
 
+        [Required]
         [MaxLength(100)]
         [Column("slug")]
         public string Slug { get; set; }
 
-        [MaxLength(20)]
+        [Required]
         [Column("status")]
         public PageStatus Status { get; set; }
 
@@ -29,11 +31,12 @@ namespace it_department_site.Entities
         [Column("content_json")]
         public string ContentJson { get; set; } = "";
 
+        [Required]
         [MaxLength(50)]
         [Column("layout_type")]
         public string LayoutType { get; set; }
 
-        [MaxLength(20)]
+        [Required]
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
@@ -41,17 +44,12 @@ namespace it_department_site.Entities
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
 
-        [MaxLength(20)]
-        [Column("allow_comments")]
-        public bool AllowComments { get; set; } = true; // ← Нове поле
-
-        [MaxLength(20)]
-        [Column("views")]
+        [Column("ViewsCount")]
         public int Views { get; set; }
 
         public Page() { }
 
-        public Page(int id, string title, string slug, PageStatus status, string contentJson, string layoutType, DateTime createdAt, DateTime updatedAt, bool allowComments = true)
+        public Page(int id, string title, string slug, PageStatus status, string contentJson, string layoutType, DateTime createdAt, DateTime updatedAt)
         {
             Id = id;
             Title = title;
@@ -60,7 +58,6 @@ namespace it_department_site.Entities
             LayoutType = layoutType;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
-            AllowComments = allowComments;
 
             ContentJson = contentJson;
             Content = new ContentSections();

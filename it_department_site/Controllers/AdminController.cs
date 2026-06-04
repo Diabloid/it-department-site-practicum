@@ -172,8 +172,7 @@ namespace it_department_site.Controllers
                 LayoutType = page.LayoutType,
                 ContentSections = page.Content,
                 CreatedAt = page.CreatedAt,
-                UpdatedAt = page.UpdatedAt,
-                AllowComments = page.AllowComments
+                UpdatedAt = page.UpdatedAt
             });
         }
 
@@ -188,7 +187,6 @@ namespace it_department_site.Controllers
                 Content = model.ContentSections,
                 Status = Enum.TryParse(model.Status, out PageStatus status) ? status : PageStatus.Draft,
                 LayoutType = model.LayoutType,
-                AllowComments = model.AllowComments,
                 CreatedAt = model.CreatedAt ?? DateTime.Now,
                 UpdatedAt = DateTime.Now
             };

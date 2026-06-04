@@ -67,6 +67,59 @@ namespace it_department_site.Migrations
                     b.ToTable("graduates");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.Page", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("content_json");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("LayoutType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("layout_type");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("slug");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasMaxLength(20)
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("Views")
+                        .HasColumnType("int")
+                        .HasColumnName("ViewsCount");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("pages");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Partner", b =>
                 {
                     b.Property<int>("Id")
@@ -99,67 +152,6 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("partners");
-                });
-
-            modelBuilder.Entity("it_department_site.Entities.Page", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<bool>("AllowComments")
-                        .HasMaxLength(20)
-                        .HasColumnType("tinyint(20)")
-                        .HasColumnName("allow_comments");
-
-                    b.Property<string>("ContentJson")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)")
-                        .HasColumnName("content_json");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasMaxLength(20)
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("LayoutType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("layout_type");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("slug");
-
-                    b.Property<int>("Status")
-                        .HasMaxLength(20)
-                        .HasColumnType("int")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("title");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasMaxLength(20)
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.Property<int>("Views")
-                        .HasMaxLength(20)
-                        .HasColumnType("int")
-                        .HasColumnName("views");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("pages");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>
