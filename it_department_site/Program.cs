@@ -79,6 +79,11 @@ app.MapControllerRoute(
 );
 
 app.MapControllerRoute(
+    name: "proudOfYou",
+    pattern: "proudofyou",
+    defaults: new { controller = "Graduates", action = "ProudOfYou" });
+
+app.MapControllerRoute(
     name: "pageBySlug",
     pattern: "{slug}",
     defaults: new { controller = "Pages", action = "Details" }

@@ -1,34 +1,46 @@
 ﻿@model List<it_department_site.Entities.MenuItem>
+@using it_department_site.Entities
+
+@functions {
+    string ResolveMenuUrl(MenuItem item)
+    {
+        if (!string.IsNullOrEmpty(item.PageSlug) &&
+            item.PageSlug.Equals("proudofyou", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/proudofyou";
+        }
+
+        var name = item.Name ?? "";
+        if (name.Contains("proud", StringComparison.OrdinalIgnoreCase) &&
+            name.Contains("you", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/proudofyou";
+        }
+
+        if (!string.IsNullOrEmpty(item.PageSlug))
+            return $"/{item.PageSlug}";
+
+        return "#";
+    }
+}
 
 @foreach (var item in Model)
 {
     if (item.Children.Any())
     {
         <li class="dropdown">
-            @{
-                var linkUrl = !string.IsNullOrEmpty(item.PageSlug) ? $"/{item.PageSlug}" : "#";
-            }
-
-            <a href="@linkUrl">@item.Name</a>
+            <a href="@ResolveMenuUrl(item)">@item.Name</a>
 
             <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
-                    var childUrl = !string.IsNullOrEmpty(child.PageSlug) ? $"/{child.PageSlug}" : "#";
-                    <a href="@childUrl">@child.Name</a>
+                    <a href="@ResolveMenuUrl(child)">@child.Name</a>
                 }
             </div>
         </li>
     }
     else
     {
-        if (!string.IsNullOrEmpty(item.PageSlug))
-        {
-            <li><a href="/@item.PageSlug">@item.Name</a></li>
-        }
-        else
-        {
-            <li><a href="#">@item.Name</a></li>
-        }
+        <li><a href="@ResolveMenuUrl(item)">@item.Name</a></li>
     }
 }
