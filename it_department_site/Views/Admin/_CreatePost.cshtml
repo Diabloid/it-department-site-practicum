@@ -1,53 +1,5 @@
-@model it_department_site.Entities.Post
-
-<h4>Створити публікацію</h4>
-
-<form method="post"
-      asp-action="CreatePost"
-      enctype="multipart/form-data"
-      onsubmit="return submitForm(this)">
-
-    @Html.AntiForgeryToken()
-
-    <div class="mb-3">
-        <label class="form-label">Назва</label>
-        <input asp-for="Title" class="form-control" required />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Slug</label>
-        <input asp-for="Slug" class="form-control" required />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Дата публікації</label>
-        <input type="datetime-local"
-               name="CreatedAt"
-               class="form-control"
-               value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm")"
-               required />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Короткий опис</label>
-        <textarea asp-for="Excerpt" id="PostExcerptCreate" class="form-control editor" rows="4"></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Контент</label>
-        <textarea asp-for="Content" id="PostContentCreate" rows="8" class="form-control editor" required></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Обкладинка</label>
-        <input type="file" name="thumbnailFile" class="form-control"
-               accept=".jpg,.jpeg,.png,.webp"
-               onchange="checkSquareImage(this)" />
-        <div class="form-text">
-            Фото повинно мати <b>однакову ширину та висоту</b> (квадрат).
-        </div>
-    </div>
-
-    <button class="btn btn-success">Зберегти</button>
-    <button type="button" class="btn btn-secondary" onclick="loadContent('Posts')">Назад</button>
-</form>
+@model Post
+@{
+    ViewData["PostFormTitle"] = "Створити публікацію";
+}
+<partial name="_PostForm" model="Model" />

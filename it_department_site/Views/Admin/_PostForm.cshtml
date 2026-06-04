@@ -1,0 +1,73 @@
+@model Post
+
+<h4>@(ViewData["PostFormTitle"] ?? "Публікація")</h4>
+
+<form method="post"
+      asp-action="SavePostDraft"
+      enctype="multipart/form-data"
+      data-post-form
+      onsubmit="return false">
+
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" id="PostId" />
+    <input type="hidden" asp-for="Status" id="PostStatus" />
+    <input type="hidden" asp-for="Thumbnail" />
+
+    <div class="mb-3">
+        <label class="form-label">Назва</label>
+        <input asp-for="Title" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Slug</label>
+        <input asp-for="Slug" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Дата публікації</label>
+        <input type="datetime-local"
+               name="CreatedAt"
+               class="form-control"
+               value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm")" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Короткий опис</label>
+        <textarea asp-for="Excerpt" class="form-control editor" rows="4"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Контент</label>
+        <textarea asp-for="Content" rows="8" class="form-control editor"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">@(Model.Id == 0 ? "Обкладинка" : "Змінити обкладинку")</label>
+        <input type="file" name="thumbnailFile" class="form-control"
+               accept=".jpg,.jpeg,.png,.webp"
+               onchange="typeof checkSquareImage === 'function' && checkSquareImage(this)" />
+        <div class="form-text">
+            Фото повинно мати <b>однакову ширину та висоту</b> (квадрат). Завантажується при «Опублікувати».
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Thumbnail))
+        {
+            <div class="mt-2">
+                <p>Поточне фото:</p>
+                <img src="@Model.Thumbnail" style="width: 150px; border-radius: 8px;" alt="" />
+            </div>
+        }
+    </div>
+
+    <div asp-validation-summary="All" class="text-danger mb-2"></div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <button type="button" class="btn btn-outline-secondary" onclick="savePostDraft()">
+            Зберегти чернетку
+        </button>
+        <button type="button" class="btn btn-success" onclick="publishPost()">
+            Опублікувати
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="loadContent('Posts')">Назад</button>
+        <span id="postAutosaveStatus" class="text-muted small ms-2"></span>
+    </div>
+</form>

@@ -202,6 +202,7 @@ CREATE TABLE posts (
   page_id int DEFAULT NULL,
   slug varchar(150) NOT NULL,
   title varchar(200) NOT NULL,
+  status enum('Draft','Published') NOT NULL DEFAULT 'Draft',
   excerpt text NOT NULL,
   thumbnail text,
   created_at datetime DEFAULT CURRENT_TIMESTAMP,
