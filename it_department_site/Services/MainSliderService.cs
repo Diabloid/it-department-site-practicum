@@ -71,8 +71,21 @@ namespace it_department_site.Services
             }
             else
             {
-                DeleteUploadedFileIfExists(slide.ImageUrl);
+                var oldUrl = slide.ImageUrl;
                 slide.ImageUrl = null;
+                _context.Entry(slide).Property(s => s.ImageUrl).IsModified = true;
+                await _context.SaveChangesAsync();
+
+                try
+                {
+                    DeleteUploadedFileIfExists(oldUrl);
+                }
+                catch
+                {
+                    // DB clear succeeded; file removal must not block delete.
+                }
+
+                return;
             }
 
             await _context.SaveChangesAsync();

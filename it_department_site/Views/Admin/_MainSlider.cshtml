@@ -58,53 +58,26 @@
                             <input type="text" name="altText" class="form-control" value="@slide.AltText" maxlength="200" />
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary btn-sm">Зберегти</button>
-                            @if (!slide.IsEmpty)
-                            {
-                                <button type="button"
-                                        class="btn btn-outline-danger btn-sm"
-                                        onclick="deleteMainSliderSlide(@slide.Slot, this)">
-                                    Видалити
-                                </button>
-                            }
-                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Зберегти</button>
                     </form>
+
+                    @if (!slide.IsEmpty)
+                    {
+                        <form method="post"
+                              asp-action="DeleteMainSliderSlide"
+                              class="mt-2"
+                              style="margin:0;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="slot" value="@slide.Slot" />
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    onclick="requestConfirmSubmit(this.form, 'Видалити зображення зі слоту @slide.Slot?')">
+                                Видалити
+                            </button>
+                        </form>
+                    }
                 </div>
             </div>
         </div>
     }
 </div>
-
-<script>
-    function deleteMainSliderSlide(slot, button) {
-        if (!confirm('Видалити зображення зі слоту ' + slot + '?')) {
-            return;
-        }
-
-        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
-        const formData = new FormData();
-        formData.append('slot', slot);
-        if (token) {
-            formData.append('__RequestVerificationToken', token);
-        }
-
-        button.disabled = true;
-
-        fetch('@Url.Action("DeleteMainSliderSlide", "Admin")', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.text())
-            .then(html => {
-                const container = document.getElementById('contentArea');
-                if (container) {
-                    container.innerHTML = html;
-                }
-            })
-            .catch(() => alert('Не вдалося видалити слайд.'))
-            .finally(() => {
-                button.disabled = false;
-            });
-    }
-</script>

@@ -327,10 +327,18 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMainSliderSlide(byte slot)
         {
-            await _mainSliderService.ClearSlideAsync(slot);
+            try
+            {
+                await _mainSliderService.ClearSlideAsync(slot);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete main slider slide {Slot}", slot);
+                ModelState.AddModelError(string.Empty, "Не вдалося видалити слайд. Спробуйте ще раз.");
+            }
+
             var slides = await _mainSliderService.GetAdminSlidesAsync();
             return PartialView("_MainSlider", slides);
         }
