@@ -1,0 +1,29 @@
+@model IEnumerable<MainSliderSlide>
+@{
+    var slides = Model.OrderBy(s => s.Slot).ToList();
+}
+
+<div class="banner-container js-main-slider" data-autoplay-ms="5000">
+    <div class="banner-track">
+        @foreach (var slide in slides)
+        {
+            <div class="banner-element banner-slide">
+                <img class="banner_image" src="@slide.ImageUrl" alt="@slide.AltText" />
+            </div>
+        }
+    </div>
+
+    <button type="button" class="banner-arrow banner-arrow-prev" aria-label="Попередній слайд">&#10094;</button>
+    <button type="button" class="banner-arrow banner-arrow-next" aria-label="Наступний слайд">&#10095;</button>
+
+    <div class="banner-dots" role="tablist" aria-label="Слайди головного банера">
+        @for (var i = 0; i < slides.Count; i++)
+        {
+            <button type="button"
+                    class="banner-dot @(i == 0 ? "is-active" : "")"
+                    data-slide-index="@i"
+                    aria-label="Слайд @(i + 1)"
+                    aria-selected="@(i == 0 ? "true" : "false")"></button>
+        }
+    </div>
+</div>

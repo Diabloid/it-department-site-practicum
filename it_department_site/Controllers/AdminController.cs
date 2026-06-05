@@ -13,6 +13,7 @@ namespace it_department_site.Controllers
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
         private readonly IGraduateService _graduateService;
+        private readonly IMainSliderService _mainSliderService;
 
         public AdminController(
             IPageService pageService,
@@ -22,7 +23,8 @@ namespace it_department_site.Controllers
             ISiteSettingsService settingsService,
             IPartnerService partnerService,
             IPostRepository postRepository,
-            IGraduateService graduateService)
+            IGraduateService graduateService,
+            IMainSliderService mainSliderService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -32,6 +34,7 @@ namespace it_department_site.Controllers
             _partnerService = partnerService;
             _postRepository = postRepository;
             _graduateService = graduateService;
+            _mainSliderService = mainSliderService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -299,6 +302,37 @@ namespace it_department_site.Controllers
         {
             var partners = await _partnerService.GetAllPartnersAsync();
             return PartialView("_Partners", partners.ToList());
+        }
+
+        public async Task<IActionResult> MainSlider()
+        {
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateMainSliderSlide(byte slot, IFormFile? imageFile, string? altText)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Оберіть зображення для завантаження.");
+                var currentSlides = await _mainSliderService.GetAdminSlidesAsync();
+                return PartialView("_MainSlider", currentSlides);
+            }
+
+            await _mainSliderService.UpdateSlideAsync(slot, imageFile, altText);
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteMainSliderSlide(byte slot)
+        {
+            await _mainSliderService.ClearSlideAsync(slot);
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
         }
 
         [HttpPost]
