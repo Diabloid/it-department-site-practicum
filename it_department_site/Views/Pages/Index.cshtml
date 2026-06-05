@@ -2,21 +2,19 @@
    ViewData["Title"] = "Головна";
    var newsList = (ViewBag.News as IEnumerable<Post>)?.ToList() ?? new List<Post>();
    var mainSliderSlides = (ViewBag.MainSliderSlides as IEnumerable<MainSliderSlide>)?.ToList()
-       ?? new List<MainSliderSlide>
-       {
-           new MainSliderSlide { Slot = 1, ImageUrl = "/images/banner_photo_1.JPG", AltText = "Слайд 1" },
-           new MainSliderSlide { Slot = 2, ImageUrl = "/images/banner_photo_1.JPG", AltText = "Слайд 2" },
-           new MainSliderSlide { Slot = 3, ImageUrl = "/images/banner_photo_1.JPG", AltText = "Слайд 3" }
-       };
+       ?? new List<MainSliderSlide>();
 }
 
 
 <div class="main-content">
 
 
-   <div class="start-banner">
-       @await Html.PartialAsync("Partials/_MainBannerSlider", mainSliderSlides)
-   </div>
+   @if (mainSliderSlides.Any())
+   {
+       <div class="start-banner">
+           @await Html.PartialAsync("Partials/_MainBannerSlider", mainSliderSlides)
+       </div>
+   }
 
 
    <div class="content-part-line">

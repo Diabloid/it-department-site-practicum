@@ -8,7 +8,6 @@ namespace it_department_site.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
-        private const string FallbackImage = "/images/banner_photo_1.JPG";
 
         public MainSliderService(ApplicationDbContext context, IWebHostEnvironment env)
         {
@@ -18,12 +17,13 @@ namespace it_department_site.Services
 
         public async Task<List<MainSliderSlide>> GetAdminSlidesAsync()
         {
-            return await BuildSlidesAsync(useFallbackImage: false);
+            return await BuildSlidesAsync();
         }
 
         public async Task<List<MainSliderSlide>> GetDisplaySlidesAsync()
         {
-            return await BuildSlidesAsync(useFallbackImage: true);
+            var slides = await BuildSlidesAsync();
+            return slides.Where(s => !s.IsEmpty).ToList();
         }
 
         public async Task UpdateSlideAsync(byte slot, IFormFile imageFile, string? altText)
@@ -78,7 +78,7 @@ namespace it_department_site.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<List<MainSliderSlide>> BuildSlidesAsync(bool useFallbackImage)
+        private async Task<List<MainSliderSlide>> BuildSlidesAsync()
         {
             List<MainSliderSlide> fromDb;
             try
@@ -100,25 +100,20 @@ namespace it_department_site.Services
             {
                 if (bySlot.TryGetValue(slot, out var existing))
                 {
-                    var slide = new MainSliderSlide
+                    result.Add(new MainSliderSlide
                     {
                         Slot = existing.Slot,
                         ImageUrl = existing.ImageUrl,
                         AltText = string.IsNullOrWhiteSpace(existing.AltText) ? $"Слайд {slot}" : existing.AltText,
                         UpdatedAt = existing.UpdatedAt
-                    };
-
-                    if (useFallbackImage && slide.IsEmpty)
-                        slide.ImageUrl = FallbackImage;
-
-                    result.Add(slide);
+                    });
                     continue;
                 }
 
                 result.Add(new MainSliderSlide
                 {
                     Slot = slot,
-                    ImageUrl = useFallbackImage ? FallbackImage : null,
+                    ImageUrl = null,
                     AltText = $"Слайд {slot}"
                 });
             }
