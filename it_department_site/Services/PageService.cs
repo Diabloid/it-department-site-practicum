@@ -64,14 +64,8 @@
     public async Task DeletePageAsync(int id) => await _pageRepository.DeleteAsync(id);
 
     // Логіка переглядів
-    public async Task<bool> HasUserViewedPageAsync(int userId, int pageId)
+    public async Task IncrementViewsAsync(int pageId)
     {
-        return await _pageRepository.HasPageViewAsync(userId, pageId);
-    }
-
-    public async Task MarkPageAsViewedAsync(int userId, int pageId)
-    {
-        await _pageRepository.AddPageViewAsync(userId, pageId);
         await _pageRepository.IncrementViewsAsync(pageId);
     }
 

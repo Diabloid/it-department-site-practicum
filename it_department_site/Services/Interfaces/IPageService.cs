@@ -11,8 +11,7 @@
         Task<List<Page>> GetPagedAsync(int b, int c);
         Task<int> GetTotalAsync(int p);
 
-        Task<bool> HasUserViewedPageAsync(int userId, int pageId);
-        Task MarkPageAsViewedAsync(int userId, int pageId);
+        Task IncrementViewsAsync(int pageId);
         Task<int> GetViewsAsync(int pageId);
     }
 }

@@ -90,21 +90,6 @@
 
     // --- Перегляди ---
 
-    public async Task<bool> HasPageViewAsync(int userId, int pageId)
-    {
-        int? result = await _db.QueryFirstOrDefaultAsync<int?>(
-            "SELECT 1 FROM page_views WHERE UserId = @userId AND PageId = @pageId LIMIT 1",
-            new { userId, pageId });
-        return result.HasValue;
-    }
-
-    public async Task AddPageViewAsync(int userId, int pageId)
-    {
-        await _db.ExecuteAsync(
-            "INSERT INTO page_views (UserId, PageId) VALUES (@userId, @pageId)",
-            new { userId, pageId });
-    }
-
     public async Task IncrementViewsAsync(int pageId)
     {
         await _db.ExecuteAsync(
