@@ -44,13 +44,9 @@ builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
-builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
-builder.Services.AddScoped<IFavoriteService, FavoriteService>();
-
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<EncryptionService>();
 
-builder.Services.AddScoped<IPartnerRepository, PartnerRepository>();
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
