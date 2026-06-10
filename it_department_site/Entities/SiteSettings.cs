@@ -10,9 +10,9 @@ namespace it_department_site.Entities
         [Column("Id")]
         public int Id { get; set; }
 
-        [MaxLength(255)]
+        [Required]
         [Column("SiteTitle")]
-        public string? SiteTitle { get; set; }
+        public string SiteTitle { get; set; }
 
         [Required]
         [Column("HeaderHtml")]
@@ -33,7 +33,7 @@ namespace it_department_site.Entities
         [Column("CustomCss")]
         public string CustomCss { get; set; }
 
-        [MaxLength(255)]
+        [Required]
         [Column("SiteLogoUrl")]
         public string? SiteLogoUrl { get; set; }
     }

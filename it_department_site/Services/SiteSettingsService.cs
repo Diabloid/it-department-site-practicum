@@ -17,7 +17,7 @@ namespace it_department_site.Services
             {
                 return new SiteSettings
                 {
-                    Id = 1,
+                    Id = 0,
                     HeaderHtml = "<header></header>",
                     FooterHtml = "<footer></footer>",
                     HeaderCss = "",
@@ -31,11 +31,10 @@ namespace it_department_site.Services
 
         public async Task SaveAsync(SiteSettings settings)
         {
-            var existingSettings = await _context.SiteSettings.FindAsync(1);
+            var existingSettings = await _context.SiteSettings.FindAsync(1); -> await _context.SiteSettings.FirstOrDefaultAsync();
 
             if (existingSettings == null)
             {
-                settings.Id = 1;
                 _context.SiteSettings.Add(settings);
             }
             else
