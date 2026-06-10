@@ -12,6 +12,7 @@
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">📄 View All Pages</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MenuItems')">🧩 Manage Menu Items</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">👤 View All Users</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MainSlider')">📰 Слайдер головної сторінки</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Posts')">📰 Публікації</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Partners')">🤝 Управління партнерами</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Employees')">👩‍💻 Управління Співробітниками</a>
@@ -34,14 +35,55 @@
     </div>
 </div>
 
+<div class="modal fade" id="adminConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Підтвердження</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body">
+                <p id="adminConfirmMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-danger" id="adminConfirmOkBtn">Видалити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        let pendingConfirmForm = null;
+
         document.addEventListener("DOMContentLoaded", () => {
             const section = new URLSearchParams(window.location.search).get("section");
             if (section) {
                 loadContent(section);
             }
+
+            const confirmModalEl = document.getElementById('adminConfirmModal');
+            const confirmOkBtn = document.getElementById('adminConfirmOkBtn');
+
+            confirmOkBtn?.addEventListener('click', () => {
+                if (!pendingConfirmForm) return;
+                const form = pendingConfirmForm;
+                pendingConfirmForm = null;
+                bootstrap.Modal.getInstance(confirmModalEl)?.hide();
+                submitForm(form);
+            });
+
+            confirmModalEl?.addEventListener('hidden.bs.modal', () => {
+                pendingConfirmForm = null;
+            });
         });
+
+        function requestConfirmSubmit(form, message) {
+            pendingConfirmForm = form;
+            document.getElementById('adminConfirmMessage').textContent = message;
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('adminConfirmModal')).show();
+        }
 
         function loadContent(option, params = '') {
             const url = `/Admin/${encodeURIComponent(option)}${params}`;

@@ -48,6 +48,7 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<EncryptionService>();
 
 builder.Services.AddScoped<IPartnerService, PartnerService>();
+builder.Services.AddScoped<IMainSliderService, MainSliderService>();
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
