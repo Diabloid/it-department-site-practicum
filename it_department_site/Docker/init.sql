@@ -29,6 +29,7 @@ CREATE TABLE `menu_items` (
   `name` varchar(255) NOT NULL,
   `parent_id` int DEFAULT NULL,
   `page_id` int DEFAULT NULL,
+  `custom_url` varchar(255) DEFAULT NULL,
   `sort_order` int DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`),
@@ -211,3 +212,13 @@ CREATE TABLE posts (
   KEY posts_user_id_fk (author_id),
   CONSTRAINT posts_user_id_fk FOREIGN KEY (author_id) REFERENCES users (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE disciplines (
+  id int NOT NULL AUTO_INCREMENT,
+  name varchar(200) NOT NULL,
+  description text,
+  teacher varchar(200) NOT NULL,
+  sort_order int NOT NULL DEFAULT 0,
+  created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

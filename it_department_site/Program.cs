@@ -31,6 +31,7 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGraduateService, GraduateService>();
+builder.Services.AddScoped<IDisciplineService, DisciplineService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
@@ -77,6 +78,11 @@ app.MapControllerRoute(
     pattern: "Admin",
     defaults: new { controller = "Admin", action = "Index" }
 );
+
+app.MapControllerRoute(
+    name: "disciplines",
+    pattern: "Disciplines/{action=Index}/{id?}",
+    defaults: new { controller = "Disciplines" });
 
 app.MapControllerRoute(
     name: "pageBySlug",

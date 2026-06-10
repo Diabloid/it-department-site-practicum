@@ -37,6 +37,33 @@ if (header) { // Додана перевірка для уникнення по�
 }
 // -------------------------------------------------------------
 
+// Випадаюче меню: клік відкриває список, клік по пункту — перехід
+document.querySelectorAll('header .dropdown').forEach((dropdown) => {
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const content = dropdown.querySelector('.dropdown-content');
+    if (!trigger || !content) return;
+
+    trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        const willOpen = !dropdown.classList.contains('is-open');
+        document.querySelectorAll('header .dropdown.is-open').forEach((d) => {
+            d.classList.remove('is-open');
+            d.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+        });
+        dropdown.classList.toggle('is-open', willOpen);
+        trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if (e.target.closest('header .dropdown')) return;
+    document.querySelectorAll('header .dropdown.is-open').forEach((dropdown) => {
+        dropdown.classList.remove('is-open');
+        dropdown.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+    });
+});
+// -------------------------------------------------------------
+
 // Функція для визначення, чи є елемент у видимій області
 const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
