@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   db:
     image: mysql:latest
@@ -17,6 +16,18 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    image: ipz-site
+    container_name: backend
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=${MYSQL_DATABASE};User ID=${MYSQL_USER};Password=${MYSQL_PASSWORD};Pooling=true;
+    ports:
+      - "8080:8080"
 
 volumes:
   db_data:
