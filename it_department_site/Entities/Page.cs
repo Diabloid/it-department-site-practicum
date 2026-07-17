@@ -40,7 +40,7 @@ namespace it_department_site.Entities
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
-        [MaxLength(20)]
+        [Required]
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
 
@@ -58,7 +58,6 @@ namespace it_department_site.Entities
             LayoutType = layoutType;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
-
             ContentJson = contentJson;
             Content = new ContentSections();
         }
@@ -69,11 +68,12 @@ namespace it_department_site.Entities
         Draft,
         Published
     }
+
     public class ContentSections
     {
         public string main { get; set; } = "";
         public string left { get; set; } = "";
         public string right { get; set; } = "";
-
+        
     }
 }
