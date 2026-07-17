@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using it_department_site.Infrastructure;
+using it_department_site.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using ZstdSharp.Unsafe;
 
 namespace it_department_site.Controllers
 {
@@ -13,6 +16,9 @@ namespace it_department_site.Controllers
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
         private readonly IGraduateService _graduateService;
+        private readonly IEmployeeService _employeeService;
+        private readonly IGoogleDriveService _driveService;
+        private readonly GoogleDriveOptions _driveOptions;
 
         public AdminController(
             IPageService pageService,
@@ -22,7 +28,10 @@ namespace it_department_site.Controllers
             ISiteSettingsService settingsService,
             IPartnerService partnerService,
             IPostRepository postRepository,
-            IGraduateService graduateService)
+            IGraduateService graduateService,
+            IEmployeeService employeeService,
+            IGoogleDriveService driveService,
+            Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -32,6 +41,9 @@ namespace it_department_site.Controllers
             _partnerService = partnerService;
             _postRepository = postRepository;
             _graduateService = graduateService;
+            _employeeService = employeeService;
+            _driveService = driveService;
+            _driveOptions = driveOptions.Value;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -114,6 +126,120 @@ namespace it_department_site.Controllers
         {
             await _graduateService.DeleteAsync(id);
             return await Graduates();
+        }
+
+        //===========================================
+        public IActionResult CreateEmployee()
+        {
+            return PartialView("_CreateEmployee", new Employee());
+        }
+
+        public async Task<IActionResult> Employees()
+        {
+            var employees = await _employeeService.GetAllAsync();
+            var employeeList = employees.ToList();
+            var counts = await _employeeService.GetCertificateCountsAsync(employeeList.Select(e => e.Id));
+            ViewBag.CertificateCounts = counts;
+            return PartialView("_EmployeesTable", employeeList);
+        }
+
+        public async Task<IActionResult> EditEmployee(int id)
+        {
+            var employee = await _employeeService.GetByIdAsync(id);
+            if (employee == null) return NotFound();
+
+            ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(id);
+            return PartialView("_EditEmployee", employee);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
+
+            if (photoFile != null)
+                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+            else
+                employee.PhotoUrl = "/images/banner_photo_2.jpg";
+
+            employee.PatronymicName ??= string.Empty;
+            employee.Email ??= string.Empty;
+            employee.Specialization ??= string.Empty;
+            employee.Bio ??= string.Empty;
+
+            await _employeeService.CreateAsync(employee);
+            if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
+                await _employeeService.ApplyDrivePhotoFromFolderAsync(employee.Id);
+            return await Employees();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEmployee(
+            Employee employee,
+            IFormFile? photoFile,
+            string[]? selectedCertificateFileIds)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(employee.Id);
+                return PartialView("_EditEmployee", employee);
+            }
+
+            if (photoFile != null)
+                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+
+            await _employeeService.UpdateAsync(employee.Id, employee);
+
+            if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
+            {
+                if (photoFile == null)
+                    await _employeeService.ApplyDrivePhotoFromFolderAsync(employee.Id);
+
+                await _employeeService.SetSelectedDriveCertificatesAsync(
+                    employee.Id,
+                    selectedCertificateFileIds ?? Array.Empty<string>());
+            }
+
+            return await Employees();
+        }
+
+        [HttpGet]
+        [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> DriveFilePreview(int employeeId, string fileId)
+        {
+            if (string.IsNullOrWhiteSpace(fileId) ||
+                !await _employeeService.IsFileInEmployeeDriveFolderAsync(employeeId, fileId))
+            {
+                return NotFound();
+            }
+
+            var preview = await _driveService.GetPreviewStreamAsync(fileId);
+            if (preview == null)
+                return NotFound();
+
+            return File(preview.Value.Stream, preview.Value.ContentType);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SyncDriveFolders()
+        {
+            var rootFolderId = _driveOptions.RootFolderId;
+            var syncResult = await _employeeService.SyncDriveFoldersFromRootAsync(rootFolderId);
+            ViewBag.DriveSyncResult = syncResult;
+            return await Employees();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            await _employeeService.DeleteAsync(id);
+            return await Employees();
         }
 
         public async Task<IActionResult> Users()
@@ -398,6 +524,21 @@ namespace it_department_site.Controllers
                 _logger.LogError(ex, "Помилка при редагуванні");
                 return StatusCode(500, "Помилка сервера");
             }
+        }
+
+        private static List<string> ParseDriveLinks(string? linksText)
+        {
+            if (string.IsNullOrWhiteSpace(linksText))
+                return new List<string>();
+
+            return linksText
+                .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(link => link.Trim())
+                .Where(link => Uri.TryCreate(link, UriKind.Absolute, out var uri)
+                               && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                .Distinct()
+                .Take(15)
+                .ToList();
         }
 
         private async Task<string> SaveImage(IFormFile file, string folderName)
