@@ -14,7 +14,10 @@
             <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
-                    var childUrl = !string.IsNullOrEmpty(child.PageSlug) ? $"/{child.PageSlug}" : "#";
+                    var isEmployeesItem = string.Equals(child.Name?.Trim(), "Співробітники", StringComparison.OrdinalIgnoreCase);
+                    var childUrl = isEmployeesItem
+                        ? "/Employees/Index"
+                        : !string.IsNullOrEmpty(child.PageSlug) ? $"/{child.PageSlug}" : "#";
                     <a href="@childUrl">@child.Name</a>
                 }
             </div>
