@@ -1,0 +1,83 @@
+@model IEnumerable<MainSliderSlide>
+@{
+    var slides = Model.OrderBy(s => s.Slot).ToList();
+}
+
+<h4>Слайдер головної сторінки (3 фото)</h4>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row g-3">
+    @foreach (var slide in slides)
+    {
+        <div class="col-12 col-lg-4">
+            <div class="card h-100">
+                <div class="card-header fw-semibold">Слайд @slide.Slot</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        @if (slide.IsEmpty)
+                        {
+                            <div class="d-flex align-items-center justify-content-center rounded border bg-light text-muted"
+                                 style="min-height: 160px;">
+                                Слот порожній
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@slide.ImageUrl" alt="@slide.AltText" class="img-fluid rounded border" />
+                        }
+                    </div>
+                    <form method="post"
+                          asp-action="UpdateMainSliderSlide"
+                          enctype="multipart/form-data"
+                          onsubmit="return submitForm(this)">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="slot" value="@slide.Slot" />
+
+                        <div class="mb-2">
+                            <label class="form-label">Зображення</label>
+                            <input type="file"
+                                   name="imageFile"
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.webp"
+                                   @(slide.IsEmpty ? "required" : null) />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Alt текст</label>
+                            <input type="text" name="altText" class="form-control" value="@slide.AltText" maxlength="200" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-sm">Зберегти</button>
+                    </form>
+
+                    @if (!slide.IsEmpty)
+                    {
+                        <form method="post"
+                              asp-action="DeleteMainSliderSlide"
+                              class="mt-2"
+                              style="margin:0;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="slot" value="@slide.Slot" />
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    onclick="requestConfirmSubmit(this.form, 'Видалити зображення зі слоту @slide.Slot?')">
+                                Видалити
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

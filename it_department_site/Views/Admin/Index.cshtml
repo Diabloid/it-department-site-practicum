@@ -3,6 +3,7 @@
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="~/ckeditor/ckeditor.js"></script>
 
 <div class="container mt-5">
     <div class="row">
@@ -11,8 +12,10 @@
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Pages')">📄 View All Pages</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MenuItems')">🧩 Manage Menu Items</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Users')">👤 View All Users</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('MainSlider')">📰 Слайдер головної сторінки</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Posts')">📰 Публікації</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Partners')">🤝 Управління партнерами</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Employees')">👩‍💻 Управління Співробітниками</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Graduates')">🤝 Управління випускниками</a>
                 <a class="list-group-item list-group-item-action" asp-action="LayoutSettings" asp-controller="Admin">
                     ⚙️ Редагувати хедер і футер
@@ -32,14 +35,55 @@
     </div>
 </div>
 
+<div class="modal fade" id="adminConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Підтвердження</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body">
+                <p id="adminConfirmMessage" class="mb-0"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-danger" id="adminConfirmOkBtn">Видалити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        let pendingConfirmForm = null;
+
         document.addEventListener("DOMContentLoaded", () => {
             const section = new URLSearchParams(window.location.search).get("section");
             if (section) {
                 loadContent(section);
             }
+
+            const confirmModalEl = document.getElementById('adminConfirmModal');
+            const confirmOkBtn = document.getElementById('adminConfirmOkBtn');
+
+            confirmOkBtn?.addEventListener('click', () => {
+                if (!pendingConfirmForm) return;
+                const form = pendingConfirmForm;
+                pendingConfirmForm = null;
+                bootstrap.Modal.getInstance(confirmModalEl)?.hide();
+                submitForm(form);
+            });
+
+            confirmModalEl?.addEventListener('hidden.bs.modal', () => {
+                pendingConfirmForm = null;
+            });
         });
+
+        function requestConfirmSubmit(form, message) {
+            pendingConfirmForm = form;
+            document.getElementById('adminConfirmMessage').textContent = message;
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('adminConfirmModal')).show();
+        }
 
         function loadContent(option, params = '') {
             const url = `/Admin/${encodeURIComponent(option)}${params}`;
@@ -57,6 +101,8 @@
                     if (option === 'Partners') {
                         initPartnersDragAndDrop();
                     }
+
+                    initRichTextEditors();
                 })
                 .catch(error => {
                     console.error("Error loading content:", error);
@@ -101,15 +147,43 @@
             }
         }
 
-    function submitForm(form) {
-        event.preventDefault();
+    function initRichTextEditors() {
+        if (typeof FullEditor === 'undefined') return;
+        document.querySelectorAll('#contentArea textarea.editor').forEach(textarea => {
+            if (textarea.dataset.ckeReady === '1') return;
+            textarea.dataset.ckeReady = '1';
+            FullEditor.create(textarea, { ckfinder: { uploadUrl: '/ckeditor/upload' } })
+                .then(editor => { textarea.ckeditorInstance = editor; })
+                .catch(err => console.error("CKEditor init error:", err));
+        });
+    }
+
+    function syncRichTextEditors(form) {
+        form.querySelectorAll('textarea.editor').forEach(textarea => {
+            if (textarea.ckeditorInstance) {
+                textarea.value = textarea.ckeditorInstance.getData();
+            }
+        });
+    }
+
+    function submitForm(form, e) {
+        if (e) e.preventDefault();
+        syncRichTextEditors(form);
         fetch(form.action, {
             method: 'POST',
             body: new FormData(form)
         })
-        .then(r => r.text())
+        .then(response => {
+            if (!response.ok) throw new Error('Помилка збереження');
+            return response.text();
+        })
         .then(html => {
             document.getElementById("contentArea").innerHTML = html;
+            initRichTextEditors();
+        })
+        .catch(error => {
+            console.error("Error submitting form:", error);
+            alert("Не вдалося зберегти. Перевірте, чи заповнені обов'язкові поля.");
         });
         return false;
     }

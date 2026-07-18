@@ -1,0 +1,98 @@
+@model IEnumerable<it_department_site.Entities.Employee>
+
+@{
+    var certificateCounts = ViewBag.CertificateCounts as Dictionary<int, int> ?? new Dictionary<int, int>();
+}
+
+@{
+    var syncResult = ViewBag.DriveSyncResult as it_department_site.ViewModels.DriveSyncResultViewModel;
+}
+@if (syncResult != null)
+{
+    <div class="alert @(string.IsNullOrEmpty(syncResult.ErrorMessage) ? "alert-success" : "alert-warning") mb-3">
+        @if (!string.IsNullOrEmpty(syncResult.ErrorMessage))
+        {
+            <div>@syncResult.ErrorMessage</div>
+        }
+        else
+        {
+            <div>Прив’язано папок: @syncResult.MatchedCount</div>
+        }
+        @if (syncResult.UnmatchedFolders.Count > 0)
+        {
+            <div class="mt-1"><strong>Папки без викладача:</strong> @string.Join(", ", syncResult.UnmatchedFolders)</div>
+        }
+        @if (syncResult.EmployeesWithoutFolder.Count > 0)
+        {
+            <div class="mt-1"><strong>Викладачі без папки:</strong> @string.Join(", ", syncResult.EmployeesWithoutFolder)</div>
+        }
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0">Викладачі</h4>
+    <div class="d-flex gap-2">
+        <form method="post"
+              asp-controller="Admin"
+              asp-action="SyncDriveFolders"
+              onsubmit="return submitForm(this, event)">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-outline-primary">Синхронізувати папки з Drive</button>
+        </form>
+        <button class="btn btn-success" onclick="loadContent('CreateEmployee')">
+            + Додати викладача
+        </button>
+    </div>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Ім'я</th>
+            <th>Прізвище</th>
+            <th>Побатькові</th>
+            <th>Пошта</th>
+            <th>Спеціалізація</th>
+            <th>Сертифікати</th>
+            <th>Drive папка</th>
+            <th style="width:200px">Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FirstName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.PatronymicName</td>
+                <td>@employee.Email</td>
+                <td>@employee.Specialization</td>
+                <td>@(certificateCounts.TryGetValue(employee.Id, out var count) ? count : 0)</td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
+                    {
+                        <a href="@employee.GoogleDriveFolderUrl" target="_blank" rel="noopener">Відкрити</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">—</span>
+                    }
+                </td>
+                <td class="d-flex align-items-center gap-2">
+                    <button class="btn btn-primary btn-sm"
+                            onclick="loadContent('EditEmployee', '/@employee.Id')">
+                        Редагувати
+                    </button>
+                    <form method="post"
+                          asp-controller="Admin"
+                          asp-action="DeleteEmployee"
+                          asp-route-id="@employee.Id"
+                          onsubmit="return confirm('Видалити викладача?') && submitForm(this, event)"
+                          style="margin: 0;">
+                        <button class="btn btn-danger btn-sm">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,85 @@
+@model it_department_site.ViewModels.EmployeeInfoViewModel
+
+@{
+    ViewData["Title"] = "Деталі співробітника";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
+}
+
+<section class="employees-page employees-details-page container py-5">
+
+    <div class="employees-details-header">
+        <a href="/Employees/Index" class="employees-back-link">
+            ← Назад до списку співробітників
+        </a>
+    </div>
+
+    <div class="employees-main-wrapper">
+        <header class="employees-hero employee-detail-hero">
+            <div class="employee-profile-photo-wrap employee-detail-photo-wrap">
+                <img src="@Model.PhotoUrl"
+                     alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
+                     class="employee-profile-photo" />
+            </div>
+            <div class="employees-hero-inner employee-detail-hero-inner">
+                <div class="employee-detail-hero-content">
+                    <p class="employees-kicker">
+                        <span class="employees-kicker-dot" aria-hidden="true"></span>
+                        Профіль викладача
+                    </p>
+                    <h1 class="employees-title-main employee-detail-title">
+                        <span class="employees-title-line">@Model.LastName</span>
+                        <span class="employees-title-accent">@Model.FirstName @Model.PatronymicName</span>
+                    </h1>
+                    <p class="employees-subtitle employee-detail-subtitle">@Model.Specialization</p>
+                    <div class="employee-card-contact-box mt-3">
+                        <span class="contact-label">Email для зв'язку</span>
+                        <a href="mailto:@Model.Email" class="employee-contact-link">@Model.Email</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="employees-divider"></div>
+
+        <section>
+                            @Html.Raw(Model.Bio)
+       
+            @* <h2 class="employees-section-title">
+                <span class="title-icon">📖</span> Біографія
+            </h2>
+            <div class="bio-text">
+                @Model.Bio
+            </div> *@
+        </section>
+
+        @if (Model.Certificates.Count > 0)
+        {
+            <div class="employees-divider"></div>
+            <section class="certificates-section">
+                <h2 class="employees-section-title">Сертифікати</h2>
+                <div class="certificates-slider-wrap">
+                    <div class="certificates-mask-wrapper">
+                        <div class="certificates-track">
+                            @for (var i = 0; i < Model.Certificates.Count; i++)
+                            {
+                                @await Html.PartialAsync("_CertificateDisplay", Model.Certificates[i])
+                            }
+
+                            @if (Model.Certificates.Count > 1)
+                            {
+                                @for (var i = 0; i < Model.Certificates.Count; i++)
+                                {
+                                    @await Html.PartialAsync("_CertificateDisplay", Model.Certificates[i])
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+    </div>
+
+</section>
