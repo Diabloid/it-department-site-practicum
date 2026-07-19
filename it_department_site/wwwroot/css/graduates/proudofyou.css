@@ -1,0 +1,314 @@
+.proud-page {
+  font-family: "Inter", sans-serif;
+  color: #333;
+  width: 100%;
+  max-width: min(1320px, 96vw);
+  margin: 0 auto;
+  padding: 0 24px 64px;
+  box-sizing: border-box;
+}
+
+.proud-hero {
+  position: relative;
+  margin: 0 0 48px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #636ac0;
+  box-shadow: 0 20px 50px rgba(53, 59, 122, 0.22);
+}
+
+.proud-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 80% 120% at 100% 0%,
+      rgba(236, 237, 255, 0.45) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 60% 80% at 0% 100%,
+      rgba(53, 59, 122, 0.5) 0%,
+      transparent 50%
+    ),
+    linear-gradient(145deg, #4f56a8 0%, #636ac0 40%, #7a80c8 100%);
+  pointer-events: none;
+}
+
+.proud-hero-bg::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  opacity: 0.6;
+}
+
+.proud-hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 56px 48px 52px;
+  color: #fff;
+}
+
+.proud-kicker {
+  display: inline-block;
+  margin: 0 0 16px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #636ac0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 100px;
+}
+
+.proud-title {
+  margin: 0 0 20px;
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.12);
+}
+
+.proud-subtitle {
+  margin: 0;
+  max-width: 640px;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 400;
+}
+
+.proud-list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(99, 106, 192, 0.2);
+}
+
+.proud-list-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #353b7a;
+}
+
+.proud-list-count {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #636ac0;
+}
+
+.proud-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  font-size: 1.1rem;
+  color: #575979;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px dashed rgba(99, 106, 192, 0.35);
+}
+
+.proud-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.proud-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(99, 106, 192, 0.14);
+  box-shadow: 0 4px 24px rgba(53, 59, 122, 0.08);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.proud-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(53, 59, 122, 0.14);
+}
+
+.proud-card-photo {
+  position: relative;
+  flex: 0 0 260px;
+  min-height: 260px;
+  background: linear-gradient(160deg, #ecedff 0%, #d8daf5 100%);
+}
+
+.proud-card-photo img {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.proud-photo-placeholder {
+  width: 100%;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #636ac0;
+  background: linear-gradient(145deg, #ecedff 0%, #c5c9eb 100%);
+}
+
+.proud-year-badge {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(53, 59, 122, 0.88);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+.proud-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 36px 32px 28px;
+  min-width: 0;
+}
+
+.proud-name {
+  margin: 0 0 10px;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #353b7a;
+}
+
+.proud-last-name {
+  margin-right: 0.35em;
+}
+
+.proud-first-name {
+  font-weight: 600;
+  color: #575979;
+}
+
+.proud-meta {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #636ac0;
+}
+
+.proud-job {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: #444;
+}
+
+.proud-job-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #575979;
+}
+
+.proud-testimonial {
+  position: relative;
+  margin: 0;
+  padding: 20px 24px 20px 28px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f1fc 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(99, 106, 192, 0.12);
+}
+
+.proud-quote-mark {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 2.5rem;
+  line-height: 1;
+  font-weight: 800;
+  font-style: normal;
+  color: rgba(99, 106, 192, 0.25);
+  font-family: Georgia, serif;
+}
+
+.proud-testimonial-text {
+  margin: 0;
+  padding-left: 8px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  font-style: italic;
+  color: #575979;
+}
+
+@media (max-width: 992px) {
+  .proud-page {
+    padding: 0 16px 48px;
+  }
+
+  .proud-hero-content {
+    padding: 40px 28px 36px;
+  }
+
+  .proud-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .proud-card {
+    flex-direction: column;
+  }
+
+  .proud-card-photo {
+    flex: none;
+    width: 100%;
+    min-height: 240px;
+  }
+
+  .proud-card-photo img,
+  .proud-photo-placeholder {
+    min-height: 240px;
+  }
+
+  .proud-card-body {
+    padding: 24px 22px 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .proud-title {
+    font-size: 2rem;
+  }
+
+  .proud-name {
+    font-size: 1.35rem;
+  }
+}

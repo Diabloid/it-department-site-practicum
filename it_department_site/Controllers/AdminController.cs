@@ -19,6 +19,7 @@ namespace it_department_site.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IGoogleDriveService _driveService;
         private readonly GoogleDriveOptions _driveOptions;
+        private readonly IMainSliderService _mainSliderService;
 
         public AdminController(
             IPageService pageService,
@@ -31,7 +32,8 @@ namespace it_department_site.Controllers
             IGraduateService graduateService,
             IEmployeeService employeeService,
             IGoogleDriveService driveService,
-            Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions)
+            Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
+           IMainSliderService mainSliderService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -44,6 +46,8 @@ namespace it_department_site.Controllers
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
+       _mainSliderService = mainSliderService;
+     
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -425,6 +429,45 @@ namespace it_department_site.Controllers
         {
             var partners = await _partnerService.GetAllPartnersAsync();
             return PartialView("_Partners", partners.ToList());
+        }
+
+        public async Task<IActionResult> MainSlider()
+        {
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateMainSliderSlide(byte slot, IFormFile? imageFile, string? altText)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Оберіть зображення для завантаження.");
+                var currentSlides = await _mainSliderService.GetAdminSlidesAsync();
+                return PartialView("_MainSlider", currentSlides);
+            }
+
+            await _mainSliderService.UpdateSlideAsync(slot, imageFile, altText);
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteMainSliderSlide(byte slot)
+        {
+            try
+            {
+                await _mainSliderService.ClearSlideAsync(slot);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete main slider slide {Slot}", slot);
+                ModelState.AddModelError(string.Empty, "Не вдалося видалити слайд. Спробуйте ще раз.");
+            }
+
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
         }
 
         [HttpPost]
