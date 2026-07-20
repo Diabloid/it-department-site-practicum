@@ -7,16 +7,16 @@ namespace it_department_site.Entities
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Slug є обов'язковим"), MaxLength(150)]
+        [MaxLength(150)]
         public string Slug { get; set; } = null!;
 
-        [Required(ErrorMessage = "Заголовок є обов'язковим"), MaxLength(200)]
+        [MaxLength(200)]
         public string Title { get; set; } = null!;
 
-        [MaxLength(300)]
+        public string Status { get; set; } = "Draft";
+
         public string? Excerpt { get; set; }
 
-        [Required(ErrorMessage = "Контент не може бути порожнім")]
         public string Content { get; set; } = null!;
 
         public string? Thumbnail { get; set; }

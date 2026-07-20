@@ -46,8 +46,7 @@ namespace it_department_site.Controllers
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
-       _mainSliderService = mainSliderService;
-     
+      	     _mainSliderService = mainSliderService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -499,37 +498,12 @@ namespace it_department_site.Controllers
 
         public IActionResult CreatePost()
         {
-            return PartialView("_CreatePost", new Post());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePost(Post post, IFormFile? thumbnailFile)
-        {
-            ModelState.Remove("Author");
-            ModelState.Remove("Thumbnail"); // Видаляємо, бо заповнимо вручну
-
-            if (!ModelState.IsValid) return PartialView("_CreatePost", post);
-
-            try
+            return PartialView("_CreatePost", new Post
             {
-                if (thumbnailFile != null)
-                {
-                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
-                }
-
-                post.AuthorId = 1;
-                post.CreatedAt = DateTime.UtcNow;
-                post.UpdatedAt = DateTime.UtcNow;
-
-                await _postRepository.CreateAsync(post);
-                return await Posts();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Помилка при створенні");
-                return StatusCode(500, "Помилка сервера");
-            }
+                Id = 0,
+                Status = "Draft",
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task<IActionResult> EditPost(int id)
@@ -540,34 +514,131 @@ namespace it_department_site.Controllers
             return PartialView("_EditPost", post);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost(Post post, IFormFile? thumbnailFile)
+        public async Task<IActionResult> SavePostDraft(Post post)
         {
-            ModelState.Remove("Author");
-            ModelState.Remove("Thumbnail");
-
-            if (!ModelState.IsValid) return PartialView("_EditPost", post);
+            ClearPostSoftValidationState();
 
             try
             {
-                if (thumbnailFile != null)
+                NormalizePostForDraft(post);
+                post.AuthorId = 1;
+                if (post.CreatedAt == default)
+                    post.CreatedAt = DateTime.Now;
+                post.UpdatedAt = DateTime.Now;
+
+                if (post.Id == 0)
                 {
-                    // Якщо завантажили нове фото — зберігаємо його
-                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
+                    var id = await _postRepository.CreateAsync(post);
+                    return Json(new { id, savedAt = DateTime.Now, status = "Draft" });
                 }
 
-                post.UpdatedAt = DateTime.UtcNow;
+                var existing = await _postRepository.GetByIdAsync(post.Id);
+                if (existing == null) return NotFound();
+
+                if (string.IsNullOrEmpty(post.Thumbnail))
+                    post.Thumbnail = existing.Thumbnail;
+
                 await _postRepository.UpdateAsync(post);
+                return Json(new { id = post.Id, savedAt = DateTime.Now, status = "Draft" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Помилка збереження чернетки");
+                return StatusCode(500, "Помилка сервера");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PublishPost(Post post, IFormFile? thumbnailFile)
+        {
+            ClearPostSoftValidationState();
+
+            if (!ValidatePostForPublish(post, out var error))
+            {
+                ModelState.AddModelError(string.Empty, error!);
+                return post.Id == 0
+                    ? PartialView("_CreatePost", post)
+                    : PartialView("_EditPost", post);
+            }
+
+            try
+            {
+                post.Status = "Published";
+                post.AuthorId = 1;
+                if (post.CreatedAt == default)
+                    post.CreatedAt = DateTime.Now;
+                post.UpdatedAt = DateTime.Now;
+                post.Excerpt ??= string.Empty;
+
+                if (thumbnailFile != null)
+                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
+                else if (post.Id != 0)
+                {
+                    var existing = await _postRepository.GetByIdAsync(post.Id);
+                    if (existing != null && string.IsNullOrEmpty(post.Thumbnail))
+                        post.Thumbnail = existing.Thumbnail;
+                }
+
+                if (post.Id == 0)
+                    post.Id = await _postRepository.CreateAsync(post);
+                else
+                    await _postRepository.UpdateAsync(post);
+
                 return await Posts();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Помилка при редагуванні");
+                _logger.LogError(ex, "Помилка публікації");
                 return StatusCode(500, "Помилка сервера");
             }
         }
+
+        private void ClearPostSoftValidationState()
+        {
+            ModelState.Remove("Author");
+            ModelState.Remove("Thumbnail");
+            ModelState.Remove(nameof(Post.Title));
+            ModelState.Remove(nameof(Post.Slug));
+            ModelState.Remove(nameof(Post.Content));
+            ModelState.Remove(nameof(Post.Excerpt));
+            ModelState.Remove(nameof(Post.Status));
+        }
+
+        private static void NormalizePostForDraft(Post post)
+        {
+            if (string.IsNullOrWhiteSpace(post.Title))
+                post.Title = "Без назви";
+            if (string.IsNullOrWhiteSpace(post.Slug))
+                post.Slug = "draft-" + Guid.NewGuid().ToString("N")[..8];
+            post.Excerpt ??= string.Empty;
+            post.Content ??= string.Empty;
+            post.Status = "Draft";
+        }
+
+        private static bool ValidatePostForPublish(Post post, out string? error)
+        {
+            if (string.IsNullOrWhiteSpace(post.Title))
+            {
+                error = "Заголовок є обов'язковим";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(post.Slug))
+            {
+                error = "Slug є обов'язковим";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(post.Content))
+            {
+                error = "Контент не може бути порожнім";
+                return false;
+            }
+            error = null;
+            return true;
+        }
+
 
         private static List<string> ParseDriveLinks(string? linksText)
         {

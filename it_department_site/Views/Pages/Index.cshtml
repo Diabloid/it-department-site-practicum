@@ -58,7 +58,7 @@
                                         @mainPost.CreatedAt.ToString("dd.MM.yyyy")
                                   </span>
                                   <h3>@mainPost.Title</h3>
-                                 <p>@mainPost.Excerpt</p>
+                                 <div class="news-excerpt">@Html.Raw(mainPost.Excerpt)</div>
                                </a>
                            </div>
 
@@ -207,6 +207,4 @@
            @await Html.PartialAsync("Partials/_PartnerSlider", (List<it_department_site.Entities.Partner>)(ViewBag.Partners ?? new List<it_department_site.Entities.Partner>()))
        </div>
    </div>
-</div>
-
 </div>
