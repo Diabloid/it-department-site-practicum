@@ -17,7 +17,7 @@ namespace it_department_site.Repositories
         public async Task<IEnumerable<Post>> GetAllAsync()
         {
             return await _db.QueryAsync<Post>(
-                "SELECT * FROM posts ORDER BY created_at DESC"
+                "SELECT * FROM posts ORDER BY updated_at DESC"
             );
         }
 
@@ -32,22 +32,22 @@ namespace it_department_site.Repositories
         public async Task<IEnumerable<Post>> GetLatestAsync(int count)
         {
             return await _db.QueryAsync<Post>(
-                "SELECT * FROM posts ORDER BY created_at DESC LIMIT @count",
+                "SELECT * FROM posts WHERE status = 'Published' ORDER BY created_at DESC LIMIT @count",
                 new { count }
             );
         }
 
-      public async Task CreateAsync(Post post)
-{
-    // Використовуємо імена властивостей класу Post для параметрів @
-    var sql = @"
-        INSERT INTO posts 
-        (slug, title, excerpt, content, thumbnail, created_at, updated_at, author_id)
-        VALUES 
-        (@Slug, @Title, @Excerpt, @Content, @Thumbnail, @CreatedAt, @UpdatedAt, @AuthorId)";
+        public async Task<int> CreateAsync(Post post)
+        {
+            var sql = @"
+                INSERT INTO posts
+                (slug, title, status, excerpt, content, thumbnail, created_at, updated_at, author_id)
+                VALUES
+                (@Slug, @Title, @Status, @Excerpt, @Content, @Thumbnail, @CreatedAt, @UpdatedAt, @AuthorId);
+                SELECT LAST_INSERT_ID();";
 
-    await _db.ExecuteAsync(sql, post);
-}
+            return await _db.ExecuteScalarAsync<int>(sql, post);
+        }
 
         public async Task UpdateAsync(Post post)
         {
@@ -55,9 +55,11 @@ namespace it_department_site.Repositories
                 UPDATE posts SET
                     slug = @Slug,
                     title = @Title,
+                    status = @Status,
                     excerpt = @Excerpt,
                     content = @Content,
                     thumbnail = @Thumbnail,
+                    created_at = @CreatedAt,
                     updated_at = NOW()
                 WHERE id = @Id
             ", post);

@@ -1,0 +1,65 @@
+@using it_department_site.ViewModels
+@{
+    var items = ViewBag.DriveCertificateItems as List<DriveCertificatePickerItemViewModel> ?? new List<DriveCertificatePickerItemViewModel>();
+    var maxCount = 15;
+}
+
+@if (items.Count > 0)
+{
+    <div class="mb-3" id="drive-certificate-picker">
+        <label class="form-label">Сертифікати з Google Drive (оберіть до @maxCount)</label>
+        <div class="form-text mb-2">
+            Зображення (PNG, JPG, WebP, GIF…) та <strong>PDF</strong>. Файл <code>photo.png</code> / <code>фото.jpg</code> — лише фото профілю.
+        </div>
+        <div class="row g-2">
+            @foreach (var item in items)
+            {
+                <div class="col-6 col-md-4 col-lg-3">
+                    <label class="card h-100 drive-cert-option @(item.IsSelected ? "border-primary" : "") @(item.IsPdf ? "drive-cert-option--pdf" : "")" style="cursor:pointer;">
+                        <div class="card-body p-2 text-center">
+                            <input type="checkbox"
+                                   class="form-check-input drive-cert-checkbox mb-2"
+                                   name="selectedCertificateFileIds"
+                                   value="@item.FileId"
+                                   @(item.IsSelected ? "checked" : "") />
+                            <img src="@item.PreviewUrl"
+                                 alt="@item.Name"
+                                 class="img-fluid rounded @(item.IsPdf ? "drive-cert-pdf-thumb" : "")"
+                                 style="max-height:100px; object-fit:contain; width:100%; background:#f8fafc;"
+                                 loading="lazy" />
+                            <div class="small text-muted text-truncate mt-1" title="@item.Name">@item.Name</div>
+                        </div>
+                    </label>
+                </div>
+            }
+        </div>
+    </div>
+    <script>
+        (function () {
+            const max = @maxCount;
+            const picker = document.getElementById('drive-certificate-picker');
+            if (!picker) return;
+
+            function updateState() {
+                const boxes = picker.querySelectorAll('.drive-cert-checkbox');
+                const checked = picker.querySelectorAll('.drive-cert-checkbox:checked');
+                const atLimit = checked.length >= max;
+                boxes.forEach(cb => {
+                    if (!cb.checked) cb.disabled = atLimit;
+                    cb.closest('.drive-cert-option')?.classList.toggle('border-primary', cb.checked);
+                });
+            }
+
+            picker.querySelectorAll('.drive-cert-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateState);
+            });
+            updateState();
+        })();
+    </script>
+}
+else if (!string.IsNullOrWhiteSpace(ViewBag.HasDriveFolder as string))
+{
+    <div class="alert alert-info mb-3">
+        У папці Drive не знайдено сертифікатів (зображень або PDF). Додайте файли і збережіть форму знову.
+    </div>
+}

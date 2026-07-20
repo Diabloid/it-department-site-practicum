@@ -1,0 +1,61 @@
+@model IEnumerable<it_department_site.ViewModels.EmployeeInfoViewModel>
+
+@{
+    ViewData["Title"] = "Співробітники";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
+}
+
+<section class="employees-page container py-5">
+    <header class="employees-hero" aria-labelledby="employees-page-title">
+        <div class="employees-hero-glow employees-hero-glow--left" aria-hidden="true"></div>
+        <div class="employees-hero-glow employees-hero-glow--right" aria-hidden="true"></div>
+
+        <div class="employees-hero-inner">
+            <p class="employees-kicker">
+                <span class="employees-kicker-dot" aria-hidden="true"></span>
+                Спеціальність інженерії програмного забезпечення
+            </p>
+
+            <h1 id="employees-page-title" class="employees-title-main">
+                <span class="employees-title-line">Співробітники</span>
+                <span class="employees-title-accent">спеціальності</span>
+            </h1>
+
+            <p class="employees-subtitle">
+                Профіль викладачів та фахівців, які забезпечують навчальний процес,
+                наукову роботу та розвиток ІТ-напряму.
+            </p>
+
+            <div class="employees-hero-divider" aria-hidden="true">
+                <span class="employees-hero-divider-line"></span>
+
+                <span class="employees-hero-divider-line"></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="employees-grid">
+        @foreach (EmployeeInfoViewModel employee in Model)
+        {
+            <article class="employee-card">
+                <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id" class="employee-card-link">
+
+                    <div class="employee-photo-wrap">
+                        <img src="@employee.PhotoUrl" alt="@employee.LastName" class="employee-photo" />
+                    </div>
+
+                    <div class="employee-body">
+                        <h2 class="employee-name">
+                            <span class="last-name">@employee.LastName</span>
+                            <span class="first-patronymic">@employee.FirstName @employee.PatronymicName</span>
+                        </h2>
+                        <p class="employee-meta">@employee.Specialization</p>
+                    </div>
+                </a>
+            </article>
+        }
+    </div>
+</section>
