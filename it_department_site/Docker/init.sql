@@ -196,6 +196,18 @@ VALUES
 (14, 'Chernivtsi IT Cluster', '/images/partners/3bdbc070-8131-461a-88bc-b9958bb395c7.png', 5, 'https://www.it-cluster.cv.ua/'),
 (15, 'Datawiz.io', '/images/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
 
+CREATE TABLE main_slider_slides (
+  slot TINYINT NOT NULL PRIMARY KEY COMMENT '1, 2 або 3',
+  image_url VARCHAR(500) NULL,
+  alt_text VARCHAR(200) DEFAULT '',
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
+(1, '/images/banner_photo_1.JPG', 'Слайд 1'),
+(2, '/images/banner_photo_1.JPG', 'Слайд 2'),
+(3, '/images/banner_photo_1.JPG', 'Слайд 3');
+
 CREATE TABLE posts (
   id int NOT NULL AUTO_INCREMENT,
   author_id int DEFAULT NULL,
