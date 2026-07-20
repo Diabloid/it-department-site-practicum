@@ -1,33 +1,25 @@
-version: '3.8'
 services:
   db:
     image: mysql:latest
-    container_name: it_dept_mysql
+    container_name: ipz_db
     restart: always
     env_file:
       - .env
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - "3307:3306"
     volumes:
-      - db_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./ipz_db:/var/lib/mysql
+    networks: [ipz_net]
 
-  backend:
-    image: ipz-site
-    container_name: backend
-    depends_on:
-      - db
+  ipz-site:
     env_file:
       - .env
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=${MYSQL_DATABASE};User ID=${MYSQL_USER};Password=${MYSQL_PASSWORD};Pooling=true;
-    ports:
-      - "8080:8080"
+    #image: ghcr.io/${GITHUB_REPOSITORY}/ipz-site:${IMAGE_TAG}
+    image: ipz-site
+    restart: on-failure:5
+    ports: "8080:8080"
+    volumes:
+      - ./secrets:/app/secrets:ro
+    networks: [ipz_net]
 
-volumes:
-  db_data:
+networks:
+  ipz_net:
+    driver: bridge
