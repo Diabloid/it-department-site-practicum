@@ -5,8 +5,11 @@ namespace it_department_site.Infrastructure
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeCertificate> EmployeeCertificates { get; set; }
         public DbSet<Graduate> Graduates { get; set; }
         public DbSet<Partner> Partners { get; set; }
+        public DbSet<MainSliderSlide> MainSliderSlides { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

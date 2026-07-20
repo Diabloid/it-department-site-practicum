@@ -1,4 +1,5 @@
 ﻿@model List<it_department_site.Entities.MenuItem>
+@using it_department_site.Entities
 
 @functions {
     bool IsDisciplineMenuItem(MenuItem item)
@@ -9,12 +10,32 @@
 
     string ResolveMenuUrl(MenuItem item)
     {
+        if (!string.IsNullOrEmpty(item.PageSlug) &&
+            item.PageSlug.Equals("proudofyou", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/proudofyou";
+        }
+
+        var name = item.Name ?? "";
+        if (name.Contains("proud", StringComparison.OrdinalIgnoreCase) &&
+            name.Contains("you", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/proudofyou";
+        }
+
+        if (!string.IsNullOrEmpty(item.Name) &&
+            item.Name.Contains("Співробітники", StringComparison.OrdinalIgnoreCase))
+        {
+            return "/Employees/Index";
+        }
+
         if (IsDisciplineMenuItem(item))
             return "/Disciplines";
         if (!string.IsNullOrEmpty(item.CustomUrl))
             return item.CustomUrl;
-        if (!string.IsNullOrEmpty(item.PageSlug))
+       if (!string.IsNullOrEmpty(item.PageSlug))
             return $"/{item.PageSlug}";
+
         return "#";
     }
 }
@@ -24,26 +45,18 @@
     if (item.Children.Any())
     {
         <li class="dropdown">
-            <a href="#" class="dropdown-trigger" aria-haspopup="true" aria-expanded="false">@item.Name</a>
+            <a href="@ResolveMenuUrl(item)">@item.Name</a>
 
             <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
-                    <a href="@ResolveMenuUrl(child)" class="dropdown-link">@child.Name</a>
+                    <a href="@ResolveMenuUrl(child)">@child.Name</a>
                 }
             </div>
         </li>
     }
     else
     {
-        var linkUrl = ResolveMenuUrl(item);
-        if (linkUrl != "#")
-        {
-            <li><a href="@linkUrl">@item.Name</a></li>
-        }
-        else
-        {
-            <li><a href="#">@item.Name</a></li>
-        }
+        <li><a href="@ResolveMenuUrl(item)">@item.Name</a></li>
     }
 }

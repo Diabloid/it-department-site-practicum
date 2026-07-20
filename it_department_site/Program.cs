@@ -1,8 +1,12 @@
 ﻿using it_department_site.Infrastructure;
+using it_department_site.Services;
+using it_department_site.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<GoogleDriveOptions>(builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
 builder.Services.AddAuthentication().AddCookie(options=>
 {
@@ -15,6 +19,7 @@ builder.Services.AddSession();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 // 3. Реєстрація підключення до БД (Dapper)
 builder.Services.AddScoped<IDbConnection>(sp =>
@@ -44,8 +49,11 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<EncryptionService>();
 
 builder.Services.AddScoped<IPartnerService, PartnerService>();
+builder.Services.AddScoped<IMainSliderService, MainSliderService>();
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var app = builder.Build();
@@ -83,6 +91,11 @@ app.MapControllerRoute(
     name: "disciplines",
     pattern: "Disciplines/{action=Index}/{id?}",
     defaults: new { controller = "Disciplines" });
+
+app.MapControllerRoute(
+    name: "proudOfYou",
+    pattern: "proudofyou",
+    defaults: new { controller = "Graduates", action = "ProudOfYou" });
 
 app.MapControllerRoute(
     name: "pageBySlug",

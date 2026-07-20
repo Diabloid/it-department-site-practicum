@@ -20,4 +20,9 @@ public class GraduatesController : Controller
         return View(graduate);
     }
 
+    public async Task<IActionResult> ProudOfYou()
+    {
+        var graduates = await _graduateService.GetAllAsync();
+        return View(graduates.OrderByDescending(g => g.GraduationYear));
+    }
 }
