@@ -87,6 +87,13 @@ app.MapControllerRoute(
     defaults: new { controller = "Admin", action = "Index" }
 );
 
+// ВАЖЛИВО: маршрут постів має бути ВИЩЕ, ніж pageBySlug
+app.MapControllerRoute(
+    name: "posts",
+    pattern: "posts/{slug}-{id:int}",
+    defaults: new { controller = "Posts", action = "Details" }
+);
+
 app.MapControllerRoute(
     name: "disciplines",
     pattern: "Disciplines/{action=Index}/{id?}",

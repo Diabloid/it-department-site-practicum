@@ -1,0 +1,55 @@
+@model it_department_site.Entities.Post
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/post-details.css" asp-append-version="true" />
+}
+
+<div class="post-page">
+    <article class="post-card">
+        <div class="post-header">
+            <h1 class="post-title">@Model.Title</h1>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))
+        {
+            <div class="post-image-wrap">
+                <img src="@Model.Thumbnail" alt="@Model.Title" class="post-image" />
+            </div>
+        }
+
+        <div class="post-body">
+            <div class="post-meta">
+             <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
+                @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+            </div>
+
+            <div class="post-content">
+                @Html.Raw(Model.Content)
+            </div>
+        </div>
+    </article>
+
+    <div class="side-news-list">
+        @foreach (var item in (IEnumerable<dynamic>)ViewBag.Posts) 
+        {
+            <a href="/posts/@(item.Slug)-@(item.Id)">
+                <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default-news.jpg" : item.Thumbnail)');"></div>
+                
+                <div class="news-info-container">
+                    <div class="news-meta">
+                        <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
+                        @item.CreatedAt.ToString("dd.MM.yyyy")
+                    </div>
+                    
+                    <div class="news-title-wrapper">
+                        <div class="news-title-small">@item.Title</div>
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</div>
