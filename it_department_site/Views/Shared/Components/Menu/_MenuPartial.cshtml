@@ -1,40 +1,17 @@
 ﻿@model List<it_department_site.Entities.MenuItem>
-@using it_department_site.Entities
 
 @functions {
-    bool IsDisciplineMenuItem(MenuItem item)
-    {
-        return item.Name.Contains("дисциплін", StringComparison.OrdinalIgnoreCase)
-            || item.Name.Contains("disciplin", StringComparison.OrdinalIgnoreCase);
-    }
-
     string ResolveMenuUrl(MenuItem item)
     {
-        if (!string.IsNullOrEmpty(item.PageSlug) &&
-            item.PageSlug.Equals("proudofyou", StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrEmpty(item.PageSlug))
         {
-            return "/proudofyou";
-        }
-
-        var name = item.Name ?? "";
-        if (name.Contains("proud", StringComparison.OrdinalIgnoreCase) &&
-            name.Contains("you", StringComparison.OrdinalIgnoreCase))
-        {
-            return "/proudofyou";
-        }
-
-        if (!string.IsNullOrEmpty(item.Name) &&
-            item.Name.Contains("Співробітники", StringComparison.OrdinalIgnoreCase))
-        {
-            return "/Employees/Index";
-        }
-
-        if (IsDisciplineMenuItem(item))
-            return "/Disciplines";
-        if (!string.IsNullOrEmpty(item.CustomUrl))
-            return item.CustomUrl;
-       if (!string.IsNullOrEmpty(item.PageSlug))
             return $"/{item.PageSlug}";
+        }
+
+        if (!string.IsNullOrEmpty(item.CustomUrl))
+        {
+            return $"/{item.CustomUrl}";
+        }
 
         return "#";
     }

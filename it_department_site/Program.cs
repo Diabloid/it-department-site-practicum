@@ -105,6 +105,21 @@ app.MapControllerRoute(
     defaults: new { controller = "Graduates", action = "ProudOfYou" });
 
 app.MapControllerRoute(
+    name: "graduatesTimeline",
+    pattern: "timeline",
+    defaults: new { controller = "Graduates", action = "Timeline" });
+
+app.MapControllerRoute(
+    name: "graduatesDetails",
+    pattern: "Graduates/Details/{id:int}",
+    defaults: new { controller = "Graduates", action = "Details" });
+
+app.MapControllerRoute(
+    name: "employees",
+    pattern: "Employees",
+    defaults: new { controller = "Employees", action = "Index" });
+
+app.MapControllerRoute(
     name: "pageBySlug",
     pattern: "{slug}",
     defaults: new { controller = "Pages", action = "Details" }

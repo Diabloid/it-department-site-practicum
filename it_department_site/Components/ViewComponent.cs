@@ -12,16 +12,6 @@
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var menuItems = await _menuService.GetAllMenuItemsAsync();
-
-            foreach (var item in menuItems)
-            {
-                if (item.Name.Contains("дисциплін", StringComparison.OrdinalIgnoreCase)
-                    || item.Name.Contains("disciplin", StringComparison.OrdinalIgnoreCase))
-                {
-                    item.CustomUrl = "/Disciplines";
-                }
-            }
-
             var lookup = menuItems.ToDictionary(m => m.Id);
             var rootItems = new List<MenuItem>();
 
