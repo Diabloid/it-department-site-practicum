@@ -759,7 +759,6 @@ header .dropdown.is-open .dropdown-content {
 }
 
 .banner-track {
-   height: 100%;
    display: flex;
    transition: transform 0.6s ease;
    will-change: transform;
