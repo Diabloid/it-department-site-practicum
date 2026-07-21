@@ -10,6 +10,7 @@ namespace it_department_site.Infrastructure
         public DbSet<Graduate> Graduates { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<MainSliderSlide> MainSliderSlides { get; set; }
+        public DbSet<Discipline> Disciplines { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

@@ -20,6 +20,7 @@ namespace it_department_site.Controllers
         private readonly IGoogleDriveService _driveService;
         private readonly GoogleDriveOptions _driveOptions;
         private readonly IMainSliderService _mainSliderService;
+        private readonly IDisciplineService _disciplineService;
 
         public AdminController(
             IPageService pageService,
@@ -33,7 +34,8 @@ namespace it_department_site.Controllers
             IEmployeeService employeeService,
             IGoogleDriveService driveService,
             Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
-           IMainSliderService mainSliderService)
+            IMainSliderService mainSliderService,
+            IDisciplineService disciplineService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -47,6 +49,7 @@ namespace it_department_site.Controllers
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
       	     _mainSliderService = mainSliderService;
+            _disciplineService = disciplineService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -243,6 +246,51 @@ namespace it_department_site.Controllers
         {
             await _employeeService.DeleteAsync(id);
             return await Employees();
+        }
+
+
+        public IActionResult CreateDiscipline()
+        {
+            return PartialView("_CreateDiscipline", new Discipline());
+        }
+
+        public async Task<IActionResult> Disciplines()
+        {
+            var disciplines = await _disciplineService.GetAllAsync();
+            return PartialView("_DisciplinesTable", disciplines);
+        }
+
+        public async Task<IActionResult> EditDiscipline(int id)
+        {
+            var discipline = await _disciplineService.GetByIdAsync(id);
+            if (discipline == null) return NotFound();
+            return PartialView("_EditDiscipline", discipline);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateDiscipline(Discipline discipline)
+        {
+            if (!ModelState.IsValid) return PartialView("_CreateDiscipline", discipline);
+
+            await _disciplineService.CreateAsync(discipline);
+            return await Disciplines();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditDiscipline(Discipline discipline)
+        {
+            if (!ModelState.IsValid) return PartialView("_EditDiscipline", discipline);
+
+            await _disciplineService.UpdateAsync(discipline.Id, discipline);
+            return await Disciplines();
+        }
+
+        public async Task<IActionResult> DeleteDiscipline(int id)
+        {
+            await _disciplineService.DeleteAsync(id);
+            return await Disciplines();
         }
 
         public async Task<IActionResult> Users()

@@ -18,6 +18,7 @@
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Partners')">🤝 Управління партнерами</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Employees')">👩‍💻 Управління Співробітниками</a>
                 <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Graduates')">🤝 Управління випускниками</a>
+                <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Disciplines')">📚 Дисципліни</a>
                 <a class="list-group-item list-group-item-action" asp-action="LayoutSettings" asp-controller="Admin">
                     ⚙️ Редагувати хедер і футер
                 </a>
@@ -197,10 +198,11 @@
           if(document.getElementById('menuName')) document.getElementById('menuName').value = '';
           if(document.getElementById('parentId')) document.getElementById('parentId').value = '';
           if(document.getElementById('pageId')) document.getElementById('pageId').value = '';
+          if(document.getElementById('customUrl')) document.getElementById('customUrl').value = '';
           if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = '';
         }
 
-        function fillForm(id, name, parentId, pageId, sortOrder) {
+        function fillForm(id, name, parentId, pageId, sortOrder, customUrl) {
           const modalLabel = document.getElementById('menuModalLabel');
           if(modalLabel) modalLabel.textContent = 'Редагування пункту меню';
 
@@ -208,6 +210,7 @@
           if(document.getElementById('menuName')) document.getElementById('menuName').value = name;
           if(document.getElementById('parentId')) document.getElementById('parentId').value = parentId;
           if(document.getElementById('pageId')) document.getElementById('pageId').value = pageId;
+          if(document.getElementById('customUrl')) document.getElementById('customUrl').value = customUrl || '';
           if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = sortOrder;
         }
     </script>
