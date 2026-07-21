@@ -36,6 +36,7 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGraduateService, GraduateService>();
+builder.Services.AddScoped<IDisciplineService, DisciplineService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
@@ -86,10 +87,37 @@ app.MapControllerRoute(
     defaults: new { controller = "Admin", action = "Index" }
 );
 
+// ВАЖЛИВО: маршрут постів має бути ВИЩЕ, ніж pageBySlug
+app.MapControllerRoute(
+    name: "posts",
+    pattern: "posts/{slug}-{id:int}",
+    defaults: new { controller = "Posts", action = "Details" }
+);
+
+app.MapControllerRoute(
+    name: "disciplines",
+    pattern: "Disciplines/{action=Index}/{id?}",
+    defaults: new { controller = "Disciplines" });
+
 app.MapControllerRoute(
     name: "proudOfYou",
     pattern: "proudofyou",
     defaults: new { controller = "Graduates", action = "ProudOfYou" });
+
+app.MapControllerRoute(
+    name: "graduatesTimeline",
+    pattern: "timeline",
+    defaults: new { controller = "Graduates", action = "Timeline" });
+
+app.MapControllerRoute(
+    name: "graduatesDetails",
+    pattern: "Graduates/Details/{id:int}",
+    defaults: new { controller = "Graduates", action = "Details" });
+
+app.MapControllerRoute(
+    name: "employees",
+    pattern: "Employees",
+    defaults: new { controller = "Employees", action = "Index" });
 
 app.MapControllerRoute(
     name: "pageBySlug",

@@ -7,7 +7,7 @@ namespace it_department_site.Repositories.Interfaces
         Task<IEnumerable<Post>> GetAllAsync();
         Task<Post?> GetByIdAsync(int id);
         Task<IEnumerable<Post>> GetLatestAsync(int count);
-        Task CreateAsync(Post post);
+        Task<int> CreateAsync(Post post);
         Task UpdateAsync(Post post);
         Task DeleteAsync(int id);
     }

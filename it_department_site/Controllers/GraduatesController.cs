@@ -7,7 +7,7 @@ public class GraduatesController : Controller
         _graduateService = graduateService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Timeline()
     {
         var graduates = await _graduateService.GetAllAsync();
         return View(graduates);
