@@ -688,7 +688,7 @@ header .navigation-buttons {
 }
 
 header .navigation-buttons a {
-  display: inline-block;
+  display: block;
   text-decoration: none;
   color: #3d1d76;
   font-weight: 500;
