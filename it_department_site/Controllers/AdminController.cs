@@ -37,7 +37,7 @@ namespace it_department_site.Controllers
             Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
- 	    IUserService userService)
+            IUserService userService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -53,7 +53,7 @@ namespace it_department_site.Controllers
       	     _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
             _userService = userService; 
-       }
+        }
 
         public async Task<IActionResult> LayoutSettings()
         {
@@ -310,6 +310,7 @@ namespace it_department_site.Controllers
 
             ViewData["CurrentPage"] = page;
             ViewData["TotalPages"] = totalPages;
+
             return PartialView("_PagesTable", pages);
         }
 
@@ -317,6 +318,7 @@ namespace it_department_site.Controllers
         {
             var menuItems = await _menuService.GetAllMenuItemsAsync();
             ViewBag.Pages = await _pageService.GetAllPagesAsync();
+
             return PartialView("_MenuItemsTable", menuItems);
         }
 
