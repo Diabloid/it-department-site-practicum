@@ -3,25 +3,17 @@
 using it_department_site.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-public class UserService : IUserService
+public class UserService(ApplicationDbContext context) : IUserService
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IDbConnection _db;
-
-    public UserService(ApplicationDbContext context)
-    {
-        _context = context;
-        _db = context.Database.GetDbConnection();
-    }
     
     public async Task<User?> FindUserByUsernameAsync(string username)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        return await context.Set<User>().AsNoTracking().FirstOrDefaultAsync(u => u.Username == username);
     }
+
     public async Task<IEnumerable<User>> GetAllAsync()
     {
-        var users = await _db.QueryAsync<User>("SELECT id, username, email, created_at FROM users ORDER BY id");
-        return users;
+        return await context.Set<User>().AsNoTracking().ToListAsync();
     }
 
 }
