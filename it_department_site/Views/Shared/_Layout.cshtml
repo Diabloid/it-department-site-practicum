@@ -33,7 +33,7 @@
 
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
-     <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 
     @if (isAdminPage)
@@ -64,7 +64,7 @@
                             @Html.Raw(menuHtml)
 
                             @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
-                                <li><a href='/Admin/Index'>Admin Panel</a></li>
+                                <li><a href='/Admin/Index'>Панель адміністатора</a></li>
                             }
                            
                         </ul>

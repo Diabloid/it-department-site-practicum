@@ -10,6 +10,7 @@
             <th>Назва</th>
             <th>Батько</th>
             <th>Прив’язана сторінка</th>
+            <th>Custom URL</th>
             <th>Порядок</th>
             <th>Дії</th>
         </tr>
@@ -31,12 +32,13 @@
                     }
                 </td>
 
+                <td>@(item.CustomUrl ?? "-")</td>
                 <td>@item.SortOrder</td>
                 <td>
                     <!-- Кнопка редагування -->
                     <button type="button" class="btn btn-sm btn-warning"
                             data-bs-toggle="modal" data-bs-target="#menuModal"
-                            onclick="fillForm('@item.Id', '@item.Name', '@item.ParentId', '@item.PageId', '@item.SortOrder')">
+                            onclick="fillForm('@item.Id', '@item.Name', '@item.ParentId', '@item.PageId', '@item.SortOrder', '@(item.CustomUrl ?? "")')">
                         ✏️
                     </button>
                     <form asp-action="DeleteMenuItem" asp-route-id="@item.Id" method="post" style="display:inline">
@@ -85,6 +87,12 @@
         }
     </select>
 </div>
+
+                    <div class="mb-3">
+                        <label for="customUrl" class="form-label">Custom URL</label>
+                        <input type="text" class="form-control" id="customUrl" name="CustomUrl" placeholder="/Disciplines">
+                        <div class="form-text">Якщо вказано — використовується замість slug сторінки.</div>
+                    </div>
 
                     <div class="mb-3">
                         <label for="sortOrder" class="form-label">Порядок</label>

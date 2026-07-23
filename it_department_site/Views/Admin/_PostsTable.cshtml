@@ -14,6 +14,7 @@
         <tr>
             <th>Назва</th>
             <th>Slug</th>
+            <th>Статус</th>
             <th>Дата створення</th>
             <th>Оновлено</th>
             <th style="width:200px">Дії</th>
@@ -26,6 +27,16 @@
         <tr>
             <td><strong>@post.Title</strong></td>
             <td>@post.Slug</td>
+            <td>
+                @if (post.Status == "Published")
+                {
+                    <span class="badge bg-success">Опубліковано</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Чернетка</span>
+                }
+            </td>
             <td>@post.CreatedAt.ToString("yyyy-MM-dd")</td>
             <td>@post.UpdatedAt.ToString("yyyy-MM-dd")</td>
             <td class="d-flex align-items-center gap-2">

@@ -1,37 +1,39 @@
 ﻿@model List<it_department_site.Entities.MenuItem>
 
+@functions {
+    string ResolveMenuUrl(MenuItem item)
+    {
+        if (!string.IsNullOrEmpty(item.PageSlug))
+        {
+            return $"/{item.PageSlug}";
+        }
+
+        if (!string.IsNullOrEmpty(item.CustomUrl))
+        {
+            return $"/{item.CustomUrl}";
+        }
+
+        return "#";
+    }
+}
+
 @foreach (var item in Model)
 {
     if (item.Children.Any())
     {
         <li class="dropdown">
-            @{
-                var linkUrl = !string.IsNullOrEmpty(item.PageSlug) ? $"/{item.PageSlug}" : "#";
-            }
-
-            <a href="@linkUrl">@item.Name</a>
+            <a href="@ResolveMenuUrl(item)">@item.Name</a>
 
             <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
-                    var isEmployeesItem = string.Equals(child.Name?.Trim(), "Співробітники", StringComparison.OrdinalIgnoreCase);
-                    var childUrl = isEmployeesItem
-                        ? "/Employees/Index"
-                        : !string.IsNullOrEmpty(child.PageSlug) ? $"/{child.PageSlug}" : "#";
-                    <a href="@childUrl">@child.Name</a>
+                    <a href="@ResolveMenuUrl(child)">@child.Name</a>
                 }
             </div>
         </li>
     }
     else
     {
-        if (!string.IsNullOrEmpty(item.PageSlug))
-        {
-            <li><a href="/@item.PageSlug">@item.Name</a></li>
-        }
-        else
-        {
-            <li><a href="#">@item.Name</a></li>
-        }
+        <li><a href="@ResolveMenuUrl(item)">@item.Name</a></li>
     }
 }
