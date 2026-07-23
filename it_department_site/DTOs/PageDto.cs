@@ -1,5 +1,6 @@
 ﻿namespace it_department_site.DTOs
 {
+    // REFACTOR_HINT: rename to PageViewModel ?
     public class PageDto
     {
         public int Id { get; set; }
