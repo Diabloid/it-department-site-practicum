@@ -1,0 +1,42 @@
+@model IEnumerable<it_department_site.Entities.Discipline>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Дисципліни</h4>
+    <button class="btn btn-success" onclick="loadContent('CreateDiscipline')">
+        + Додати дисципліну
+    </button>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Назва</th>
+            <th>Викладач</th>
+            <th>Порядок</th>
+            <th style="width:200px">Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var discipline in Model)
+        {
+            <tr>
+                <td>@discipline.Name</td>
+                <td>@discipline.Teacher</td>
+                <td>@discipline.SortOrder</td>
+                <td class="d-flex align-items-center gap-2">
+                    <button class="btn btn-primary btn-sm"
+                            onclick="loadContent('EditDiscipline', '/@discipline.Id')">
+                        Редагувати
+                    </button>
+                    <form method="post"
+                          asp-action="DeleteDiscipline"
+                          asp-route-id="@discipline.Id"
+                          onsubmit="return confirm('Видалити дисципліну?') && submitForm(this)"
+                          style="margin: 0;">
+                        <button class="btn btn-danger btn-sm">Видалити</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

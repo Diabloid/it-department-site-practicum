@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using it_department_site.Infrastructure;
+using it_department_site.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using ZstdSharp.Unsafe;
 
 namespace it_department_site.Controllers
 {
@@ -13,6 +16,11 @@ namespace it_department_site.Controllers
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
         private readonly IGraduateService _graduateService;
+        private readonly IEmployeeService _employeeService;
+        private readonly IGoogleDriveService _driveService;
+        private readonly GoogleDriveOptions _driveOptions;
+        private readonly IMainSliderService _mainSliderService;
+        private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
 
         public AdminController(
@@ -24,8 +32,12 @@ namespace it_department_site.Controllers
             IPartnerService partnerService,
             IPostRepository postRepository,
             IGraduateService graduateService,
-            IUserService userService
-            )
+            IEmployeeService employeeService,
+            IGoogleDriveService driveService,
+            Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
+            IMainSliderService mainSliderService,
+            IDisciplineService disciplineService,
+ 	    IUserService userService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -35,8 +47,13 @@ namespace it_department_site.Controllers
             _partnerService = partnerService;
             _postRepository = postRepository;
             _graduateService = graduateService;
-            _userService = userService;
-        }
+            _employeeService = employeeService;
+            _driveService = driveService;
+            _driveOptions = driveOptions.Value;
+      	     _mainSliderService = mainSliderService;
+            _disciplineService = disciplineService;
+            _userService = userService; 
+       }
 
         public async Task<IActionResult> LayoutSettings()
         {
@@ -118,6 +135,165 @@ namespace it_department_site.Controllers
         {
             await _graduateService.DeleteAsync(id);
             return await Graduates();
+        }
+
+        //===========================================
+        public IActionResult CreateEmployee()
+        {
+            return PartialView("_CreateEmployee", new Employee());
+        }
+
+        public async Task<IActionResult> Employees()
+        {
+            var employees = await _employeeService.GetAllAsync();
+            var employeeList = employees.ToList();
+            var counts = await _employeeService.GetCertificateCountsAsync(employeeList.Select(e => e.Id));
+            ViewBag.CertificateCounts = counts;
+            return PartialView("_EmployeesTable", employeeList);
+        }
+
+        public async Task<IActionResult> EditEmployee(int id)
+        {
+            var employee = await _employeeService.GetByIdAsync(id);
+            if (employee == null) return NotFound();
+
+            ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(id);
+            return PartialView("_EditEmployee", employee);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
+
+            if (photoFile != null)
+                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+            else
+                employee.PhotoUrl = "/images/banner_photo_2.jpg";
+
+            employee.PatronymicName ??= string.Empty;
+            employee.Email ??= string.Empty;
+            employee.Specialization ??= string.Empty;
+            employee.Bio ??= string.Empty;
+
+            await _employeeService.CreateAsync(employee);
+            if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
+                await _employeeService.ApplyDrivePhotoFromFolderAsync(employee.Id);
+            return await Employees();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEmployee(
+            Employee employee,
+            IFormFile? photoFile,
+            string[]? selectedCertificateFileIds)
+        {
+            ModelState.Remove("PhotoUrl");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(employee.Id);
+                return PartialView("_EditEmployee", employee);
+            }
+
+            if (photoFile != null)
+                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+
+            await _employeeService.UpdateAsync(employee.Id, employee);
+
+            if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
+            {
+                if (photoFile == null)
+                    await _employeeService.ApplyDrivePhotoFromFolderAsync(employee.Id);
+
+                await _employeeService.SetSelectedDriveCertificatesAsync(
+                    employee.Id,
+                    selectedCertificateFileIds ?? Array.Empty<string>());
+            }
+
+            return await Employees();
+        }
+
+        [HttpGet]
+        [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> DriveFilePreview(int employeeId, string fileId)
+        {
+            if (string.IsNullOrWhiteSpace(fileId) ||
+                !await _employeeService.IsFileInEmployeeDriveFolderAsync(employeeId, fileId))
+            {
+                return NotFound();
+            }
+
+            var preview = await _driveService.GetPreviewStreamAsync(fileId);
+            if (preview == null)
+                return NotFound();
+
+            return File(preview.Value.Stream, preview.Value.ContentType);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SyncDriveFolders()
+        {
+            var rootFolderId = _driveOptions.RootFolderId;
+            var syncResult = await _employeeService.SyncDriveFoldersFromRootAsync(rootFolderId);
+            ViewBag.DriveSyncResult = syncResult;
+            return await Employees();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            await _employeeService.DeleteAsync(id);
+            return await Employees();
+        }
+
+
+        public IActionResult CreateDiscipline()
+        {
+            return PartialView("_CreateDiscipline", new Discipline());
+        }
+
+        public async Task<IActionResult> Disciplines()
+        {
+            var disciplines = await _disciplineService.GetAllAsync();
+            return PartialView("_DisciplinesTable", disciplines);
+        }
+
+        public async Task<IActionResult> EditDiscipline(int id)
+        {
+            var discipline = await _disciplineService.GetByIdAsync(id);
+            if (discipline == null) return NotFound();
+            return PartialView("_EditDiscipline", discipline);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateDiscipline(Discipline discipline)
+        {
+            if (!ModelState.IsValid) return PartialView("_CreateDiscipline", discipline);
+
+            await _disciplineService.CreateAsync(discipline);
+            return await Disciplines();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditDiscipline(Discipline discipline)
+        {
+            if (!ModelState.IsValid) return PartialView("_EditDiscipline", discipline);
+
+            await _disciplineService.UpdateAsync(discipline.Id, discipline);
+            return await Disciplines();
+        }
+
+        public async Task<IActionResult> DeleteDiscipline(int id)
+        {
+            await _disciplineService.DeleteAsync(id);
+            return await Disciplines();
         }
 
         public async Task<IActionResult> Users()
@@ -243,6 +419,7 @@ namespace it_department_site.Controllers
 
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
+
             return View(pages);
         }
 
@@ -319,6 +496,45 @@ namespace it_department_site.Controllers
             return PartialView("_Partners", partners.ToList());
         }
 
+        public async Task<IActionResult> MainSlider()
+        {
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateMainSliderSlide(byte slot, IFormFile? imageFile, string? altText)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Оберіть зображення для завантаження.");
+                var currentSlides = await _mainSliderService.GetAdminSlidesAsync();
+                return PartialView("_MainSlider", currentSlides);
+            }
+
+            await _mainSliderService.UpdateSlideAsync(slot, imageFile, altText);
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteMainSliderSlide(byte slot)
+        {
+            try
+            {
+                await _mainSliderService.ClearSlideAsync(slot);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete main slider slide {Slot}", slot);
+                ModelState.AddModelError(string.Empty, "Не вдалося видалити слайд. Спробуйте ще раз.");
+            }
+
+            var slides = await _mainSliderService.GetAdminSlidesAsync();
+            return PartialView("_MainSlider", slides);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
         {
@@ -350,80 +566,95 @@ namespace it_department_site.Controllers
 
         public IActionResult CreatePost()
         {
-            return PartialView("_CreatePost", new Post());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePost(Post post, IFormFile? thumbnailFile)
-        {
-            ModelState.Remove("Author");
-            ModelState.Remove("Thumbnail"); // Видаляємо, бо заповнимо вручну
-
-            if (!ModelState.IsValid)
+            return PartialView("_CreatePost", new Post
             {
-                return PartialView("_CreatePost", post);
-            }
-
-            try
-            {
-                if (thumbnailFile != null)
-                {
-                    _logger.LogInformation("Saving thumbnail for new post: {FileName}", thumbnailFile.FileName);
-                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
-                }
-
-                post.AuthorId = 1;
-                post.CreatedAt = DateTime.UtcNow;
-                post.UpdatedAt = DateTime.UtcNow;
-
-                await _postRepository.CreateAsync(post);
-                _logger.LogInformation("Post created with ID {PostId}", post.Id);
-                return await Posts();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while creating a post");
-                return StatusCode(500, "Помилка сервера");
-            }
+                Id = 0,
+                Status = "Draft",
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task<IActionResult> EditPost(int id)
         {
             var post = await _postRepository.GetByIdAsync(id);
-            if (post == null)
-            {
-                _logger.LogWarning("Admin attempted to edit a post with ID {PostId} that does not exist", id);
-                return NotFound();
-            }
+            if (post == null) return NotFound();
+
             return PartialView("_EditPost", post);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SavePostDraft(Post post)
+        {
+            ClearPostSoftValidationState();
+
+            try
+            {
+                NormalizePostForDraft(post);
+                post.AuthorId = 1;
+                if (post.CreatedAt == default)
+                    post.CreatedAt = DateTime.Now;
+                post.UpdatedAt = DateTime.Now;
+
+                if (post.Id == 0)
+                {
+                    var id = await _postRepository.CreateAsync(post);
+                    return Json(new { id, savedAt = DateTime.Now, status = "Draft" });
+                }
+
+                var existing = await _postRepository.GetByIdAsync(post.Id);
+                if (existing == null) return NotFound();
+
+                if (string.IsNullOrEmpty(post.Thumbnail))
+                    post.Thumbnail = existing.Thumbnail;
+
+                await _postRepository.UpdateAsync(post);
+                return Json(new { id = post.Id, savedAt = DateTime.Now, status = "Draft" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Помилка збереження чернетки");
+                return StatusCode(500, "Помилка сервера");
+            }
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPost(Post post, IFormFile? thumbnailFile)
+        public async Task<IActionResult> PublishPost(Post post, IFormFile? thumbnailFile)
         {
-            ModelState.Remove("Author");
-            ModelState.Remove("Thumbnail");
+            ClearPostSoftValidationState();
 
-            if (!ModelState.IsValid)
+            if (!ValidatePostForPublish(post, out var error))
             {
-                return PartialView("_EditPost", post);
+                ModelState.AddModelError(string.Empty, error!);
+                return post.Id == 0
+                    ? PartialView("_CreatePost", post)
+                    : PartialView("_EditPost", post);
             }
 
             try
             {
+                post.Status = "Published";
+                post.AuthorId = 1;
+                if (post.CreatedAt == default)
+                    post.CreatedAt = DateTime.Now;
+                post.UpdatedAt = DateTime.Now;
+                post.Excerpt ??= string.Empty;
+
                 if (thumbnailFile != null)
-                {
-                    // Якщо завантажили нове фото — зберігаємо його
-                    _logger.LogInformation("Saving new thumbnail for post with ID {PostId}: {FileName}", post.Id, thumbnailFile.FileName);
                     post.Thumbnail = await SaveImage(thumbnailFile, "posts");
+                else if (post.Id != 0)
+                {
+                    var existing = await _postRepository.GetByIdAsync(post.Id);
+                    if (existing != null && string.IsNullOrEmpty(post.Thumbnail))
+                        post.Thumbnail = existing.Thumbnail;
                 }
 
-                post.UpdatedAt = DateTime.UtcNow;
-                await _postRepository.UpdateAsync(post);
-                _logger.LogInformation("Post with ID {PostId} updated successfully", post.Id);
+                if (post.Id == 0)
+                    post.Id = await _postRepository.CreateAsync(post);
+                else
+                    await _postRepository.UpdateAsync(post);
+
                 return await Posts();
             }
             catch (Exception ex)
@@ -431,6 +662,65 @@ namespace it_department_site.Controllers
                 _logger.LogError(ex, "Error occurred while editing a post");
                 return StatusCode(500, "Помилка сервера");
             }
+        }
+
+        private void ClearPostSoftValidationState()
+        {
+            ModelState.Remove("Author");
+            ModelState.Remove("Thumbnail");
+            ModelState.Remove(nameof(Post.Title));
+            ModelState.Remove(nameof(Post.Slug));
+            ModelState.Remove(nameof(Post.Content));
+            ModelState.Remove(nameof(Post.Excerpt));
+            ModelState.Remove(nameof(Post.Status));
+        }
+
+        private static void NormalizePostForDraft(Post post)
+        {
+            if (string.IsNullOrWhiteSpace(post.Title))
+                post.Title = "Без назви";
+            if (string.IsNullOrWhiteSpace(post.Slug))
+                post.Slug = "draft-" + Guid.NewGuid().ToString("N")[..8];
+            post.Excerpt ??= string.Empty;
+            post.Content ??= string.Empty;
+            post.Status = "Draft";
+        }
+
+        private static bool ValidatePostForPublish(Post post, out string? error)
+        {
+            if (string.IsNullOrWhiteSpace(post.Title))
+            {
+                error = "Заголовок є обов'язковим";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(post.Slug))
+            {
+                error = "Slug є обов'язковим";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(post.Content))
+            {
+                error = "Контент не може бути порожнім";
+                return false;
+            }
+            error = null;
+            return true;
+        }
+
+
+        private static List<string> ParseDriveLinks(string? linksText)
+        {
+            if (string.IsNullOrWhiteSpace(linksText))
+                return new List<string>();
+
+            return linksText
+                .Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(link => link.Trim())
+                .Where(link => Uri.TryCreate(link, UriKind.Absolute, out var uri)
+                               && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                .Distinct()
+                .Take(15)
+                .ToList();
         }
 
         private async Task<string> SaveImage(IFormFile file, string folderName)

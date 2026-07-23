@@ -1,99 +1,80 @@
 ﻿@model it_department_site.DTOs.PageDto
-@using System.Security.Claims
 
 @{
-    bool isAdmin = false;
-    int userId = 0;
-
-    
     ViewData["Title"] = Model.Title;
     Layout = "_Layout";
+    var viewsCount = ViewBag.Views as int? ?? Model.Views;
 }
 
-<div class="w-100 px-4">
-    <div class="card shadow-sm mb-4 w-100">
-        <h3 class="card-header">@Model.Title</h3>
+@section Styles {
+    <link rel="stylesheet" href="~/css/page-details.css" asp-append-version="true" />
+}
 
-        <div class="card-body p-4">
-            <p class="card-subtitle text-muted mb-2">
-                Створено: @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
-            </p>
+<div class="page-details">
+    <div class="page-shell">
+        <nav class="page-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">Головна</a>
+            <span class="page-breadcrumb-sep">/</span>
+            <span class="page-breadcrumb-current">@Model.Title</span>
+        </nav>
 
-            <div class="d-flex align-items-center gap-2 mt-2 mb-3">
-                @if ( !isAdmin)
+        <header class="page-header">
+            <h1 class="page-title">@Model.Title</h1>
+        </header>
+
+        <div class="page-body">
+            <article class="page-article">
+                <div class="page-meta-row page-meta-row--article">
+                    <span class="page-meta-item">
+                        <img src="~/svg/eye.svg" alt="" class="page-meta-icon" aria-hidden="true" />
+                        <span>@viewsCount переглядів</span>
+                    </span>
+                    <span class="page-meta-dot" aria-hidden="true"></span>
+                    <span class="page-meta-item">
+                        <img src="~/svg/calendar.svg" alt="" class="page-meta-icon" aria-hidden="true" />
+                        <time datetime="@Model.CreatedAt.ToString("yyyy-MM-dd")">
+                            @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        </time>
+                    </span>
+                </div>
+
+                @if (Model.LayoutType == "left-sidebar")
                 {
-                    <button type="button"
-                            data-page-id="@Model.Id">
-                    </button>
+                    <div class="page-layout">
+                        <aside class="page-sidebar">
+                            <span class="page-sidebar-label">Додатково</span>
+                            <div class="page-prose">
+                                @Html.Raw(Model.LeftSidebar)
+                            </div>
+                        </aside>
+                        <div class="page-prose page-prose--full">
+                            @Html.Raw(Model.MainContent)
+                        </div>
+                    </div>
                 }
-
-                <button type="button"
-                        id="like-btn"
-                        class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
-                        data-page-id="@Model.Id">
-                    ❤️ <span id="like-count">@ViewBag.Likes</span>
-                </button>
-
-                <div class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1" style="cursor: default;">
-                    👁 <span>@ViewBag.Views</span>
-                </div>
-            </div>
-            <hr />
-            @if (Model.LayoutType == "left-sidebar")
-            {
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="sidebar bg-light p-3 rounded">
-                            @Html.Raw(Model.LeftSidebar)
+                else if (Model.LayoutType == "right-sidebar")
+                {
+                    <div class="page-layout page-layout--right">
+                        <div class="page-prose page-prose--full">
+                            @Html.Raw(Model.MainContent)
                         </div>
+                        <aside class="page-sidebar">
+                            <span class="page-sidebar-label">Додатково</span>
+                            <div class="page-prose">
+                                @Html.Raw(Model.RightSidebar)
+                            </div>
+                        </aside>
                     </div>
-                    <div class="col-md-9">
+                }
+                else
+                {
+                    <div class="page-prose">
                         @Html.Raw(Model.MainContent)
                     </div>
-                </div>
-            }
-            else if (Model.LayoutType == "right-sidebar")
-            {
-                <div class="row">
-                    <div class="col-md-9">
-                        @Html.Raw(Model.MainContent)
-                    </div>
-                    <div class="col-md-3">
-                        <div class="sidebar bg-light p-3 rounded">
-                            @Html.Raw(Model.RightSidebar)
-                        </div>
-                    </div>
-                </div>
-            }
-            else
-            {
-                @Html.Raw(Model.MainContent)
-            }
+                }
+            </article>
+
+            <a href="/" class="page-back-link">← На головну</a>
         </div>
-
-        
     </div>
 </div>
-
-<script src="~/ckeditor/ckeditor.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const likeBtn = document.getElementById("like-btn");
-        if (likeBtn) {
-            likeBtn.addEventListener("click", () => {
-                const pageId = likeBtn.dataset.pageId;
-                fetch("/likes/toggle", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `pageId=${pageId}`
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById("like-count").textContent = data.likeCount;
-                    }
-                });
-            });
-        }
-    });
-</script>

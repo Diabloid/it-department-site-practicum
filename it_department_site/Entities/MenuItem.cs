@@ -10,6 +10,8 @@
 
         public int? PageId { get; set; } // NULL, якщо це просто контейнер, як "Blog"
 
+        public string? CustomUrl { get; set; }
+
         public int SortOrder { get; set; }
         public string PageSlug { get; set; } // Add this field for slug
 

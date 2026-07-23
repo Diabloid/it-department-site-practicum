@@ -6,20 +6,24 @@
         private readonly ICurrentUserService _currentUser;
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
+        private readonly IMainSliderService _mainSliderService;
 
         public PagesController(IPageService pageService, 
-            ICurrentUserService currentUser, IPartnerService partnerService, IPostRepository postRepository)
+            ICurrentUserService currentUser, IPartnerService partnerService, IPostRepository postRepository,
+            IMainSliderService mainSliderService)
         {
             _pageService = pageService;
             _currentUser = currentUser;
             _partnerService = partnerService;
             _postRepository = postRepository;
+            _mainSliderService = mainSliderService;
         }
 
         public async Task<IActionResult> Index()
         {
             var partners = await _partnerService.GetAllPartnersAsync();
             ViewBag.Partners = partners.ToList();
+            ViewBag.MainSliderSlides = await _mainSliderService.GetDisplaySlidesAsync();
 
             // 2. --- ЛОГІКА НОВИН ---
             ViewBag.News = await _postRepository.GetLatestAsync(4);
