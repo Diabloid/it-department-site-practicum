@@ -1,0 +1,68 @@
+@model it_department_site.ViewModels.GraduateTimelinePageViewModel
+
+@if (Model.YearGroups.Count == 0)
+{
+    <div class="graduate-timeline-empty">
+        <p>Поки немає випускників. Додайте їх у розділі «Управління випускниками».</p>
+    </div>
+}
+else
+{
+    <div class="graduate-timeline" aria-label="Хронологія випускників">
+        <div class="graduate-timeline__spine" aria-hidden="true"></div>
+
+        @foreach (var yearGroup in Model.YearGroups)
+        {
+            <section class="graduate-timeline__section" aria-labelledby="year-@yearGroup.Year">
+                <div class="graduate-timeline__year">
+                    <span class="graduate-timeline__year-badge" id="year-@yearGroup.Year">@yearGroup.Year</span>
+                </div>
+
+                <div class="graduate-timeline__cards">
+                    @{
+                        var index = 0;
+                    }
+                    @foreach (var graduate in yearGroup.Graduates)
+                    {
+                        var sideClass = index % 2 == 0
+                            ? "graduate-timeline__card--left"
+                            : "graduate-timeline__card--right";
+                        index++;
+
+                        <article class="graduate-timeline__card @sideClass">
+                            <a asp-controller="Graduates"
+                               asp-action="Details"
+                               asp-route-id="@graduate.Id"
+                               class="graduate-timeline__card-link">
+                                @if (!string.IsNullOrEmpty(graduate.PhotoUrl))
+                                {
+                                    <img src="@graduate.PhotoUrl"
+                                         alt="@graduate.LastName @graduate.FirstName"
+                                         class="graduate-timeline__photo" />
+                                }
+                                else
+                                {
+                                    <div class="graduate-timeline__photo-placeholder" aria-hidden="true">👤</div>
+                                }
+                                <div class="graduate-timeline__body">
+                                    <h2 class="graduate-timeline__name">
+                                        <span class="last-name">@graduate.LastName</span>
+                                        <span class="first-name">@graduate.FirstName</span>
+                                    </h2>
+                                    @if (!string.IsNullOrWhiteSpace(graduate.Specialization))
+                                    {
+                                        <p class="graduate-timeline__meta">@graduate.Specialization</p>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(graduate.JobDescription))
+                                    {
+                                        <p class="graduate-timeline__job">@graduate.JobDescription</p>
+                                    }
+                                </div>
+                            </a>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+}
