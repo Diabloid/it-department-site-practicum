@@ -123,7 +123,6 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> Users()
         {
             var users = await _userService.GetAllAsync();
-            _logger.LogInformation("Admin requested users list, total {UserCount} users", users.Count());
             return PartialView("_UsersTable", users);
         }
 
@@ -135,7 +134,6 @@ namespace it_department_site.Controllers
 
             ViewData["CurrentPage"] = page;
             ViewData["TotalPages"] = totalPages;
-            _logger.LogInformation("Admin requested pages list, page {PageNumber} of {TotalPages}", page, totalPages);
             return PartialView("_PagesTable", pages);
         }
 
@@ -143,13 +141,11 @@ namespace it_department_site.Controllers
         {
             var menuItems = await _menuService.GetAllMenuItemsAsync();
             ViewBag.Pages = await _pageService.GetAllPagesAsync();
-            _logger.LogInformation("Admin requested menu items list");
             return PartialView("_MenuItemsTable", menuItems);
         }
 
         public IActionResult Create()
         {
-            _logger.LogInformation("Admin opened create page form");
             return View("CreatePage");
         }
 
@@ -159,7 +155,6 @@ namespace it_department_site.Controllers
 
             if (id == null)
             {
-                _logger.LogInformation("Admin opened create page form");
                 var layoutType = HttpContext.Session.GetString("SelectedLayoutType") ?? "no-sidebar";
                 return View(new PageEditorViewModel { LayoutType = layoutType });
             }
@@ -174,11 +169,11 @@ namespace it_department_site.Controllers
             return View(new PageEditorViewModel
             {
                 Id = page.Id,
-                Title = page.Title ?? "",
-                Slug = page.Slug ?? "",
+                Title = page.Title,
+                Slug = page.Slug,
                 Status = page.Status.ToString(),
-                LayoutType = page.LayoutType ?? "",
-                ContentSections = page.Content ?? new ContentSections(),
+                LayoutType = page.LayoutType,
+                ContentSections = page.Content,
                 CreatedAt = page.CreatedAt,
                 UpdatedAt = page.UpdatedAt,
             });
@@ -194,7 +189,7 @@ namespace it_department_site.Controllers
                 Slug = model.Slug,
                 Content = model.ContentSections,
                 Status = Enum.TryParse(model.Status, out PageStatus status) ? status : PageStatus.Draft,
-                LayoutType = model.LayoutType ?? "",
+                LayoutType = model.LayoutType,
                 CreatedAt = model.CreatedAt ?? DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -202,20 +197,16 @@ namespace it_department_site.Controllers
             if (model.Id == null)
             {
                 page.Id = await _pageService.CreatePageAsync(page);
-                _logger.LogInformation("Page created with ID {PageId}", page.Id);
             }
             else
             {
-                _logger.LogInformation("Page updated with ID {PageId}", page.Id);
                 await _pageService.UpdatePageAsync(page);
             }
 
             if (model.ParentMenuItemId.HasValue)
             {
-                _logger.LogInformation("Linking page ID {PageId} to menu item ID {MenuItemId}", page.Id, model.ParentMenuItemId.Value);
                 await _menuService.LinkPageToMenuAsync(page.Id, model.ParentMenuItemId, page.Title);
             }
-            _logger.LogInformation("Redirecting to pages list after saving page with ID {PageId}", page.Id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -232,7 +223,6 @@ namespace it_department_site.Controllers
         {
             if (!string.IsNullOrEmpty(model.LayoutType))
             {
-                _logger.LogInformation("Admin selected layout type: {LayoutType}", model.LayoutType);
                 HttpContext.Session.SetString("SelectedLayoutType", model.LayoutType);
                 return Ok();
             }
@@ -253,7 +243,6 @@ namespace it_department_site.Controllers
 
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
-            _logger.LogInformation("Admin requested all pages list, page {PageNumber} of {TotalPages}", page, totalPages);
             return View(pages);
         }
 
@@ -262,7 +251,6 @@ namespace it_department_site.Controllers
             var pages = await _pageService.GetAllPagesAsync();
             ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
-            _logger.LogInformation("Admin opened create menu item form");
             return View("EditMenuItem", new MenuItem());
         }
 
@@ -272,7 +260,6 @@ namespace it_department_site.Controllers
             var pages = await _pageService.GetAllPagesAsync();
             ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
-            _logger.LogInformation("Admin opened edit form for menu item with ID {MenuItemId}", id);
             return View(item);
         }
 
@@ -329,7 +316,6 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> Partners()
         {
             var partners = await _partnerService.GetAllPartnersAsync();
-            _logger.LogInformation("Admin requested partners list, total {PartnerCount} partners", partners.Count());
             return PartialView("_Partners", partners.ToList());
         }
 
@@ -337,7 +323,6 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
         {
             await _partnerService.AddPartnerAsync(file, name, link);
-            _logger.LogInformation("Admin uploaded new partner: {PartnerName}", name);
             return RedirectToAction("Index", new { section = "Partners" });
         }
 
@@ -353,7 +338,6 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> UpdatePartnerOrder([FromBody] List<int> newOrder)
         {
             await _partnerService.UpdatePartnerOrderAsync(newOrder);
-            _logger.LogInformation("Admin updated partner order");
             return Ok();
         }
 
@@ -362,6 +346,11 @@ namespace it_department_site.Controllers
             var posts = await _postRepository.GetAllAsync();
             _logger.LogInformation("Admin requested posts list, total {PostCount} posts", posts.Count());
             return PartialView("_PostsTable", posts);
+        }
+
+        public IActionResult CreatePost()
+        {
+            return PartialView("_CreatePost", new Post());
         }
 
         [HttpPost]
@@ -373,7 +362,6 @@ namespace it_department_site.Controllers
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Admin attempted to create a post with invalid data");
                 return PartialView("_CreatePost", post);
             }
 
@@ -396,7 +384,6 @@ namespace it_department_site.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while creating a post");
-                _logger.LogWarning("Admin attempted to create a post with invalid data");
                 return StatusCode(500, "Помилка сервера");
             }
         }
@@ -409,7 +396,6 @@ namespace it_department_site.Controllers
                 _logger.LogWarning("Admin attempted to edit a post with ID {PostId} that does not exist", id);
                 return NotFound();
             }
-            _logger.LogInformation("Admin opened edit form for post with ID {PostId}", id);
             return PartialView("_EditPost", post);
         }
 
@@ -423,7 +409,6 @@ namespace it_department_site.Controllers
 
             if (!ModelState.IsValid)
             {
-                _logger.LogWarning("Admin attempted to edit a post with ID {PostId} that has invalid data", post.Id);
                 return PartialView("_EditPost", post);
             }
 
@@ -475,7 +460,7 @@ namespace it_department_site.Controllers
         {
             await _postRepository.DeleteAsync(id);
             _logger.LogInformation("Admin deleted post with ID {PostId}", id);
-            return await Posts(); // 🔥 Оновлюємо таблицю
+            return await Posts();
         }
     }
 }
