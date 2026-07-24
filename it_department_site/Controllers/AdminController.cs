@@ -307,7 +307,7 @@ namespace it_department_site.Controllers
         {
             int pageSize = 5;
             var pages = await _pageService.GetPagedAsync(page, pageSize);
-            var totalPages = await _pageService.GetTotalAsync(pageSize);
+            var totalPages = await _pageService.GetTotalPagesAsync(pageSize);
 
             ViewData["CurrentPage"] = page;
             ViewData["TotalPages"] = totalPages;
@@ -418,7 +418,7 @@ namespace it_department_site.Controllers
         {
             int pageSize = 3;
             var pages = await _pageService.GetPagedAsync(page, pageSize);
-            var totalPages = await _pageService.GetTotalAsync(pageSize);
+            var totalPages = await _pageService.GetTotalPagesAsync(pageSize);
 
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;

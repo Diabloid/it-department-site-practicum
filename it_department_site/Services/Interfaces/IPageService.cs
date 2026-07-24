@@ -8,11 +8,11 @@
         Task<int> CreatePageAsync(Page page);
         Task UpdatePageAsync(Page page);
         Task DeletePageAsync(int id);
-        Task<List<Page>> GetPagedAsync(int b, int c);
-        Task<int> GetTotalAsync(int p);
+        Task<List<Page>> GetPagedAsync(int pageNumber, int pageSize);
+        Task<int> GetTotalPagesAsync(int pageSize);
 
         Task<bool> HasUserViewedPageAsync(int userId, int pageId);
         Task MarkPageAsViewedAsync(int userId, int pageId);
-        Task<int> GetViewsAsync(int pageId);
+        Task<int> GetViewsAsync(int id);
     }
 }
