@@ -105,7 +105,6 @@ namespace it_department_site.Services
         private void EncryptContent(Page page)
         {
             var json = JsonSerializer.Serialize(page.Content);
-            // Прибрав зайві логи в консоль
             var encrypted = encryption.Encrypt(json);
             page.ContentJson = encrypted;
         }
