@@ -11,6 +11,6 @@
         public string MainContent { get; set; }
         public string LeftSidebar { get; set; }
         public string RightSidebar { get; set; }
-        public int Views { get; set; }
+        public int ViewsCount { get; set; }
     }
 }

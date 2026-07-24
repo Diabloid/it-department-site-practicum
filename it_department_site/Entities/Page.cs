@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Entities
 {
+    [Index(nameof(Slug), IsUnique = true)]
     [Table("pages")]
     public class Page
     {
@@ -11,12 +13,12 @@ namespace it_department_site.Entities
         public int Id { get; set; }
         
         [Required]
-        [MaxLength(50)]
+        [MaxLength(200)]
         [Column("title")]
         public string Title { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(150)]
         [Column("slug")]
         public string Slug { get; set; }
 
@@ -27,8 +29,7 @@ namespace it_department_site.Entities
         [NotMapped]
         public ContentSections Content { get; set; }
 
-        [MaxLength(1000)]
-        [Column("content_json")]
+        [Column("content", TypeName = "text")]
         public string ContentJson { get; set; } = "";
 
         [Required]
@@ -44,8 +45,8 @@ namespace it_department_site.Entities
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
 
-        [Column("ViewsCount")]
-        public int Views { get; set; }
+        [Column("views_count")]
+        public int ViewsCount { get; set; }
 
         public Page() { }
 
@@ -74,6 +75,5 @@ namespace it_department_site.Entities
         public string main { get; set; } = "";
         public string left { get; set; } = "";
         public string right { get; set; } = "";
-        
     }
 }

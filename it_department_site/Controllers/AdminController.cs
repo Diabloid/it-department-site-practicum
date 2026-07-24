@@ -12,6 +12,7 @@ namespace it_department_site.Controllers
         private readonly IMenuService _menuService;
         private readonly ILogger<AdminController> _logger;
         private readonly ISiteSettingsService _settingsService;
+        // REFACTOR_HINT: remove _db
         private readonly IDbConnection _db; // ✅ Замість Dbhelper
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;

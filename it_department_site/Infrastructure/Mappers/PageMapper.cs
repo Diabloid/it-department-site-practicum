@@ -14,8 +14,7 @@
                 MainContent = page.Content.main,
                 LeftSidebar = page.Content.left,
                 RightSidebar = page.Content.right,
-                Views = page.Views // <- ось це додай
-
+                ViewsCount = page.ViewsCount
             };
         }
 
@@ -33,7 +32,7 @@
                     left = dto.LeftSidebar,
                     right = dto.RightSidebar
                 },
-                Views = dto.Views
+                ViewsCount = dto.ViewsCount
             };
         }
     }
