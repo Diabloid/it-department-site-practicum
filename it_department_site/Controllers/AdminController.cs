@@ -1,7 +1,5 @@
 ﻿using it_department_site.Infrastructure;
-using it_department_site.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using ZstdSharp.Unsafe;
 
 namespace it_department_site.Controllers
 {
@@ -12,8 +10,6 @@ namespace it_department_site.Controllers
         private readonly IMenuService _menuService;
         private readonly ILogger<AdminController> _logger;
         private readonly ISiteSettingsService _settingsService;
-        // REFACTOR_HINT: remove _db
-        private readonly IDbConnection _db; // ✅ Замість Dbhelper
         private readonly IPartnerService _partnerService;
         private readonly IPostRepository _postRepository;
         private readonly IGraduateService _graduateService;
@@ -27,7 +23,6 @@ namespace it_department_site.Controllers
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
-            IDbConnection db, // ✅ Інжектимо з'єднання
             ILogger<AdminController> logger,
             ISiteSettingsService settingsService,
             IPartnerService partnerService,
@@ -42,7 +37,6 @@ namespace it_department_site.Controllers
         {
             _pageService = pageService;
             _menuService = menuService;
-            _db = db;
             _logger = logger;
             _settingsService = settingsService;
             _partnerService = partnerService;
