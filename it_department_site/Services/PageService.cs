@@ -68,7 +68,7 @@ namespace it_department_site.Services
         public async Task UpdatePageAsync(Page page)
         {
             EncryptContent(page);
-            await dbContext.Set<Page>().AddAsync(page);
+            dbContext.Set<Page>().Update(page);
             await dbContext.SaveChangesAsync();
         }
 
