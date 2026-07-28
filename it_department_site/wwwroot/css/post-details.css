@@ -1,0 +1,199 @@
+/* ====================================================================== */
+/* 5. СТОРІНКА ПОСТА З БОКОВИМ СПИСКОМ (SIDEBAR) */
+/* ====================================================================== */
+
+.post-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  display: flex !important;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.post-card {
+  flex: 2.5 !important;
+  position: relative !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 40px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 20px 60px rgba(118, 125, 207, 0.1) !important;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.post-card::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -50% !important;
+  left: -50% !important;
+  width: 200% !important;
+  height: 200% !important;
+  background-image: linear-gradient(
+    135deg,
+    rgba(109, 114, 171, 0.1) 0%,
+    rgba(255, 255, 255, 0.5) 25%,
+    rgba(148, 153, 201, 0.1) 50%,
+    rgba(255, 255, 255, 0.6) 75%,
+    rgba(118, 126, 219, 0.1) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: postFlowGradient 15s ease-in-out infinite !important;
+  z-index: -1 !important;
+}
+
+@keyframes postFlowGradient {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.post-header {
+  padding: 40px 50px 20px;
+}
+.post-title {
+  font-size: 42px;
+  font-weight: 800;
+  color: #2d2f45;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.post-image-wrap {
+  padding: 0 50px;
+  margin-bottom: 30px;
+}
+.post-image {
+  width: 100%;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.post-body {
+  padding: 0 50px 50px;
+}
+.post-meta {
+  font-size: 14px;
+  color: #575979;
+  font-weight: 600;
+  margin-bottom: 25px;
+  background: rgba(118, 125, 207, 0.1);
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 10px;
+}
+
+.post-content {
+  font-size: 19px;
+  line-height: 1.8;
+  color: #3e415e;
+}
+
+.side-news-list {
+  flex: 1 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: sticky !important;
+  top: 20px;
+}
+
+.side-news-list a {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 15px;
+  padding: 12px !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 20px !important;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease !important;
+}
+
+.side-news-list a:hover {
+  transform: translateX(8px) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 10px 25px rgba(118, 125, 207, 0.1);
+}
+
+.news-image-small {
+  width: 85px;
+  height: 85px;
+  background-size: cover !important;
+  background-position: center !important;
+  border-radius: 15px;
+  flex-shrink: 0;
+}
+
+.news-info-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #575979;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.news-date-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  opacity: 0.7;
+}
+
+.news-title-small {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d2f45;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .post-page {
+    flex-direction: column;
+  }
+  .side-news-list {
+    width: 100%;
+    position: static;
+  }
+  .post-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .post-header,
+  .post-body,
+  .post-image-wrap {
+    padding: 20px;
+  }
+  .post-title {
+    font-size: 28px;
+  }
+  .post-image {
+    height: 300px;
+  }
+}

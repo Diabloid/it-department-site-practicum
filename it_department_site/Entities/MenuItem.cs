@@ -33,6 +33,9 @@ namespace it_department_site.Entities
         [Column("page_slug")]
         public string? PageSlug { get; set; }
 
+        [Column("custom_url")]
+        public string? CustomUrl { get; set; }
+
         [InverseProperty(nameof(Parent))]
         public List<MenuItem> Children { get; set; } = new List<MenuItem>();
     }

@@ -1,0 +1,14 @@
+@model it_department_site.ViewModels.EmployeeCertificateViewModel
+@{
+    var title = string.IsNullOrWhiteSpace(Model.FileName) ? "Сертифікат" : Model.FileName;
+}
+<a href="@Model.LinkUrl"
+   target="_blank"
+   rel="noopener"
+   class="certificate-card @(Model.IsPdf ? "certificate-card--pdf" : "")"
+   title="@title">
+    <img src="@Model.PreviewUrl"
+         alt="@title"
+         class="certificate-card-image"
+         loading="lazy" />
+</a>

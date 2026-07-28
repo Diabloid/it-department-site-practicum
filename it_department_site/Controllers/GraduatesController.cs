@@ -7,7 +7,7 @@ public class GraduatesController : Controller
         _graduateService = graduateService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Timeline()
     {
         var graduates = await _graduateService.GetAllAsync();
         return View(graduates);
@@ -20,4 +20,9 @@ public class GraduatesController : Controller
         return View(graduate);
     }
 
+    public async Task<IActionResult> ProudOfYou()
+    {
+        var graduates = await _graduateService.GetAllAsync();
+        return View(graduates.OrderByDescending(g => g.GraduationYear));
+    }
 }
