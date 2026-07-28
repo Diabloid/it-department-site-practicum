@@ -227,53 +227,6 @@ namespace it_department_site.Migrations
                     b.ToTable("main_slider_slides");
                 });
 
-            modelBuilder.Entity("it_department_site.Entities.SiteSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("Id");
-
-                    b.Property<string>("CustomCss")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("CustomCss");
-
-                    b.Property<string>("FooterCss")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("FooterCss");
-
-                    b.Property<string>("FooterHtml")
-                        .HasColumnType("longtext")
-                        .HasColumnName("FooterHtml");
-
-                    b.Property<string>("HeaderCss")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("HeaderCss");
-
-                    b.Property<string>("HeaderHtml")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("HeaderHtml");
-
-                    b.Property<string>("SiteLogoUrl")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("SiteLogoUrl");
-
-                    b.Property<string>("SiteTitle")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("SiteTitle");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("site_settings");
-                });
-
-
             modelBuilder.Entity("it_department_site.Entities.Page", b =>
                 {
                     b.Property<int>("Id")
@@ -302,8 +255,9 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(150)")
                         .HasColumnName("slug");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int")
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("ENUM('Draft', 'Published')")
                         .HasColumnName("status");
 
                     b.Property<string>("Title")
@@ -360,6 +314,49 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("partners");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.SiteSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("CustomCss")
+                        .HasColumnType("text")
+                        .HasColumnName("custom_css");
+
+                    b.Property<string>("FooterCss")
+                        .HasColumnType("text")
+                        .HasColumnName("footer_css");
+
+                    b.Property<string>("FooterHtml")
+                        .HasColumnType("text")
+                        .HasColumnName("footer_html");
+
+                    b.Property<string>("HeaderCss")
+                        .HasColumnType("text")
+                        .HasColumnName("header_css");
+
+                    b.Property<string>("HeaderHtml")
+                        .HasColumnType("text")
+                        .HasColumnName("header_html");
+
+                    b.Property<string>("SiteLogoUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("logo_url");
+
+                    b.Property<string>("SiteTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("site_title");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("site_settings");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>
