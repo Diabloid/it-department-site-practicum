@@ -1,27 +1,29 @@
-﻿using it_department_site.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Services
 {
-    public class MenuService : IMenuService
+    public class MenuService(ApplicationDbContext dbContext) : IMenuService
     {
-        private readonly ApplicationDbContext _context;
-
-        public MenuService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<List<MenuItem>> GetAllMenuItemsAsync()
         {
-            return await _context.MenuItems
+            return await dbContext.MenuItems
                 .OrderBy(m => m.SortOrder)
                 .ToListAsync();
         }
 
+        public async Task<List<MenuItem>> GetRootMenuItemsAsync()
+        {
+            return await dbContext.Set<MenuItem>()
+                .Include(m => m.Page)
+                .Include(m => m.Children)
+                .Where( m => m.ParentId == null)
+                .OrderBy(m => m.SortOrder)
+                .ToListAsync();
+        }
+    
         public async Task LinkPageToMenuAsync(int pageId, int? parentId, string title)
         {
-            var existingItem = await _context.MenuItems
+            var existingItem = await dbContext.Set<MenuItem>()
                 .FirstOrDefaultAsync(m => m.PageId == pageId);
 
             if (existingItem != null)
@@ -38,36 +40,36 @@ namespace it_department_site.Services
                     PageId = pageId,
                     SortOrder = 0
                 };
-                _context.MenuItems.Add(newItem);
+                dbContext.Set<MenuItem>().Add(newItem);
             }
 
-            await _context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task<MenuItem?> GetMenuItemByIdAsync(int id)
         {
-            return await _context.MenuItems.FindAsync(id);
+            return await dbContext.Set<MenuItem>().FindAsync(id);
         }
 
         public async Task CreateMenuItemAsync(MenuItem item)
         {
-            _context.MenuItems.Add(item);
-            await _context.SaveChangesAsync();
+            dbContext.Set<MenuItem>().Add(item);
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateMenuItemAsync(MenuItem item)
         {
-            _context.MenuItems.Update(item);
-            await _context.SaveChangesAsync();
+            dbContext.Set<MenuItem>().Update(item);
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteMenuItemAsync(int id)
         {
-            var item = await _context.MenuItems.FindAsync(id);
+            var item = await dbContext.Set<MenuItem>().FindAsync(id);
             if (item != null)
             {
-                _context.MenuItems.Remove(item);
-                await _context.SaveChangesAsync();
+                dbContext.Set<MenuItem>().Remove(item);
+                await dbContext.SaveChangesAsync();
             }
         }
     }

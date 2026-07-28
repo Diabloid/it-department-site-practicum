@@ -30,7 +30,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // 4. Реєстрація Репозиторіїв та Сервісів (Всі Scoped)
 builder.Services.AddScoped<IPageRepository, PageRepository>();
 builder.Services.AddScoped<IPageService, PageService>();
-builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
