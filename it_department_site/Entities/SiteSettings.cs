@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace it_department_site.Entities
@@ -11,30 +11,27 @@ namespace it_department_site.Entities
         public int Id { get; set; }
 
         [Required]
-        [Column("SiteTitle")]
+        [MaxLength(200)]
+        [Column("site_title")]
         public string SiteTitle { get; set; }
 
-        [Required]
-        [Column("HeaderHtml")]
-        public string HeaderHtml { get; set; }
+        [Column("header_html", TypeName = "text")]
+        public string? HeaderHtml { get; set; }
 
-        [Column("FooterHtml")]
+        [Column("footer_html", TypeName = "text")]
         public string? FooterHtml { get; set; }
 
-        [Required]
-        [Column("HeaderCss")]
-        public string HeaderCss { get; set; }
+        [Column("header_css", TypeName = "text")]
+        public string? HeaderCss { get; set; }
 
-        [Required]
-        [Column("FooterCss")]
-        public string FooterCss { get; set; }
+        [Column("footer_css", TypeName = "text")]
+        public string? FooterCss { get; set; }
 
-        [Required]
-        [Column("CustomCss")]
-        public string CustomCss { get; set; }
+        [Column("custom_css", TypeName = "text")]
+        public string? CustomCss { get; set; }
 
-        [Required]
-        [Column("SiteLogoUrl")]
+        [MaxLength(255)]
+        [Column("logo_url")]
         public string? SiteLogoUrl { get; set; }
     }
 }

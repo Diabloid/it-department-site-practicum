@@ -1,17 +1,12 @@
+﻿using Microsoft.EntityFrameworkCore;
+
 namespace it_department_site.Services
 {
-    public class SiteSettingsService : ISiteSettingsService
+    public class SiteSettingsService(ApplicationDbContext dbContext) : ISiteSettingsService
     {
-        private readonly ApplicationDbContext _context;
-
-        public SiteSettingsService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<SiteSettings> GetAsync()
         {
-            var settings = await _context.SiteSettings.FindAsync(1);
+            var settings = await dbContext.Set<SiteSettings>().AsNoTracking().FirstOrDefaultAsync();
 
             if (settings == null)
             {
@@ -31,11 +26,11 @@ namespace it_department_site.Services
 
         public async Task SaveAsync(SiteSettings settings)
         {
-            var existingSettings = await _context.SiteSettings.FindAsync(1); -> await _context.SiteSettings.FirstOrDefaultAsync();
+            var existingSettings = await dbContext.Set<SiteSettings>().FirstOrDefaultAsync();
 
             if (existingSettings == null)
             {
-                _context.SiteSettings.Add(settings);
+                dbContext.Set<SiteSettings>().Add(settings);
             }
             else
             {
@@ -48,7 +43,7 @@ namespace it_department_site.Services
                 existingSettings.SiteLogoUrl = settings.SiteLogoUrl;
             }
 
-            await _context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
     }
 }
