@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Infrastructure
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Employee> Employees { get; set; }
@@ -12,10 +12,13 @@ namespace it_department_site.Infrastructure
         public DbSet<MainSliderSlide> MainSliderSlides { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
         public DbSet<Page> Pages { get; set; }
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Page>()
+                .Property(p => p.Status)
+                .HasConversion<string>() 
+                .HasColumnType("ENUM('Draft', 'Published')"); 
         }
     }
 }
