@@ -227,6 +227,49 @@ namespace it_department_site.Migrations
                     b.ToTable("main_slider_slides");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CustomUrl")
+                        .HasColumnType("longtext")
+                        .HasColumnName("custom_url");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("PageId")
+                        .HasColumnType("int")
+                        .HasColumnName("page_id");
+
+                    b.Property<string>("PageSlug")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("page_slug");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int")
+                        .HasColumnName("parent_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int")
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("menu_items");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Page", b =>
                 {
                     b.Property<int>("Id")
@@ -407,9 +450,29 @@ namespace it_department_site.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Page", "Page")
+                        .WithMany()
+                        .HasForeignKey("PageId");
+
+                    b.HasOne("it_department_site.Entities.MenuItem", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Page");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
                 {
                     b.Navigation("Certificates");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

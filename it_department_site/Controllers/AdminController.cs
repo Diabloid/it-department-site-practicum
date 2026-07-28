@@ -425,7 +425,7 @@ namespace it_department_site.Controllers
             var pages = await _pageService.GetAllPagesAsync();
             ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
-            return View("EditMenuItem", new MenuItem());
+            return View("EditMenuItem", new MenuItem { Name = String.Empty });
         }
 
         public async Task<IActionResult> EditMenuItem(int id)

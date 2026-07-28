@@ -13,6 +13,7 @@ namespace it_department_site.Infrastructure
         public DbSet<Discipline> Disciplines { get; set; }
         public DbSet<Page> Pages { get; set; }
         public DbSet<SiteSettings> SiteSettings { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
