@@ -1,0 +1,76 @@
+@model it_department_site.Entities.Employee
+
+<h4>Редагувати співробітника</h4>
+
+<form method="post"
+      asp-controller="Admin"
+      asp-action="EditEmployee"
+      enctype="multipart/form-data"
+      onsubmit="return submitForm(this, event)">
+
+    @Html.AntiForgeryToken()
+
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label class="form-label">Ім'я</label>
+        <input asp-for="FirstName" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Прізвище</label>
+        <input asp-for="LastName" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Побатькові</label>
+        <input asp-for="PatronymicName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Спеціалізація</label>
+        <input asp-for="Specialization" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Фото</label>
+        @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+        {
+            <div class="mb-2">
+                <img src="@Model.PhotoUrl" alt="Фото" style="height:80px; border-radius:8px;" />
+            </div>
+        }
+        <input type="file" name="photoFile" class="form-control" accept="image/*" />
+        <div class="form-text">
+            Або покладіть у папку Drive файл <code>photo.png</code> / <code>фото.jpg</code> (будь-який формат зображення) — підтягнеться автоматично, якщо не завантажите файл тут.
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Біографія</label>
+        <textarea asp-for="Bio" id="EmployeeBioEdit" class="form-control editor" rows="10"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Електронна пошта</label>
+        <input asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Папка (Google Drive)</label>
+        <input asp-for="GoogleDriveFolderUrl" class="form-control"
+               placeholder="https://drive.google.com/drive/folders/..." />
+        <div class="form-text">Після збереження оновиться фото з папки (якщо є photo/фото) і список сертифікатів нижче.</div>
+    </div>
+
+    @{
+        ViewBag.HasDriveFolder = Model.GoogleDriveFolderUrl;
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.GoogleDriveFolderUrl))
+    {
+        @await Html.PartialAsync("_DriveCertificatePicker")
+    }
+
+    <button class="btn btn-success">Зберегти</button>
+    <button type="button" class="btn btn-secondary" onclick="loadContent('Employees')">Назад</button>
+</form>

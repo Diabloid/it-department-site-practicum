@@ -37,6 +37,7 @@ namespace it_department_site.Entities
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+	[ForeignKey(nameof(Author))]
         [Column("author_id")]
         public int AuthorId { get; set; }
 
