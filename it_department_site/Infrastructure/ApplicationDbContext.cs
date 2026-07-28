@@ -22,6 +22,11 @@ namespace it_department_site.Infrastructure
                 .Property(p => p.Status)
                 .HasConversion<string>() 
                 .HasColumnType("ENUM('Draft', 'Published')"); 
+            
+            modelBuilder.Entity<Post>()
+                .Property(p => p.Status)
+                .HasConversion<string>() 
+                .HasColumnType("ENUM('Draft', 'Published')"); 
         }
     }
 }

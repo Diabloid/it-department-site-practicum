@@ -566,7 +566,10 @@ namespace it_department_site.Controllers
             return PartialView("_CreatePost", new Post
             {
                 Id = 0,
-                Status = "Draft",
+                Slug = string.Empty,
+                Title = string.Empty,
+                Content = string.Empty,
+                Status = PostStatus.Draft,
                 CreatedAt = DateTime.Now
             });
         }
@@ -631,7 +634,7 @@ namespace it_department_site.Controllers
 
             try
             {
-                post.Status = "Published";
+                post.Status = PostStatus.Published;
                 post.AuthorId = 1;
                 if (post.CreatedAt == default)
                     post.CreatedAt = DateTime.Now;
@@ -679,8 +682,7 @@ namespace it_department_site.Controllers
             if (string.IsNullOrWhiteSpace(post.Slug))
                 post.Slug = "draft-" + Guid.NewGuid().ToString("N")[..8];
             post.Excerpt ??= string.Empty;
-            post.Content ??= string.Empty;
-            post.Status = "Draft";
+            post.Status = PostStatus.Draft;
         }
 
         private static bool ValidatePostForPublish(Post post, out string? error)
