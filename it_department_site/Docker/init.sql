@@ -15,37 +15,6 @@ use website;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
-
-
-
---
--- Table structure for table `favorites`
---
-
-DROP TABLE IF EXISTS `favorites`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `favorites` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `page_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `page_id` (`page_id`),
-  CONSTRAINT `favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `favorites_ibfk_2` FOREIGN KEY (`page_id`) REFERENCES `pages` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `favorites`
---
-
-LOCK TABLES `favorites` WRITE;
-/*!40000 ALTER TABLE `favorites` DISABLE KEYS */;
-INSERT INTO `favorites` VALUES (52,3,2),(53,5,2);
-/*!40000 ALTER TABLE `favorites` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -60,6 +29,7 @@ CREATE TABLE `menu_items` (
   `name` varchar(255) NOT NULL,
   `parent_id` int DEFAULT NULL,
   `page_id` int DEFAULT NULL,
+  `custom_url` varchar(255) DEFAULT NULL,
   `sort_order` int DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`),
@@ -227,13 +197,26 @@ VALUES
 (14, 'Chernivtsi IT Cluster', '/images/partners/3bdbc070-8131-461a-88bc-b9958bb395c7.png', 5, 'https://www.it-cluster.cv.ua/'),
 (15, 'Datawiz.io', '/images/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
 
+CREATE TABLE main_slider_slides (
+  slot TINYINT NOT NULL PRIMARY KEY COMMENT '1, 2 або 3',
+  image_url VARCHAR(500) NULL,
+  alt_text VARCHAR(200) DEFAULT '',
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
+(1, '/images/banner_photo_1.JPG', 'Слайд 1'),
+(2, '/images/banner_photo_1.JPG', 'Слайд 2'),
+(3, '/images/banner_photo_1.JPG', 'Слайд 3');
+
 CREATE TABLE posts (
   id int NOT NULL AUTO_INCREMENT,
   author_id int DEFAULT NULL,
   page_id int DEFAULT NULL,
   slug varchar(150) NOT NULL,
   title varchar(200) NOT NULL,
-  excerpt varchar(300) NOT NULL,
+  status enum('Draft','Published') NOT NULL DEFAULT 'Draft',
+  excerpt text NOT NULL,
   thumbnail text,
   created_at datetime DEFAULT CURRENT_TIMESTAMP,
   updated_at datetime DEFAULT CURRENT_TIMESTAMP,

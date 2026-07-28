@@ -12,7 +12,6 @@
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var menuItems = await _menuService.GetAllMenuItemsAsync();
-
             var lookup = menuItems.ToDictionary(m => m.Id);
             var rootItems = new List<MenuItem>();
 

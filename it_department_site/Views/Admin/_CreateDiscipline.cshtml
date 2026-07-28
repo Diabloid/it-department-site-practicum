@@ -1,0 +1,47 @@
+@model it_department_site.Entities.Discipline
+
+<h4>Додати дисципліну</h4>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form method="post"
+      asp-action="CreateDiscipline"
+      onsubmit="return submitForm(this)">
+
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label class="form-label">Назва</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Викладач</label>
+        <input asp-for="Teacher" class="form-control" required />
+        <span asp-validation-for="Teacher" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Опис</label>
+        <textarea asp-for="Description" rows="6" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Порядок сортування</label>
+        <input asp-for="SortOrder" type="number" class="form-control" value="0" />
+    </div>
+
+    <button class="btn btn-success">Зберегти</button>
+    <button type="button" class="btn btn-secondary" onclick="loadContent('Disciplines')">Назад</button>
+</form>
