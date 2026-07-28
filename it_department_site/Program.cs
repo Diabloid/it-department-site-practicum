@@ -38,7 +38,6 @@ builder.Services.AddScoped<IGraduateService, GraduateService>();
 builder.Services.AddScoped<IDisciplineService, DisciplineService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddScoped<ISiteSettingsRepository, SiteSettingsRepository>();
 builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();

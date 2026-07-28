@@ -12,7 +12,8 @@ namespace it_department_site.Infrastructure
         public DbSet<MainSliderSlide> MainSliderSlides { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
         public DbSet<Page> Pages { get; set; }
-        
+        public DbSet<SiteSettings> SiteSettings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Page>()
