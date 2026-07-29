@@ -1,20 +1,41 @@
-﻿namespace it_department_site.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace it_department_site.Entities
 {
+    [Table("menu_items")]
     public class MenuItem
     {
+        [Key]
+        [Column("id")]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        [Required]
+        [MaxLength(255)]
+        [Column("name")]
+        public required string Name { get; set; }
 
-        public int? ParentId { get; set; } // NULL, якщо це кореневий елемент
+        [Column("parent_id")]
+        [ForeignKey(nameof(Parent))]
+        public int? ParentId { get; set; }
 
-        public int? PageId { get; set; } // NULL, якщо це просто контейнер, як "Blog"
+        public MenuItem? Parent { get; set; }
 
-        public int SortOrder { get; set; }
-        public string PageSlug { get; set; } // Add this field for slug
+        [Column("page_id")]
+        [ForeignKey(nameof(Page))]
+        public int? PageId { get; set; }
 
-        // Для побудови ієрархії меню (опціонально, зручно для відображення)
-        public List<MenuItem> Children { get; set; } = new List<MenuItem>();
+        public Page? Page { get; set; }
+
+        [Required]
+        [Column("sort_order")]
+        public int SortOrder { get; set; } = 0;
+
+        [Column("custom_url")]
+        public string? CustomUrl { get; set; }
+
+        [InverseProperty(nameof(Parent))]
+        public List<MenuItem> Children { get; set; } = new();
     }
 
 }

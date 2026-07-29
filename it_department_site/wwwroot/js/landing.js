@@ -37,6 +37,33 @@ if (header) { // Додана перевірка для уникнення по�
 }
 // -------------------------------------------------------------
 
+// Випадаюче меню: клік відкриває список, клік по пункту — перехід
+document.querySelectorAll('header .dropdown').forEach((dropdown) => {
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const content = dropdown.querySelector('.dropdown-content');
+    if (!trigger || !content) return;
+
+    trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        const willOpen = !dropdown.classList.contains('is-open');
+        document.querySelectorAll('header .dropdown.is-open').forEach((d) => {
+            d.classList.remove('is-open');
+            d.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+        });
+        dropdown.classList.toggle('is-open', willOpen);
+        trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if (e.target.closest('header .dropdown')) return;
+    document.querySelectorAll('header .dropdown.is-open').forEach((dropdown) => {
+        dropdown.classList.remove('is-open');
+        dropdown.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+    });
+});
+// -------------------------------------------------------------
+
 // Функція для визначення, чи є елемент у видимій області
 const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -72,6 +99,66 @@ window.addEventListener('DOMContentLoaded', () => {
         // невелика затримка для плавності
         setTimeout(() => banner.classList.add('in'), 80);
     }
+
+    const slider = document.querySelector('.js-main-slider');
+    if (!slider) return;
+
+    const track = slider.querySelector('.banner-track');
+    const slides = Array.from(slider.querySelectorAll('.banner-slide'));
+    const dots = Array.from(slider.querySelectorAll('.banner-dot'));
+    const prevBtn = slider.querySelector('.banner-arrow-prev');
+    const nextBtn = slider.querySelector('.banner-arrow-next');
+
+    if (!track || slides.length <= 1) return;
+
+    let currentIndex = 0;
+    const autoplayMs = parseInt(slider.getAttribute('data-autoplay-ms') || '5000', 10);
+    let timerId = null;
+
+    const updateUi = () => {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        dots.forEach((dot, index) => {
+            const active = index === currentIndex;
+            dot.classList.toggle('is-active', active);
+            dot.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+    };
+
+    const goTo = (index) => {
+        const maxIndex = slides.length - 1;
+        if (index < 0) currentIndex = maxIndex;
+        else if (index > maxIndex) currentIndex = 0;
+        else currentIndex = index;
+        updateUi();
+    };
+
+    const startAutoplay = () => {
+        if (timerId) clearInterval(timerId);
+        timerId = setInterval(() => goTo(currentIndex + 1), autoplayMs);
+    };
+
+    prevBtn?.addEventListener('click', () => {
+        goTo(currentIndex - 1);
+        startAutoplay();
+    });
+
+    nextBtn?.addEventListener('click', () => {
+        goTo(currentIndex + 1);
+        startAutoplay();
+    });
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            goTo(index);
+            startAutoplay();
+        });
+    });
+
+    slider.addEventListener('mouseenter', () => timerId && clearInterval(timerId));
+    slider.addEventListener('mouseleave', startAutoplay);
+
+    updateUi();
+    startAutoplay();
 });
 
 // Показ нижніх елементів при трохи більшим скроллі (поріг +200px)

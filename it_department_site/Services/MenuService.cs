@@ -1,27 +1,76 @@
-﻿namespace it_department_site.Services
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace it_department_site.Services
 {
-    public class MenuService : IMenuService
+    public class MenuService(ApplicationDbContext dbContext) : IMenuService
     {
-        private readonly IMenuRepository _menuRepository;
-
-        public MenuService(IMenuRepository menuRepository)
-        {
-            _menuRepository = menuRepository;
-        }
-
         public async Task<List<MenuItem>> GetAllMenuItemsAsync()
         {
-            return await _menuRepository.GetAllAsync();
+            return await dbContext.MenuItems
+                .OrderBy(m => m.SortOrder)
+                .ToListAsync();
         }
 
+        public async Task<List<MenuItem>> GetRootMenuItemsAsync()
+        {
+            return await dbContext.Set<MenuItem>()
+                .Include(m => m.Page)
+                .Include(m => m.Children)
+                .Where( m => m.ParentId == null)
+                .OrderBy(m => m.SortOrder)
+                .ToListAsync();
+        }
+    
         public async Task LinkPageToMenuAsync(int pageId, int? parentId, string title)
         {
-            await _menuRepository.LinkPageToMenuAsync(pageId, parentId, title);
+            var existingItem = await dbContext.Set<MenuItem>()
+                .FirstOrDefaultAsync(m => m.PageId == pageId);
+
+            if (existingItem != null)
+            {
+                existingItem.Name = title;
+                existingItem.ParentId = parentId;
+            }
+            else
+            {
+                var newItem = new MenuItem
+                {
+                    Name = title,
+                    ParentId = parentId,
+                    PageId = pageId,
+                    SortOrder = 0
+                };
+                dbContext.Set<MenuItem>().Add(newItem);
+            }
+
+            await dbContext.SaveChangesAsync();
         }
 
-        public async Task<MenuItem> GetMenuItemByIdAsync(int id) => await _menuRepository.GetByIdAsync(id);
-        public async Task CreateMenuItemAsync(MenuItem item) => await _menuRepository.CreateAsync(item);
-        public async Task UpdateMenuItemAsync(MenuItem item) => await _menuRepository.UpdateAsync(item);
-        public async Task DeleteMenuItemAsync(int id) => await _menuRepository.DeleteAsync(id);
+        public async Task<MenuItem?> GetMenuItemByIdAsync(int id)
+        {
+            return await dbContext.Set<MenuItem>().FindAsync(id);
+        }
+
+        public async Task CreateMenuItemAsync(MenuItem item)
+        {
+            dbContext.Set<MenuItem>().Add(item);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateMenuItemAsync(MenuItem item)
+        {
+            dbContext.Set<MenuItem>().Update(item);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteMenuItemAsync(int id)
+        {
+            var item = await dbContext.Set<MenuItem>().FindAsync(id);
+            if (item != null)
+            {
+                dbContext.Set<MenuItem>().Remove(item);
+                await dbContext.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -54,7 +54,6 @@ main {
 
 .banner-container {
   width: 100%;
-  height: 100%;
   display: flex;
   white-space: nowrap;
 }
@@ -688,7 +687,7 @@ header .navigation-buttons {
 }
 
 header .navigation-buttons a {
-  display: inline-block;
+  display: block;
   text-decoration: none;
   color: #3d1d76;
   font-weight: 500;
@@ -705,7 +704,7 @@ header .navigation-buttons a:hover {
 }
 
 /* Стилі для випадаючого меню (Dropdown) */
-.dropdown {
+header .navigation-buttons li.dropdown {
   position: relative;
   display: inline-block;
 }
@@ -714,9 +713,10 @@ header .dropdown-content {
   display: none;
   position: absolute;
   background-color: #ffffff;
-  min-width: 180px;
+  width: max-content;
+  min-width: 0;
   box-shadow: 0px 8px 20px rgba(61, 29, 118, 0.15);
-  z-index: 999;
+  z-index: 1100;
   border-radius: 8px;
   top: 100%;
   left: 0;
@@ -725,7 +725,7 @@ header .dropdown-content {
   overflow: hidden;
 }
 
-header .dropdown-content a {
+header .dropdown-content a.dropdown-link {
   color: #3d1d76;
   padding: 10px 16px;
   display: block;
@@ -736,12 +736,86 @@ header .dropdown-content a {
   margin: 0;
 }
 
-header .dropdown-content a:hover {
+header .dropdown-content a.dropdown-link:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+header .dropdown-content a.dropdown-link:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+header .dropdown-content a.dropdown-link:only-child {
+  border-radius: 8px;
+}
+
+header .dropdown-content a.dropdown-link:hover {
   background-color: rgba(61, 29, 118, 0.08);
 }
 
-header .dropdown:hover .dropdown-content {
+header .dropdown:hover .dropdown-content,
+header .dropdown.is-open .dropdown-content {
   display: block;
+}
+
+.banner-track {
+   display: flex;
+   transition: transform 0.6s ease;
+   will-change: transform;
+}
+
+.banner-slide {
+   min-width: 100%;
+}
+
+.banner-dots {
+   position: absolute;
+   left: 50%;
+   bottom: 20px;
+   transform: translateX(-50%);
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   z-index: 3;
+}
+
+.banner-dot {
+   width: 10px;
+   height: 10px;
+   border-radius: 50%;
+   border: 0;
+   background: rgba(255, 255, 255, 0.55);
+   padding: 0;
+   cursor: pointer;
+   transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.banner-dot.is-active {
+   transform: scale(1.2);
+   background: #ffffff;
+}
+
+.banner-arrow {
+   position: absolute;
+   top: 50%;
+   transform: translateY(-50%);
+   width: 42px;
+   height: 42px;
+   border: 0;
+   border-radius: 50%;
+   background: rgba(0, 0, 0, 0.35);
+   color: #fff;
+   font-size: 22px;
+   line-height: 1;
+   cursor: pointer;
+   z-index: 3;
+}
+
+.banner-arrow-prev {
+   left: 18px;
+}
+
+.banner-arrow-next {
+   right: 18px;
 }
 
 /* ====================================================================== */
