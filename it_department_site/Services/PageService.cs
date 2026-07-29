@@ -4,7 +4,6 @@ namespace it_department_site.Services
 {
     public class PageService(
         ApplicationDbContext dbContext,
-        IPageRepository pageRepository,
         EncryptionService encryption) : IPageService
     {
         public async Task<Page?> GetPageBySlugAsync(string slug, bool isAdmin)
@@ -78,10 +77,14 @@ namespace it_department_site.Services
                 .ExecuteDeleteAsync();
         }
 
-	public async Task IncrementViewsAsync(int pageId)
-	{
-	   await pageRepository.IncrementViewsAsync(pageId);
-	}
+        public async Task IncrementViewsAsync(int pageId)
+        {
+            await dbContext.Pages
+                .Where(p => p.Id == pageId)
+                .ExecuteUpdateAsync(s => s.SetProperty(
+                    p => p.ViewsCount,
+                    p => p.ViewsCount + 1));
+        }
 
         // --- Private Methods (Encryption) ---
         // Вони лишаються синхронними, бо це робота з пам'яттю/CPU
