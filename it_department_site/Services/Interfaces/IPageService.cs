@@ -10,9 +10,6 @@
         Task DeletePageAsync(int id);
         Task<List<Page>> GetPagedAsync(int pageNumber, int pageSize);
         Task<int> GetTotalPagesAsync(int pageSize);
-
-        Task<bool> HasUserViewedPageAsync(int userId, int pageId);
-        Task MarkPageAsViewedAsync(int userId, int pageId);
-        Task<int> GetViewsAsync(int id);
+	    Task IncrementViewsAsync(int pageId);
     }
 }

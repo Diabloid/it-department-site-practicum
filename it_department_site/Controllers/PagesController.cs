@@ -36,22 +36,32 @@
 
         public async Task<IActionResult> Details(string slug)
         {
-            bool isAdmin = _currentUser.IsAdmin;
+            bool isAdmin = _currentUser.IsAuthenticated && _currentUser.IsAdmin;
 
             var page = await _pageService.GetPageBySlugAsync(slug, isAdmin);
             if (page == null)
                 return View("~/Views/Shared/NotFound.cshtml");
 
-            if (_currentUser.IsAuthenticated)
+            // НОВА ЛОГІКА ПЕРЕГЛЯДІВ (COOKIES)
+            string viewCookieName = $"viewed_page_{page.Id}";
+
+            if (!Request.Cookies.ContainsKey(viewCookieName))
             {
-                int userId = _currentUser.UserId.Value;
-                if (!await _pageService.HasUserViewedPageAsync(userId, page.Id))
+                await _pageService.IncrementViewsAsync(page.Id);
+
+                page.ViewsCount++;
+
+                CookieOptions options = new CookieOptions
                 {
-                    await _pageService.MarkPageAsViewedAsync(userId, page.Id);
-                }
+                    Expires = DateTimeOffset.UtcNow.AddHours(24), // Діє 24 години
+                    HttpOnly = true, // Захист від XSS
+                    IsEssential = true
+                };
+
+                Response.Cookies.Append(viewCookieName, "true", options);
             }
-            
-            ViewBag.Views = await _pageService.GetViewsAsync(page.Id);
+
+            ViewBag.Views = page.ViewsCount;
             var dto = PageMapper.ToDto(page);
             return View(dto);
         }

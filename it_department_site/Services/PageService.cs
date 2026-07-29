@@ -1,11 +1,9 @@
-﻿using it_department_site.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Services
 {
     public class PageService(
         ApplicationDbContext dbContext,
-        IPageRepository pageRepository,
         EncryptionService encryption) : IPageService
     {
         public async Task<Page?> GetPageBySlugAsync(string slug, bool isAdmin)
@@ -79,24 +77,13 @@ namespace it_department_site.Services
                 .ExecuteDeleteAsync();
         }
 
-        // Логіка переглядів
-        public async Task<bool> HasUserViewedPageAsync(int userId, int pageId)
+        public async Task IncrementViewsAsync(int pageId)
         {
-            return await pageRepository.HasPageViewAsync(userId, pageId);
-        }
-
-        public async Task MarkPageAsViewedAsync(int userId, int pageId)
-        {
-            await pageRepository.AddPageViewAsync(userId, pageId);
-            await pageRepository.IncrementViewsAsync(pageId);
-        }
-
-        public async Task<int> GetViewsAsync(int id)
-        {
-            return await dbContext.Set<Page>().AsNoTracking()
-                .Where(page => page.Id == id)
-                .Select(page => page.ViewsCount)
-                .SingleOrDefaultAsync();
+            await dbContext.Pages
+                .Where(p => p.Id == pageId)
+                .ExecuteUpdateAsync(s => s.SetProperty(
+                    p => p.ViewsCount,
+                    p => p.ViewsCount + 1));
         }
 
         // --- Private Methods (Encryption) ---
