@@ -10,7 +10,6 @@
         Task DeletePageAsync(int id);
         Task<List<Page>> GetPagedAsync(int pageNumber, int pageSize);
         Task<int> GetTotalPagesAsync(int pageSize);
-	Task IncrementViewsAsync(int pageId);
-        Task<int> GetViewsAsync(int pageId);
+	    Task IncrementViewsAsync(int pageId);
     }
 }

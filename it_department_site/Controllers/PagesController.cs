@@ -34,7 +34,7 @@
             return View(dtoList);
         }
 
-public async Task<IActionResult> Details(string slug)
+        public async Task<IActionResult> Details(string slug)
         {
             bool isAdmin = _currentUser.IsAuthenticated && _currentUser.IsAdmin;
 
@@ -48,8 +48,8 @@ public async Task<IActionResult> Details(string slug)
             if (!Request.Cookies.ContainsKey(viewCookieName))
             {
                 await _pageService.IncrementViewsAsync(page.Id);
-                
-                page.Views++; 
+
+                page.ViewsCount++;
 
                 CookieOptions options = new CookieOptions
                 {
@@ -57,11 +57,11 @@ public async Task<IActionResult> Details(string slug)
                     HttpOnly = true, // Захист від XSS
                     IsEssential = true
                 };
-                
+
                 Response.Cookies.Append(viewCookieName, "true", options);
             }
 
-            ViewBag.Views = page.Views;
+            ViewBag.Views = page.ViewsCount;
             var dto = PageMapper.ToDto(page);
             return View(dto);
         }

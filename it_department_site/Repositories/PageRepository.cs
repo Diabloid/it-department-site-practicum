@@ -6,7 +6,7 @@ namespace it_department_site.Repositories
         public async Task IncrementViewsAsync(int pageId)
         {
             await db.ExecuteAsync(
-                "UPDATE pages SET Views = Views + 1 WHERE Id = @pageId",
+                "UPDATE pages SET views_count = views_count + 1 WHERE Id = @pageId",
                 new { pageId });
         }
     }

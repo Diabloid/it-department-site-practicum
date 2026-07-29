@@ -1,5 +1,4 @@
-﻿using it_department_site.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Services
 {
@@ -79,17 +78,9 @@ namespace it_department_site.Services
                 .ExecuteDeleteAsync();
         }
 
-        public async Task<int> GetViewsAsync(int id)
-        {
-            return await dbContext.Set<Page>().AsNoTracking()
-                .Where(page => page.Id == id)
-                .Select(page => page.ViewsCount)
-                .SingleOrDefaultAsync();
-        }
-
 	public async Task IncrementViewsAsync(int pageId)
 	{
-	   await _pageRepository.IncrementViewsAsync(pageId);
+	   await pageRepository.IncrementViewsAsync(pageId);
 	}
 
         // --- Private Methods (Encryption) ---
