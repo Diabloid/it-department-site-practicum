@@ -14,10 +14,16 @@ namespace it_department_site.Infrastructure
         public DbSet<Page> Pages { get; set; }
         public DbSet<SiteSettings> SiteSettings { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<Post> Posts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Page>()
+                .Property(p => p.Status)
+                .HasConversion<string>() 
+                .HasColumnType("ENUM('Draft', 'Published')"); 
+            
+            modelBuilder.Entity<Post>()
                 .Property(p => p.Status)
                 .HasConversion<string>() 
                 .HasColumnType("ENUM('Draft', 'Published')"); 

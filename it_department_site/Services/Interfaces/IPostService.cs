@@ -1,8 +1,6 @@
-using it_department_site.Entities;
-
-namespace it_department_site.Repositories.Interfaces
+namespace it_department_site.Services.Interfaces
 {
-    public interface IPostRepository
+    public interface IPostService
     {
         Task<IEnumerable<Post>> GetAllAsync();
         Task<Post?> GetByIdAsync(int id);

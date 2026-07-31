@@ -248,11 +248,6 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("page_id");
 
-                    b.Property<string>("PageSlug")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("page_slug");
-
                     b.Property<int?>("ParentId")
                         .HasColumnType("int")
                         .HasColumnName("parent_id");
@@ -359,6 +354,66 @@ namespace it_department_site.Migrations
                     b.ToTable("partners");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int")
+                        .HasColumnName("author_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Excerpt")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("excerpt");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("slug");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("ENUM('Draft', 'Published')")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("longtext")
+                        .HasColumnName("thumbnail");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("posts");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.SiteSettings", b =>
                 {
                     b.Property<int>("Id")
@@ -463,6 +518,17 @@ namespace it_department_site.Migrations
                     b.Navigation("Page");
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Post", b =>
+                {
+                    b.HasOne("it_department_site.Entities.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>

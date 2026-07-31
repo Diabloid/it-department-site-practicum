@@ -47,7 +47,7 @@ builder.Services.AddScoped<EncryptionService>();
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 builder.Services.AddScoped<IMainSliderService, MainSliderService>();
 
-builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IPostService, PostServiceService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;

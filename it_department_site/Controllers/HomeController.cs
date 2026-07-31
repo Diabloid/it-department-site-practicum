@@ -3,16 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 
 public class HomeController : Controller
 {
-    private readonly IPostRepository _postRepository;
+    private readonly IPostService _postService;
 
-    public HomeController(IPostRepository postRepository)
+    public HomeController(IPostService postService)
     {
-        _postRepository = postRepository;
+        _postService = postService;
     }
 
     public async Task<IActionResult> Index()
     {
-        ViewBag.News = await _postRepository.GetLatestAsync(4);
+        ViewBag.News = await _postService.GetLatestAsync(4);
         return View();
     }
 }
