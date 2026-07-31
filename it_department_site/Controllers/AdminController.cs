@@ -11,7 +11,7 @@ namespace it_department_site.Controllers
         private readonly ILogger<AdminController> _logger;
         private readonly ISiteSettingsService _settingsService;
         private readonly IPartnerService _partnerService;
-        private readonly IPostRepository _postRepository;
+        private readonly IPostService _postService;
         private readonly IGraduateService _graduateService;
         private readonly IEmployeeService _employeeService;
         private readonly IGoogleDriveService _driveService;
@@ -26,7 +26,7 @@ namespace it_department_site.Controllers
             ILogger<AdminController> logger,
             ISiteSettingsService settingsService,
             IPartnerService partnerService,
-            IPostRepository postRepository,
+            IPostService postService,
             IGraduateService graduateService,
             IEmployeeService employeeService,
             IGoogleDriveService driveService,
@@ -40,7 +40,7 @@ namespace it_department_site.Controllers
             _logger = logger;
             _settingsService = settingsService;
             _partnerService = partnerService;
-            _postRepository = postRepository;
+            _postService = postService;
             _graduateService = graduateService;
             _employeeService = employeeService;
             _driveService = driveService;
@@ -556,7 +556,7 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> Posts()
         {
-            var posts = await _postRepository.GetAllAsync();
+            var posts = await _postService.GetAllAsync();
             _logger.LogInformation("Admin requested posts list, total {PostCount} posts", posts.Count());
             return PartialView("_PostsTable", posts);
         }
@@ -576,7 +576,7 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> EditPost(int id)
         {
-            var post = await _postRepository.GetByIdAsync(id);
+            var post = await _postService.GetByIdAsync(id);
             if (post == null) return NotFound();
 
             return PartialView("_EditPost", post);
@@ -598,17 +598,17 @@ namespace it_department_site.Controllers
 
                 if (post.Id == 0)
                 {
-                    var id = await _postRepository.CreateAsync(post);
+                    var id = await _postService.CreateAsync(post);
                     return Json(new { id, savedAt = DateTime.Now, status = "Draft" });
                 }
 
-                var existing = await _postRepository.GetByIdAsync(post.Id);
+                var existing = await _postService.GetByIdAsync(post.Id);
                 if (existing == null) return NotFound();
 
                 if (string.IsNullOrEmpty(post.Thumbnail))
                     post.Thumbnail = existing.Thumbnail;
 
-                await _postRepository.UpdateAsync(post);
+                await _postService.UpdateAsync(post);
                 return Json(new { id = post.Id, savedAt = DateTime.Now, status = "Draft" });
             }
             catch (Exception ex)
@@ -645,15 +645,15 @@ namespace it_department_site.Controllers
                     post.Thumbnail = await SaveImage(thumbnailFile, "posts");
                 else if (post.Id != 0)
                 {
-                    var existing = await _postRepository.GetByIdAsync(post.Id);
+                    var existing = await _postService.GetByIdAsync(post.Id);
                     if (existing != null && string.IsNullOrEmpty(post.Thumbnail))
                         post.Thumbnail = existing.Thumbnail;
                 }
 
                 if (post.Id == 0)
-                    post.Id = await _postRepository.CreateAsync(post);
+                    post.Id = await _postService.CreateAsync(post);
                 else
-                    await _postRepository.UpdateAsync(post);
+                    await _postService.UpdateAsync(post);
 
                 return await Posts();
             }
@@ -747,7 +747,7 @@ namespace it_department_site.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePost(int id)
         {
-            await _postRepository.DeleteAsync(id);
+            await _postService.DeleteAsync(id);
             _logger.LogInformation("Admin deleted post with ID {PostId}", id);
             return await Posts();
         }

@@ -2,27 +2,27 @@ namespace it_department_site.Controllers
 {
     public class PostController : Controller
     {
-        private readonly IPostRepository _postRepository;
+        private readonly IPostService _postService;
 
-        public PostController(IPostRepository postRepository)
+        public PostController(IPostService postService)
         {
-            _postRepository = postRepository;
+            _postService = postService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var posts = await _postRepository.GetAllAsync();
+            var posts = await _postService.GetAllAsync();
             return View(posts);
         }
 
         [HttpGet("/posts/{slug}-{id:int}")]
         public async Task<IActionResult> Details(string slug, int id)
         {
-            var posts = await _postRepository.GetLatestAsync(5);
+            var posts = await _postService.GetLatestAsync(5);
             ViewBag.Posts = posts.Where(post => post.Id != id);
 
 
-            var post = await _postRepository.GetByIdAsync(id);
+            var post = await _postService.GetByIdAsync(id);
             return post == null || !string.Equals(post.Slug, slug, StringComparison.OrdinalIgnoreCase)
                 ? View("~/Views/Shared/NotFound.cshtml")
                 : View(post);

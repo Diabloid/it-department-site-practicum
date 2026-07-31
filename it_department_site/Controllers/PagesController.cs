@@ -5,17 +5,17 @@
         private readonly IPageService _pageService;
         private readonly ICurrentUserService _currentUser;
         private readonly IPartnerService _partnerService;
-        private readonly IPostRepository _postRepository;
+        private readonly IPostService _postService;
         private readonly IMainSliderService _mainSliderService;
 
         public PagesController(IPageService pageService, 
-            ICurrentUserService currentUser, IPartnerService partnerService, IPostRepository postRepository,
+            ICurrentUserService currentUser, IPartnerService partnerService, IPostService postService,
             IMainSliderService mainSliderService)
         {
             _pageService = pageService;
             _currentUser = currentUser;
             _partnerService = partnerService;
-            _postRepository = postRepository;
+            _postService = postService;
             _mainSliderService = mainSliderService;
         }
 
@@ -26,7 +26,7 @@
             ViewBag.MainSliderSlides = await _mainSliderService.GetDisplaySlidesAsync();
 
             // 2. --- ЛОГІКА НОВИН ---
-            ViewBag.News = await _postRepository.GetLatestAsync(4);
+            ViewBag.News = await _postService.GetLatestAsync(4);
 
             // 3. --- ЛОГІКА СТОРІНОК ---
             var pages = await _pageService.GetAllPagesAsync();

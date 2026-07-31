@@ -28,7 +28,7 @@
             <td><strong>@post.Title</strong></td>
             <td>@post.Slug</td>
             <td>
-                @if (post.Status == PostStatus.Draft)
+                @if (post.Status == PostStatus.Published)
                 {
                     <span class="badge bg-success">Опубліковано</span>
                 }

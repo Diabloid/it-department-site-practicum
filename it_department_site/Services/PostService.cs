@@ -1,34 +1,26 @@
-using it_department_site.Entities;
-using it_department_site.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Repositories
 {
-    public class PostRepository : IPostRepository
+    public class PostServiceService(ApplicationDbContext context) : IPostService
     {
-        private readonly ApplicationDbContext _context;
-
-        public PostRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<IEnumerable<Post>> GetAllAsync()
         {
-            return await _context.Posts
+            return await context.Set<Post>()
                 .OrderByDescending(p => p.UpdatedAt)
                 .ToListAsync();
         }
 
         public async Task<Post?> GetByIdAsync(int id)
         {
-            return await _context.Posts
+            return await context.Set<Post>()
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IEnumerable<Post>> GetLatestAsync(int count)
         {
-            return await _context.Posts
+            return await context.Set<Post>()
                 .Where(p => p.Status == PostStatus.Published)
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(count)
@@ -40,15 +32,15 @@ namespace it_department_site.Repositories
             post.CreatedAt = DateTime.UtcNow;
             post.UpdatedAt = DateTime.UtcNow;
 
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            context.Set<Post>().Add(post);
+            await context.SaveChangesAsync();
 
             return post.Id;
         }
 
         public async Task UpdateAsync(Post post)
         {
-            var existing = await _context.Posts.FindAsync(post.Id);
+            var existing = await context.Set<Post>().FindAsync(post.Id);
             if (existing is null)
                 return;
 
@@ -60,16 +52,16 @@ namespace it_department_site.Repositories
             existing.Thumbnail = post.Thumbnail;
             existing.UpdatedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await context.Set<Post>().FindAsync(id);
             if (post is not null)
             {
-                _context.Posts.Remove(post);
-                await _context.SaveChangesAsync();
+                context.Set<Post>().Remove(post);
+                await context.SaveChangesAsync();
             }
         }
     }
