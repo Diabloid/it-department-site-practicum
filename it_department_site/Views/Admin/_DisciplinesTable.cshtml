@@ -11,8 +11,8 @@
     <thead class="table-light">
         <tr>
             <th>Назва</th>
-            <th>Викладач</th>
-            <th>Порядок</th>
+@*             <th>Викладач</th>
+ *@            <th>Порядок</th>
             <th style="width:200px">Дії</th>
         </tr>
     </thead>
@@ -21,8 +21,8 @@
         {
             <tr>
                 <td>@discipline.Name</td>
-                <td>@discipline.Teacher</td>
-                <td>@discipline.SortOrder</td>
+                 @* <td>@discipline.Teacher</td> *@
+                 <td>@discipline.SortOrder</td>
                 <td class="d-flex align-items-center gap-2">
                     <button class="btn btn-primary btn-sm"
                             onclick="loadContent('EditDiscipline', '/@discipline.Id')">

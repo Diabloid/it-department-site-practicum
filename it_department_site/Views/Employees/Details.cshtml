@@ -48,6 +48,30 @@
             @Html.Raw(Model.Bio)
         </section>
 
+        <div class="employees-divider"></div>
+
+        <section class="employee-disciplines-section my-4">
+            <h3 class="employees-section-title mb-3">Викладає дисципліни</h3>
+            @if (Model.Disciplines != null && Model.Disciplines.Count > 0)
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var discipline in Model.Disciplines.OrderBy(d => d.SortOrder))
+                    {
+                        <a asp-controller="Discipline"
+                           asp-action="Details"
+                           asp-route-id="@discipline.Id"
+                           class="btn btn-outline-primary rounded-pill px-4 py-2 text-decoration-none fw-500 shadow-sm">
+                            @discipline.Name
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted fst-italic">Дисципліни ще не призначені.</p>
+            }
+        </section>
+
         @if (Model.Certificates.Count > 0)
         {
             <div class="employees-divider"></div>

@@ -47,6 +47,40 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label fw-bold">Дисципліни, які викладає:</label>
+        <div class="card p-3 border" style="max-height: 180px; overflow-y: auto;">
+            @if (ViewBag.AllDisciplines != null)
+            {
+                var disciplines = (IEnumerable<it_department_site.Entities.Discipline>)ViewBag.AllDisciplines;
+                if (disciplines.Any())
+                {
+                    @foreach (var disc in disciplines.OrderBy(d => d.SortOrder))
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   name="selectedDisciplines"
+                                   value="@disc.Id"
+                                   id="create_disc_@disc.Id" />
+                            <label class="form-check-label" for="create_disc_@disc.Id">
+                                @disc.Name
+                            </label>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <span class="text-muted small">Список дисциплін порожній. Додайте їх у розділі "Дисципліни".</span>
+                }
+            }
+            else
+            {
+                <span class="text-muted small">Не вдалося завантажити список дисциплін.</span>
+            }
+        </div>
+        <div class="form-text">Оберіть предмети, які будуть закріплені за цим викладачем.</div>
+    </div>
+
+    <div class="mb-3">
         <label class="form-label">Фото</label>
         <input type="file" name="photoFile" class="form-control" accept="image/*" />
         <div class="form-text">Або файл <code>photo.png</code> / <code>фото.jpg</code> у папці Drive.</div>

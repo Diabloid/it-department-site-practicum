@@ -33,6 +33,38 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label fw-bold">Дисципліни, які викладає:</label>
+        <div class="card p-3 border" style="max-height: 180px; overflow-y: auto;">
+            @if (ViewBag.AllDisciplines != null)
+            {
+                var disciplines = (IEnumerable<it_department_site.Entities.Discipline>)ViewBag.AllDisciplines;
+                if (disciplines.Any())
+                {
+                    @foreach (var disc in disciplines.OrderBy(d => d.SortOrder))
+                    {
+                        bool isChecked = Model?.Disciplines?.Any(d => d.Id == disc.Id) ?? false;
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   name="selectedDisciplines"
+                                   value="@disc.Id"
+                                   id="edit_disc_@disc.Id"
+                                   @(isChecked ? "checked" : "") />
+                            <label class="form-check-label" for="edit_disc_@disc.Id">
+                                @disc.Name
+                            </label>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <span class="text-muted small">Список дисциплін порожній.</span>
+                }
+            }
+        </div>
+        <div class="form-text">Оберіть предмети, які будуть закріплені за цим викладачем.</div>
+    </div>
+
+    <div class="mb-3">
         <label class="form-label">Фото</label>
         @if (!string.IsNullOrEmpty(Model.PhotoUrl))
         {
