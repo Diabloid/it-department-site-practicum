@@ -26,7 +26,12 @@ namespace it_department_site.Infrastructure
             modelBuilder.Entity<Post>()
                 .Property(p => p.Status)
                 .HasConversion<string>() 
-                .HasColumnType("ENUM('Draft', 'Published')"); 
+                .HasColumnType("ENUM('Draft', 'Published')");
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(e => e.Disciplines)
+                .WithMany(d => d.Employees)
+                .UsingEntity(j => j.ToTable("employee_disciplines"));
         }
     }
 }
