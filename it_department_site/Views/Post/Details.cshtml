@@ -23,8 +23,18 @@
 
         <div class="post-body">
             <div class="post-meta">
-             <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
-                @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                <div class="post-date-wrapper">
+                    <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
+                    @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                </div>
+
+                <div class="post-views-wrapper ms-3" style="display: inline-flex; align-items: center; gap: 5px; opacity: 0.7;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>@ViewBag.Views</span>
+                </div>
             </div>
 
             <div class="post-content">
