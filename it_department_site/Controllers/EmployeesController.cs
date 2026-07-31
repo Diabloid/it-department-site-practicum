@@ -119,7 +119,8 @@ namespace it_department_site.Controllers
                 ? "/images/banner_photo_2.jpg"
                 : employee.PhotoUrl,
             Email = employee.Email ?? string.Empty,
-            Bio = employee.Bio ?? string.Empty
+            Bio = employee.Bio ?? string.Empty,
+            Disciplines = employee.Disciplines?.ToList() ?? new List<Discipline>()
         };
     }
 }
