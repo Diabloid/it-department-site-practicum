@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace it_department_site.Repositories
+namespace it_department_site.Services
 {
     public class PostServiceService(ApplicationDbContext context) : IPostService
     {
