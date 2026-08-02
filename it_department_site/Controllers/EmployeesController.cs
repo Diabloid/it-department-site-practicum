@@ -29,6 +29,7 @@ namespace it_department_site.Controllers
             var employee = await _employeeService.GetByIdAsync(id);
             if (employee == null)
             {
+                Response.StatusCode = 404;
                 return View("~/Views/Shared/NotFound.cshtml");
             }
             var viewModel = ToViewModel(employee);

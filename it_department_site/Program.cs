@@ -78,6 +78,8 @@ app.UseRouting();
 app.UseAuthentication(); // Хто ти?
 app.UseAuthorization();  // Що тобі можна?
 
+app.UseStatusCodePagesWithReExecute("/Home/StatusCode", "?code={0}");
+
 app.UseSession();
 
 // Маршрути
@@ -118,6 +120,11 @@ app.MapControllerRoute(
     name: "employees",
     pattern: "Employees",
     defaults: new { controller = "Employees", action = "Index" });
+
+app.MapControllerRoute(
+    name: "notFound",
+    pattern: "not-found",
+    defaults: new { controller = "Home", action = "NotFoundPage" });
 
 app.MapControllerRoute(
     name: "pageBySlug",

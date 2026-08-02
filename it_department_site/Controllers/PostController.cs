@@ -24,8 +24,14 @@ namespace it_department_site.Controllers
 
             var post = await _postRepository.GetByIdAsync(id);
             return post == null || !string.Equals(post.Slug, slug, StringComparison.OrdinalIgnoreCase)
-                ? View("~/Views/Shared/NotFound.cshtml")
+                ? NotFoundView()
                 : View(post);
+        }
+
+        private IActionResult NotFoundView()
+        {
+            Response.StatusCode = 404;
+            return View("~/Views/Shared/NotFound.cshtml");
         }
 
         

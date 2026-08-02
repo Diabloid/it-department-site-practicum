@@ -40,7 +40,10 @@
 
             var page = await _pageService.GetPageBySlugAsync(slug, isAdmin);
             if (page == null)
+            {
+                Response.StatusCode = 404;
                 return View("~/Views/Shared/NotFound.cshtml");
+            }
 
             if (_currentUser.IsAuthenticated)
             {
