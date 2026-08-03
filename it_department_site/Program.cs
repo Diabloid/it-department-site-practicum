@@ -45,7 +45,6 @@ builder.Services.AddScoped<IMainSliderService, MainSliderService>();
 builder.Services.AddScoped<IPostService, PostServiceService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var app = builder.Build();
 
