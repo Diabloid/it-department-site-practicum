@@ -64,5 +64,14 @@ namespace it_department_site.Services
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task IncrementViewsAsync(int postId)
+        {
+            await context.Set<Post>()
+                .Where(p => p.Id == postId)
+                .ExecuteUpdateAsync(s => s.SetProperty(
+                    p => p.ViewsCount,
+                    p => p.ViewsCount + 1));
+        }
     }
 }

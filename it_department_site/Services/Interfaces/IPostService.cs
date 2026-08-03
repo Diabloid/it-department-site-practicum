@@ -8,5 +8,6 @@ namespace it_department_site.Services.Interfaces
         Task<int> CreateAsync(Post post);
         Task UpdateAsync(Post post);
         Task DeleteAsync(int id);
+        Task IncrementViewsAsync(int postId);
     }
 }

@@ -1,18 +1,25 @@
-﻿namespace it_department_site.Services
+﻿using it_department_site.Entities;
+using it_department_site.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace it_department_site.Services
 {
-    public class ProfileService : IProfileService
+    public class ProfileService(ApplicationDbContext context) : IProfileService
     {
-        private readonly IProfileRepository _repository;
-
-        public ProfileService(IProfileRepository repository)
-        {
-            _repository = repository;
-        }
-
         public async Task<User?> GetUserInfoAsync(int userId)
         {
-            return await _repository.GetUserInfoAsync(userId);
+            return await context.Set<User>()
+                .AsNoTracking()
+                .Where(u => u.Id == userId)
+                .Select(u => new User
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    CreatedAt = u.CreatedAt
+                    // Password навмисно НЕ включаємо
+                })
+                .FirstOrDefaultAsync();
         }
-
     }
 }
