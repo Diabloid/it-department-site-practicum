@@ -51,6 +51,9 @@ namespace it_department_site.Entities
 
         [ForeignKey(nameof(AuthorId))]
         public User? Author { get; set; }
+
+        [Column("views_count")]
+        public int ViewsCount { get; set; } = 0;
     }
     
     public enum PostStatus

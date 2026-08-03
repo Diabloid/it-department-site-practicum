@@ -404,6 +404,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
 
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("int")
+                        .HasColumnName("views_count");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
