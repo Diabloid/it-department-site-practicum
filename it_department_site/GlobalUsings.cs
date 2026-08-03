@@ -9,9 +9,6 @@ global using System.Text.Json;
 // ASP.NET Core
 global using Microsoft.AspNetCore.Mvc;
 
-// Сторонні бібліотеки
-global using Dapper;
-
 // Наші простори імен (з урахуванням нових назв папок)
 global using it_department_site.Entities;
 global using it_department_site.ViewModels;
