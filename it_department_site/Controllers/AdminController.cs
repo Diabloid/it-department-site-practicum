@@ -1,7 +1,5 @@
 ﻿using it_department_site.Infrastructure;
-using it_department_site.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using ZstdSharp.Unsafe;
 
 namespace it_department_site.Controllers
 {
@@ -12,44 +10,44 @@ namespace it_department_site.Controllers
         private readonly IMenuService _menuService;
         private readonly ILogger<AdminController> _logger;
         private readonly ISiteSettingsService _settingsService;
-        private readonly IDbConnection _db; // ✅ Замість Dbhelper
         private readonly IPartnerService _partnerService;
-        private readonly IPostRepository _postRepository;
+        private readonly IPostService _postService;
         private readonly IGraduateService _graduateService;
         private readonly IEmployeeService _employeeService;
         private readonly IGoogleDriveService _driveService;
         private readonly GoogleDriveOptions _driveOptions;
         private readonly IMainSliderService _mainSliderService;
         private readonly IDisciplineService _disciplineService;
+        private readonly IUserService _userService;
 
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
-            IDbConnection db, // ✅ Інжектимо з'єднання
             ILogger<AdminController> logger,
             ISiteSettingsService settingsService,
             IPartnerService partnerService,
-            IPostRepository postRepository,
+            IPostService postService,
             IGraduateService graduateService,
             IEmployeeService employeeService,
             IGoogleDriveService driveService,
             Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
             IMainSliderService mainSliderService,
-            IDisciplineService disciplineService)
+            IDisciplineService disciplineService,
+            IUserService userService)
         {
             _pageService = pageService;
             _menuService = menuService;
-            _db = db;
             _logger = logger;
             _settingsService = settingsService;
             _partnerService = partnerService;
-            _postRepository = postRepository;
+            _postService = postService;
             _graduateService = graduateService;
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
       	     _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
+            _userService = userService; 
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -295,18 +293,15 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> Users()
         {
-            var reader = await _db.ExecuteReaderAsync("SELECT * FROM users ORDER BY id");
-            var dt = new DataTable();
-            dt.Load(reader);
-
-            return PartialView("_UsersTable", dt);
+            var users = await _userService.GetAllAsync();
+            return PartialView("_UsersTable", users);
         }
 
         public async Task<IActionResult> Pages(int page = 1)
         {
             int pageSize = 5;
             var pages = await _pageService.GetPagedAsync(page, pageSize);
-            var totalPages = await _pageService.GetTotalAsync(pageSize);
+            var totalPages = await _pageService.GetTotalPagesAsync(pageSize);
 
             ViewData["CurrentPage"] = page;
             ViewData["TotalPages"] = totalPages;
@@ -338,7 +333,11 @@ namespace it_department_site.Controllers
             }
 
             var page = await _pageService.GetPageByIdAsync(id.Value);
-            if (page == null) return NotFound();
+            if (page == null)
+            {
+                _logger.LogWarning("Page not found with ID {PageId}", id.Value);
+                return NotFound();
+            }
 
             return View(new PageEditorViewModel
             {
@@ -350,7 +349,6 @@ namespace it_department_site.Controllers
                 ContentSections = page.Content,
                 CreatedAt = page.CreatedAt,
                 UpdatedAt = page.UpdatedAt,
-                AllowComments = page.AllowComments
             });
         }
 
@@ -365,13 +363,14 @@ namespace it_department_site.Controllers
                 Content = model.ContentSections,
                 Status = Enum.TryParse(model.Status, out PageStatus status) ? status : PageStatus.Draft,
                 LayoutType = model.LayoutType,
-                AllowComments = model.AllowComments,
                 CreatedAt = model.CreatedAt ?? DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
 
             if (model.Id == null)
+            {
                 page.Id = await _pageService.CreatePageAsync(page);
+            }
             else
             {
                 await _pageService.UpdatePageAsync(page);
@@ -381,13 +380,13 @@ namespace it_department_site.Controllers
             {
                 await _menuService.LinkPageToMenuAsync(page.Id, model.ParentMenuItemId, page.Title);
             }
-
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         public async Task<IActionResult> DeletePage(int id)
         {
+            _logger.LogInformation("Admin requested to delete page with ID {PageId}", id);
             await _pageService.DeletePageAsync(id);
             return RedirectToAction(nameof(Index));
         }
@@ -406,14 +405,14 @@ namespace it_department_site.Controllers
 
         public class TemplateSelectionModel
         {
-            public string LayoutType { get; set; }
+            public string? LayoutType { get; set; }
         }
 
         public async Task<IActionResult> AllPages(int page = 1)
         {
             int pageSize = 3;
             var pages = await _pageService.GetPagedAsync(page, pageSize);
-            var totalPages = await _pageService.GetTotalAsync(pageSize);
+            var totalPages = await _pageService.GetTotalPagesAsync(pageSize);
 
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
@@ -426,7 +425,7 @@ namespace it_department_site.Controllers
             var pages = await _pageService.GetAllPagesAsync();
             ViewBag.Pages = pages.Select(PageMapper.ToDto).ToList();
             ViewBag.MenuItems = await _menuService.GetAllMenuItemsAsync();
-            return View("EditMenuItem", new MenuItem());
+            return View("EditMenuItem", new MenuItem { Name = String.Empty });
         }
 
         public async Task<IActionResult> EditMenuItem(int id)
@@ -442,10 +441,17 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> SaveMenuItem(MenuItem item)
         {
             if (item.Id == 0)
+            {
+                _logger.LogInformation("Creating new menu item: {MenuItemName}", item.Name);
                 await _menuService.CreateMenuItemAsync(item);
+            }
             else
+            {
+                _logger.LogInformation("Updating menu item: {MenuItemName}", item.Name);
                 await _menuService.UpdateMenuItemAsync(item);
+            }
 
+            _logger.LogInformation("Menu item saved successfully: {MenuItemName}", item.Name);
             return RedirectToAction(nameof(Index));
         }
 
@@ -453,22 +459,31 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> DeleteMenuItem(int id)
         {
             await _menuService.DeleteMenuItemAsync(id);
+            _logger.LogInformation("Deleted menu item with ID {MenuItemId}", id);
             return RedirectToAction("Index", new { section = "menuItems" });
         }
 
         [HttpPost]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
-            if (file == null || file.Length == 0) return BadRequest("File is empty");
+            if (file == null || file.Length == 0)
+            {
+                _logger.LogWarning("Admin attempted to upload an empty file");
+                return BadRequest("File is empty");
+            }
             var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
+            if (!Directory.Exists(uploadsPath))
+            {
+                _logger.LogInformation("Uploads directory does not exist, creating at {UploadsPath}", uploadsPath);
+                Directory.CreateDirectory(uploadsPath);
+            }
             var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
             var filePath = Path.Combine(uploadsPath, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
-
+            _logger.LogInformation("Admin uploaded image: {FileName}", fileName);
             return Json(new { data = new[] { new { url = $"/uploads/{fileName}" } } });
         }
 
@@ -528,6 +543,7 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> DeletePartner(int id)
         {
             await _partnerService.DeletePartnerAsync(id);
+            _logger.LogInformation("Admin deleted partner with ID {PartnerId}", id);
             return RedirectToAction("Index", new { section = "Partners" });
         }
 
@@ -540,7 +556,8 @@ namespace it_department_site.Controllers
 
         public async Task<IActionResult> Posts()
         {
-            var posts = await _postRepository.GetAllAsync();
+            var posts = await _postService.GetAllAsync();
+            _logger.LogInformation("Admin requested posts list, total {PostCount} posts", posts.Count());
             return PartialView("_PostsTable", posts);
         }
 
@@ -549,14 +566,17 @@ namespace it_department_site.Controllers
             return PartialView("_CreatePost", new Post
             {
                 Id = 0,
-                Status = "Draft",
+                Slug = string.Empty,
+                Title = string.Empty,
+                Content = string.Empty,
+                Status = PostStatus.Draft,
                 CreatedAt = DateTime.Now
             });
         }
 
         public async Task<IActionResult> EditPost(int id)
         {
-            var post = await _postRepository.GetByIdAsync(id);
+            var post = await _postService.GetByIdAsync(id);
             if (post == null) return NotFound();
 
             return PartialView("_EditPost", post);
@@ -578,17 +598,17 @@ namespace it_department_site.Controllers
 
                 if (post.Id == 0)
                 {
-                    var id = await _postRepository.CreateAsync(post);
+                    var id = await _postService.CreateAsync(post);
                     return Json(new { id, savedAt = DateTime.Now, status = "Draft" });
                 }
 
-                var existing = await _postRepository.GetByIdAsync(post.Id);
+                var existing = await _postService.GetByIdAsync(post.Id);
                 if (existing == null) return NotFound();
 
                 if (string.IsNullOrEmpty(post.Thumbnail))
                     post.Thumbnail = existing.Thumbnail;
 
-                await _postRepository.UpdateAsync(post);
+                await _postService.UpdateAsync(post);
                 return Json(new { id = post.Id, savedAt = DateTime.Now, status = "Draft" });
             }
             catch (Exception ex)
@@ -614,7 +634,7 @@ namespace it_department_site.Controllers
 
             try
             {
-                post.Status = "Published";
+                post.Status = PostStatus.Published;
                 post.AuthorId = 1;
                 if (post.CreatedAt == default)
                     post.CreatedAt = DateTime.Now;
@@ -625,21 +645,21 @@ namespace it_department_site.Controllers
                     post.Thumbnail = await SaveImage(thumbnailFile, "posts");
                 else if (post.Id != 0)
                 {
-                    var existing = await _postRepository.GetByIdAsync(post.Id);
+                    var existing = await _postService.GetByIdAsync(post.Id);
                     if (existing != null && string.IsNullOrEmpty(post.Thumbnail))
                         post.Thumbnail = existing.Thumbnail;
                 }
 
                 if (post.Id == 0)
-                    post.Id = await _postRepository.CreateAsync(post);
+                    post.Id = await _postService.CreateAsync(post);
                 else
-                    await _postRepository.UpdateAsync(post);
+                    await _postService.UpdateAsync(post);
 
                 return await Posts();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Помилка публікації");
+                _logger.LogError(ex, "Error occurred while editing a post");
                 return StatusCode(500, "Помилка сервера");
             }
         }
@@ -662,8 +682,7 @@ namespace it_department_site.Controllers
             if (string.IsNullOrWhiteSpace(post.Slug))
                 post.Slug = "draft-" + Guid.NewGuid().ToString("N")[..8];
             post.Excerpt ??= string.Empty;
-            post.Content ??= string.Empty;
-            post.Status = "Draft";
+            post.Status = PostStatus.Draft;
         }
 
         private static bool ValidatePostForPublish(Post post, out string? error)
@@ -708,23 +727,29 @@ namespace it_department_site.Controllers
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
 
-            if (!Directory.Exists(rootPath)) Directory.CreateDirectory(rootPath);
+            if (!Directory.Exists(rootPath))
+            {
+
+                Directory.CreateDirectory(rootPath);
+                _logger.LogInformation("Created directory for uploads at {RootPath}", rootPath);
+            }
 
             var filePath = Path.Combine(rootPath, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
+                _logger.LogInformation("Saving file to {FilePath}", filePath);
                 await file.CopyToAsync(stream);
             }
-
+            _logger.LogInformation("File saved successfully: {FileName}", fileName);
             return $"/uploads/{folderName}/{fileName}";
         }
 
         [HttpPost]
         public async Task<IActionResult> DeletePost(int id)
         {
-            await _postRepository.DeleteAsync(id);
-
-            return await Posts(); // 🔥 Оновлюємо таблицю
+            await _postService.DeleteAsync(id);
+            _logger.LogInformation("Admin deleted post with ID {PostId}", id);
+            return await Posts();
         }
     }
 }

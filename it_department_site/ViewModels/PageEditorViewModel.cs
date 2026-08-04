@@ -22,7 +22,6 @@
         public DateTime? UpdatedAt { get; set; }
         public List<MenuItem> MenuItems { get; internal set; }
 
-        public bool AllowComments { get; set; }
         public PageEditorViewModel() { }
 
         public PageEditorViewModel(string contentJson)

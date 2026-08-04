@@ -1,22 +1,56 @@
-﻿namespace it_department_site.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace it_department_site.Entities
 {
+    [Index(nameof(Slug), IsUnique = true)]
+    [Table("pages")]
     public class Page
     {
+        [Key]
+        [Column("id")]
         public int Id { get; set; }
+        
+        [Required]
+        [MaxLength(200)]
+        [Column("title")]
         public string Title { get; set; }
+
+        [Required]
+        [MaxLength(150)]
+        [Column("slug")]
         public string Slug { get; set; }
+
+        [Required]
+        [Column("status")]
         public PageStatus Status { get; set; }
+
+        [NotMapped]
         public ContentSections Content { get; set; }
+
+        [Column("content", TypeName = "text")]
         public string ContentJson { get; set; } = "";
+
+        [Required]
+        [MaxLength(50)]
+        [Column("layout_type")]
         public string LayoutType { get; set; }
+
+        [Required]
+        [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+
+        [Required]
+        [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
-        public bool AllowComments { get; set; } = true; // ← Нове поле
-        public int Views { get; set; }
+
+        [Column("views_count")]
+        public int ViewsCount { get; set; }
 
         public Page() { }
 
-        public Page(int id, string title, string slug, PageStatus status, string contentJson, string layoutType, DateTime createdAt, DateTime updatedAt, bool allowComments = true)
+        public Page(int id, string title, string slug, PageStatus status, string contentJson, string layoutType, DateTime createdAt, DateTime updatedAt)
         {
             Id = id;
             Title = title;
@@ -25,8 +59,6 @@
             LayoutType = layoutType;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
-            AllowComments = allowComments;
-
             ContentJson = contentJson;
             Content = new ContentSections();
         }
@@ -37,11 +69,11 @@
         Draft,
         Published
     }
+
     public class ContentSections
     {
         public string main { get; set; } = "";
         public string left { get; set; } = "";
         public string right { get; set; } = "";
-
     }
 }

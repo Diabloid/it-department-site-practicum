@@ -19,6 +19,42 @@ namespace it_department_site.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Teacher")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("teacher");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("disciplines");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -82,6 +118,11 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    b.Property<string>("DriveFileId")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)")
+                        .HasColumnName("drive_file_id");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int")
                         .HasColumnName("employee_id");
@@ -95,11 +136,6 @@ namespace it_department_site.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)")
                         .HasColumnName("mime_type");
-
-                    b.Property<string>("DriveFileId")
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)")
-                        .HasColumnName("drive_file_id");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
@@ -115,42 +151,6 @@ namespace it_department_site.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("employee_certificates");
-                });
-
-            modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("name");
-
-                    b.Property<int>("SortOrder")
-                        .HasColumnType("int")
-                        .HasColumnName("sort_order");
-
-                    b.Property<string>("Teacher")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("teacher");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("disciplines");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Graduate", b =>
@@ -201,6 +201,125 @@ namespace it_department_site.Migrations
                     b.ToTable("graduates");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.MainSliderSlide", b =>
+                {
+                    b.Property<byte>("Slot")
+                        .HasColumnType("tinyint unsigned")
+                        .HasColumnName("slot");
+
+                    b.Property<string>("AltText")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("alt_text");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Slot");
+
+                    b.ToTable("main_slider_slides");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CustomUrl")
+                        .HasColumnType("longtext")
+                        .HasColumnName("custom_url");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("PageId")
+                        .HasColumnType("int")
+                        .HasColumnName("page_id");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int")
+                        .HasColumnName("parent_id");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int")
+                        .HasColumnName("sort_order");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PageId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("menu_items");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Page", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("LayoutType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("layout_type");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("slug");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("ENUM('Draft', 'Published')")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("int")
+                        .HasColumnName("views_count");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("pages");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Partner", b =>
                 {
                     b.Property<int>("Id")
@@ -233,6 +352,113 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("partners");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int")
+                        .HasColumnName("author_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Excerpt")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("excerpt");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("slug");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("ENUM('Draft', 'Published')")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("longtext")
+                        .HasColumnName("thumbnail");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("int")
+                        .HasColumnName("views_count");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("posts");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.SiteSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("CustomCss")
+                        .HasColumnType("text")
+                        .HasColumnName("custom_css");
+
+                    b.Property<string>("FooterCss")
+                        .HasColumnType("text")
+                        .HasColumnName("footer_css");
+
+                    b.Property<string>("FooterHtml")
+                        .HasColumnType("text")
+                        .HasColumnName("footer_html");
+
+                    b.Property<string>("HeaderCss")
+                        .HasColumnType("text")
+                        .HasColumnName("header_css");
+
+                    b.Property<string>("HeaderHtml")
+                        .HasColumnType("text")
+                        .HasColumnName("header_html");
+
+                    b.Property<string>("SiteLogoUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("logo_url");
+
+                    b.Property<string>("SiteTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("site_title");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("site_settings");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>
@@ -283,9 +509,40 @@ namespace it_department_site.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Page", "Page")
+                        .WithMany()
+                        .HasForeignKey("PageId");
+
+                    b.HasOne("it_department_site.Entities.MenuItem", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Page");
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Post", b =>
+                {
+                    b.HasOne("it_department_site.Entities.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
                 {
                     b.Navigation("Certificates");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
+                {
+                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,6 @@
 ﻿namespace it_department_site.DTOs
 {
+    // REFACTOR_HINT: rename to PageViewModel ?
     public class PageDto
     {
         public int Id { get; set; }
@@ -10,7 +11,6 @@
         public string MainContent { get; set; }
         public string LeftSidebar { get; set; }
         public string RightSidebar { get; set; }
-        public bool AllowComments { get; set; }
-        public int Views { get; set; }
+        public int ViewsCount { get; set; }
     }
 }

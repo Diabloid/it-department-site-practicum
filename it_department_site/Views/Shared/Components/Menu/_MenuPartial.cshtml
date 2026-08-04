@@ -3,9 +3,9 @@
 @functions {
     string ResolveMenuUrl(MenuItem item)
     {
-        if (!string.IsNullOrEmpty(item.PageSlug))
+        if (!string.IsNullOrEmpty(item.Page?.Slug))
         {
-            return $"/{item.PageSlug}";
+            return $"/{item.Page?.Slug}";
         }
 
         if (!string.IsNullOrEmpty(item.CustomUrl))
