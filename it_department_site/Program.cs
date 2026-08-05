@@ -50,7 +50,7 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
@@ -67,6 +67,8 @@ app.UseRouting();
 
 app.UseAuthentication(); // Хто ти?
 app.UseAuthorization();  // Що тобі можна?
+
+app.UseStatusCodePagesWithReExecute("/Error", "?code={0}");
 
 app.UseSession();
 
