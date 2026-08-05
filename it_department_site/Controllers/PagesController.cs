@@ -41,8 +41,7 @@
             var page = await _pageService.GetPageBySlugAsync(slug, isAdmin);
             if (page == null)
             {
-                Response.StatusCode = 404;
-                return View("~/Views/Shared/NotFound.cshtml");
+                return NotFound();
             }
 
             // НОВА ЛОГІКА ПЕРЕГЛЯДІВ (COOKIES)
