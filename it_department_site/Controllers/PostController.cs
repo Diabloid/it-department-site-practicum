@@ -24,7 +24,7 @@ namespace it_department_site.Controllers
             var post = await _postService.GetByIdAsync(id);
             if (post == null || !string.Equals(post.Slug, slug, StringComparison.OrdinalIgnoreCase))
             {
-                return View("~/Views/Shared/NotFound.cshtml");
+                return NotFound();
             }
 
             // ЛОГІКА ПЕРЕГЛЯДІВ (COOKIES)
@@ -49,6 +49,5 @@ namespace it_department_site.Controllers
             return View(post);
         }
 
-        
     }
 }

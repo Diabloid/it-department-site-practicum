@@ -29,7 +29,7 @@ namespace it_department_site.Controllers
             var employee = await _employeeService.GetByIdAsync(id);
             if (employee == null)
             {
-                return View("~/Views/Shared/NotFound.cshtml");
+                return NotFound();
             }
             var viewModel = ToViewModel(employee);
             viewModel.Certificates = await LoadCertificatesAsync(employee, id);

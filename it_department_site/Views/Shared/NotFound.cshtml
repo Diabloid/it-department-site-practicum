@@ -1,9 +1,18 @@
 ﻿@{
+    Layout = "_Layout";
     ViewData["Title"] = "Сторінку не знайдено";
 }
+@section Styles {
+    <link rel="stylesheet" href="~/css/status-page.css" asp-append-version="true" />
+}
 
-<div class="container py-5 text-center">
-    <h1 class="display-4">404</h1>
-    <p class="lead">На жаль, сторінку не знайдено або вона недоступна.</p>
-    <a href="/" class="btn btn-primary mt-3">На головну</a>
-</div>
+<section class="status-page">
+    <div class="status-inner">
+        <h1 class="status-title">Сторінку не знайдено</h1>
+        <p class="status-text">
+            На жаль, такої сторінки немає або вона більше недоступна.
+            Перевірте адресу або поверніться на головну.
+        </p>
+        <a href="/" class="status-btn">На головну</a>
+    </div>
+</section>
