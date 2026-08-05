@@ -28,7 +28,6 @@ builder.Services.AddScoped<IDbConnection>(sp =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 // 4. Реєстрація Репозиторіїв та Сервісів (Всі Scoped)
-builder.Services.AddScoped<IPageService, PageService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -42,7 +41,6 @@ builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<EncryptionService>();
 
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 builder.Services.AddScoped<IMainSliderService, MainSliderService>();
