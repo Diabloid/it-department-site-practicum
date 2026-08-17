@@ -36,7 +36,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\ckeditor\src\" />
-    <Folder Include="wwwroot\uploads\" />
     <Folder Include="Docker\" />
   </ItemGroup>
 
