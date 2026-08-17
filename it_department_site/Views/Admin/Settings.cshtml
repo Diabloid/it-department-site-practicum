@@ -1,0 +1,75 @@
+﻿@model it_department_site.Entities.OrganizationInfo
+@{
+    ViewData["Title"] = "Налаштування організації";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Налаштування організації</h2>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="card shadow-sm p-4">
+        <form asp-action="Settings" method="post">
+
+            <div class="row">
+                <!-- Ліва колонка: Контакти -->
+                <div class="col-md-6 mb-4">
+                    <h4 class="mb-3">Контактна інформація</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Електронна пошта</label>
+                        <input asp-for="Email" class="form-control" placeholder="example@chnu.edu.ua" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Фізична адреса</label>
+                        <input asp-for="Address" class="form-control" placeholder="м. Чернівці, вул. Університетська..." />
+                    </div>
+
+                    <h5 class="mt-4 mb-3">Номери телефонів</h5>
+                    @for (int i = 0; i < Math.Max(2, Model.PhoneNumbers.Count + 1); i++)
+                    {
+                        var phone = i < Model.PhoneNumbers.Count ? Model.PhoneNumbers[i] : "";
+                        <div class="mb-2">
+                            <input type="text" name="PhoneNumbers[@i]" value="@phone" class="form-control" placeholder="+38 (000) 000-00-00" />
+                        </div>
+                    }
+                    <small class="text-muted">Залиште поле порожнім, якщо номер не потрібен.</small>
+                </div>
+
+                <!-- Права колонка: Соцмережі -->
+                <div class="col-md-6 mb-4">
+                    <h4 class="mb-3">Соціальні мережі</h4>
+
+                    @for (int i = 0; i < Math.Max(3, Model.SocialLinks.Count + 1); i++)
+                    {
+                        var link = i < Model.SocialLinks.Count ? Model.SocialLinks[i] : new it_department_site.Entities.SocialLinkItem();
+
+                        <div class="border rounded p-3 mb-3 bg-light">
+                            <div class="mb-2">
+                                <label class="form-label small">Назва (для alt-тексту)</label>
+                                <input type="text" name="SocialLinks[@i].Name" value="@link.Name" class="form-control form-control-sm" placeholder="Instagram" />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Шлях до SVG-іконки</label>
+                                <input type="text" name="SocialLinks[@i].Icon" value="@link.Icon" class="form-control form-control-sm" placeholder="/svg/instagram-icon.svg" />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Посилання (URL або mailto:)</label>
+                                <input type="text" name="SocialLinks[@i].Link" value="@link.Link" class="form-control form-control-sm" placeholder="https://..." />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <hr class="my-4" />
+            <button type="submit" class="btn btn-success px-5">Зберегти налаштування</button>
+        </form>
+    </div>
+</div>

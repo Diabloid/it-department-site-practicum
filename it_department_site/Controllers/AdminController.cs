@@ -19,6 +19,7 @@ namespace it_department_site.Controllers
         private readonly IMainSliderService _mainSliderService;
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
+        private readonly IOrganizationInfoService _organizationInfoService;
 
         public AdminController(
             IPageService pageService,
@@ -33,7 +34,8 @@ namespace it_department_site.Controllers
             Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
-            IUserService userService)
+            IUserService userService,
+            IOrganizationInfoService organizationInfoService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -47,7 +49,8 @@ namespace it_department_site.Controllers
             _driveOptions = driveOptions.Value;
       	     _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
-            _userService = userService; 
+            _userService = userService;
+            _organizationInfoService = organizationInfoService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -750,6 +753,32 @@ namespace it_department_site.Controllers
             await _postService.DeleteAsync(id);
             _logger.LogInformation("Admin deleted post with ID {PostId}", id);
             return await Posts();
+        }
+
+        // ІНФОРМАЦІЯ ПРО ОРГАНІЗАЦІЮ
+
+        [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            var info = await _organizationInfoService.GetAsync();
+            return View(info);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Settings(OrganizationInfo model)
+        {
+            ModelState.Clear();
+
+            model.PhoneNumbers ??= new List<string>();
+            model.SocialLinks ??= new List<SocialLinkItem>();
+
+            model.PhoneNumbers = model.PhoneNumbers.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            model.SocialLinks = model.SocialLinks.Where(s => !string.IsNullOrWhiteSpace(s.Link)).ToList();
+
+            await _organizationInfoService.UpdateAsync(model);
+
+            TempData["SuccessMessage"] = "Налаштування організації успішно збережено!";
+            return RedirectToAction("Settings");
         }
     }
 }
