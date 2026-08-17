@@ -265,6 +265,40 @@ namespace it_department_site.Migrations
                     b.ToTable("menu_items");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.OrganizationInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("PhoneNumbersJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("phone_numbers_json");
+
+                    b.Property<string>("SocialLinksJson")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("social_links_json");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("organization_info");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Page", b =>
                 {
                     b.Property<int>("Id")

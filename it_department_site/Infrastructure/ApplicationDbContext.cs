@@ -15,6 +15,7 @@ namespace it_department_site.Infrastructure
         public DbSet<SiteSettings> SiteSettings { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<OrganizationInfo> OrganizationInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
