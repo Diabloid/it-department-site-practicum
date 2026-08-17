@@ -30,7 +30,7 @@ namespace it_department_site.Infrastructure
 
             modelBuilder.Entity<Employee>()
                 .HasMany(e => e.Disciplines)
-                .WithMany(d => d.Employees)
+                .WithMany()
                 .UsingEntity(j => j.ToTable("employee_disciplines"));
         }
     }

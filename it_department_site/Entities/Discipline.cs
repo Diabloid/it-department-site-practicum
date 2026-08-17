@@ -23,7 +23,5 @@ namespace it_department_site.Entities
         [Required]
         [Column("sort_order")]
         public int SortOrder { get; set; }
-
-        public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
     }
 }
