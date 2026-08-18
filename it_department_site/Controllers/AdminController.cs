@@ -467,7 +467,7 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage(IFormFile? file)
         {
             if (file == null || file.Length == 0)
             {
@@ -536,7 +536,7 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
+        public async Task<IActionResult> UploadPartner(IFormFile? file, string name, string link)
         {
             if (file == null || file.Length == 0)
             {
@@ -545,11 +545,7 @@ namespace it_department_site.Controllers
 
             var webPath = await SaveImage(file, "partners");
 
-            var finalName = string.IsNullOrWhiteSpace(name)
-                ? Path.GetFileNameWithoutExtension(file.FileName)
-                : name;
-
-            await _partnerService.AddPartnerAsync(webPath, finalName, link);
+            await _partnerService.AddPartnerAsync(webPath, name, link);
 
             return RedirectToAction("Index", new { section = "Partners" });
         }
