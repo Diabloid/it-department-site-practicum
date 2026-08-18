@@ -19,6 +19,7 @@ namespace it_department_site.Controllers
         private readonly IMainSliderService _mainSliderService;
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _env;
 
         public AdminController(
             IPageService pageService,
@@ -33,7 +34,8 @@ namespace it_department_site.Controllers
             Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
-            IUserService userService)
+            IUserService userService,
+            IWebHostEnvironment env)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -47,7 +49,8 @@ namespace it_department_site.Controllers
             _driveOptions = driveOptions.Value;
       	     _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
-            _userService = userService; 
+            _userService = userService;
+            _env = env;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -464,7 +467,7 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage(IFormFile? file)
         {
             if (file == null || file.Length == 0)
             {
@@ -533,9 +536,17 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
+        public async Task<IActionResult> UploadPartner(IFormFile? file, string name, string link)
         {
-            await _partnerService.AddPartnerAsync(file, name, link);
+            if (file == null || file.Length == 0)
+            {
+                return RedirectToAction("Index", new { section = "Partners" });
+            }
+
+            var webPath = await SaveImage(file, "partners");
+
+            await _partnerService.AddPartnerAsync(webPath, name, link);
+
             return RedirectToAction("Index", new { section = "Partners" });
         }
 
@@ -725,7 +736,7 @@ namespace it_department_site.Controllers
         private async Task<string> SaveImage(IFormFile file, string folderName)
         {
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
+            var rootPath = Path.Combine(_env.WebRootPath, "uploads", folderName);
 
             if (!Directory.Exists(rootPath))
             {

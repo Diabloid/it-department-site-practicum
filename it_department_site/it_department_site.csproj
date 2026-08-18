@@ -7,17 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Database\**" />
-    <Compile Remove="Views\Db\**" />
-    <Content Remove="Database\**" />
-    <Content Remove="Views\Db\**" />
-    <EmbeddedResource Remove="Database\**" />
-    <EmbeddedResource Remove="Views\Db\**" />
-    <None Remove="Database\**" />
-    <None Remove="Views\Db\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.69.0.3740" />
@@ -36,8 +25,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\ckeditor\src\" />
-    <Folder Include="wwwroot\uploads\" />
-    <Folder Include="Docker\" />
   </ItemGroup>
 
 </Project>
