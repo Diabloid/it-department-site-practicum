@@ -37,7 +37,6 @@ builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<EncryptionService>();
 
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 builder.Services.AddScoped<IMainSliderService, MainSliderService>();
