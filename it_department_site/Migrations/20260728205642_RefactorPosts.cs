@@ -10,9 +10,9 @@ namespace it_department_site.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.DropColumn(
-            //    name: "page_slug",
-            //    table: "menu_items");
+            migrationBuilder.DropColumn(
+                name: "page_slug",
+                table: "menu_items");
 
             migrationBuilder.AlterColumn<string>(
                 name: "content",
@@ -24,27 +24,27 @@ namespace it_department_site.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .OldAnnotation("MySql:CharSet", "utf8mb4");
 
-            //migrationBuilder.AddColumn<string>(
-            //    name: "status",
-            //    table: "posts",
-            //    type: "ENUM('Draft', 'Published')",
-            //    nullable: false,
-            //    defaultValue: "Draft")
-            //    .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.AddColumn<string>(
+                name: "status",
+                table: "posts",
+                type: "ENUM('Draft', 'Published')",
+                nullable: false,
+                defaultValue: "")
+                .Annotation("MySql:CharSet", "utf8mb4");
 
-            //migrationBuilder.CreateIndex(
-            //    name: "IX_posts_slug",
-            //    table: "posts",
-            //    column: "slug",
-            //    unique: true);
+            migrationBuilder.CreateIndex(
+                name: "IX_posts_slug",
+                table: "posts",
+                column: "slug",
+                unique: true);
 
-            //migrationBuilder.AddForeignKey(
-            //    name: "FK_posts_users_author_id",
-            //    table: "posts",
-            //    column: "author_id",
-            //    principalTable: "users",
-            //    principalColumn: "id",
-            //    onDelete: ReferentialAction.Cascade);
+            migrationBuilder.AddForeignKey(
+                name: "FK_posts_users_author_id",
+                table: "posts",
+                column: "author_id",
+                principalTable: "users",
+                principalColumn: "id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
