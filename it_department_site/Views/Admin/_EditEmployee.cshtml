@@ -37,7 +37,7 @@
         <div class="card p-3 border" style="max-height: 180px; overflow-y: auto;">
             @if (ViewBag.AllDisciplines != null)
             {
-                var disciplines = (IEnumerable<it_department_site.Entities.Discipline>)ViewBag.AllDisciplines;
+                var disciplines = (IEnumerable<Discipline>)ViewBag.AllDisciplines;
                 if (disciplines.Any())
                 {
                     @foreach (var disc in disciplines.OrderBy(d => d.SortOrder))

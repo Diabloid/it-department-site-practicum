@@ -158,6 +158,7 @@ namespace it_department_site.Controllers
             if (employee == null) return NotFound();
 
             ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(id);
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_EditEmployee", employee);
         }
 
