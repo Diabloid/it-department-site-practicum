@@ -19,19 +19,19 @@ namespace it_department_site.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("DisciplineEmployee", b =>
+            modelBuilder.Entity("employee_disciplines", b =>
                 {
-                    b.Property<int>("DisciplinesId")
+                    b.Property<int>("discipline_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployeesId")
+                    b.Property<int>("employee_id")
                         .HasColumnType("int");
 
-                    b.HasKey("DisciplinesId", "EmployeesId");
+                    b.HasKey("discipline_id", "employee_id");
 
-                    b.HasIndex("EmployeesId");
+                    b.HasIndex("employee_id");
 
-                    b.ToTable("employee_disciplines", (string)null);
+                    b.ToTable("employee_disciplines");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
@@ -509,17 +509,17 @@ namespace it_department_site.Migrations
                     b.ToTable("users");
                 });
 
-            modelBuilder.Entity("DisciplineEmployee", b =>
+            modelBuilder.Entity("employee_disciplines", b =>
                 {
                     b.HasOne("it_department_site.Entities.Discipline", null)
                         .WithMany()
-                        .HasForeignKey("DisciplinesId")
+                        .HasForeignKey("discipline_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("it_department_site.Entities.Employee", null)
                         .WithMany()
-                        .HasForeignKey("EmployeesId")
+                        .HasForeignKey("employee_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
