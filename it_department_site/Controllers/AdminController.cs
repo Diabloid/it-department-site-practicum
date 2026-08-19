@@ -19,7 +19,7 @@ namespace it_department_site.Controllers
         private readonly IMainSliderService _mainSliderService;
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
-        private readonly IWebHostEnvironment _env;
+        private readonly IFileStorageService _fileStorageService;
 
         public AdminController(
             IPageService pageService,
@@ -35,7 +35,7 @@ namespace it_department_site.Controllers
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
             IUserService userService,
-            IWebHostEnvironment env)
+            IFileStorageService fileStorageService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -50,7 +50,7 @@ namespace it_department_site.Controllers
       	     _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
             _userService = userService;
-            _env = env;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -109,7 +109,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_CreateGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
+                graduate.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "graduates");
 
             await _graduateService.CreateAsync(graduate);
             return await Graduates();
@@ -123,7 +123,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_EditGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
+                graduate.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "graduates");
 
             await _graduateService.UpdateAsync(graduate.Id, graduate);
             return await Graduates();
@@ -167,7 +167,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
 
             if (photoFile != null)
-                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+                employee.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "employees");
             else
                 employee.PhotoUrl = "/images/banner_photo_2.jpg";
 
@@ -197,7 +197,7 @@ namespace it_department_site.Controllers
             }
 
             if (photoFile != null)
-                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+                employee.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "employees");
 
             await _employeeService.UpdateAsync(employee.Id, employee);
 
@@ -543,7 +543,7 @@ namespace it_department_site.Controllers
                 return RedirectToAction("Index", new { section = "Partners" });
             }
 
-            var webPath = await SaveImage(file, "partners");
+            var webPath = await _fileStorageService.SaveImage(file, "partners");
 
             await _partnerService.AddPartnerAsync(webPath, name, link);
 
@@ -653,7 +653,7 @@ namespace it_department_site.Controllers
                 post.Excerpt ??= string.Empty;
 
                 if (thumbnailFile != null)
-                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
+                    post.Thumbnail = await _fileStorageService.SaveImage(thumbnailFile, "posts");
                 else if (post.Id != 0)
                 {
                     var existing = await _postService.GetByIdAsync(post.Id);
@@ -731,28 +731,6 @@ namespace it_department_site.Controllers
                 .Distinct()
                 .Take(15)
                 .ToList();
-        }
-
-        private async Task<string> SaveImage(IFormFile file, string folderName)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var rootPath = Path.Combine(_env.WebRootPath, "uploads", folderName);
-
-            if (!Directory.Exists(rootPath))
-            {
-
-                Directory.CreateDirectory(rootPath);
-                _logger.LogInformation("Created directory for uploads at {RootPath}", rootPath);
-            }
-
-            var filePath = Path.Combine(rootPath, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                _logger.LogInformation("Saving file to {FilePath}", filePath);
-                await file.CopyToAsync(stream);
-            }
-            _logger.LogInformation("File saved successfully: {FileName}", fileName);
-            return $"/uploads/{folderName}/{fileName}";
         }
 
         [HttpPost]
