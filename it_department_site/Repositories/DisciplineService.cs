@@ -27,7 +27,6 @@ public class DisciplineService : IDisciplineService
 
     public async Task CreateAsync(Discipline discipline)
     {
-        discipline.CreatedAt = DateTime.UtcNow;
         _context.Disciplines.Add(discipline);
         await _context.SaveChangesAsync();
     }
@@ -39,7 +38,6 @@ public class DisciplineService : IDisciplineService
 
         existing.Name = discipline.Name;
         existing.Description = discipline.Description;
-        existing.Teacher = discipline.Teacher;
         existing.SortOrder = discipline.SortOrder;
 
         await _context.SaveChangesAsync();

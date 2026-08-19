@@ -1,5 +1,6 @@
 ﻿using it_department_site.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Controllers
 {
@@ -47,7 +48,7 @@ namespace it_department_site.Controllers
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
-      	     _mainSliderService = mainSliderService;
+      	    _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
             _userService = userService;
             _env = env;
@@ -82,7 +83,7 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-        
+
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
@@ -136,8 +137,9 @@ namespace it_department_site.Controllers
         }
 
         //===========================================
-        public IActionResult CreateEmployee()
+        public async Task<IActionResult> CreateEmployee()
         {
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_CreateEmployee", new Employee());
         }
 
@@ -156,12 +158,13 @@ namespace it_department_site.Controllers
             if (employee == null) return NotFound();
 
             ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(id);
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_EditEmployee", employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile)
+        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile, int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
@@ -176,6 +179,18 @@ namespace it_department_site.Controllers
             employee.Specialization ??= string.Empty;
             employee.Bio ??= string.Empty;
 
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
+            }
+
             await _employeeService.CreateAsync(employee);
             if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
                 await _employeeService.ApplyDrivePhotoFromFolderAsync(employee.Id);
@@ -187,13 +202,27 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> EditEmployee(
             Employee employee,
             IFormFile? photoFile,
-            string[]? selectedCertificateFileIds)
+            string[]? selectedCertificateFileIds,
+            int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid)
             {
                 ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(employee.Id);
+                ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
                 return PartialView("_EditEmployee", employee);
+            }
+
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
             }
 
             if (photoFile != null)

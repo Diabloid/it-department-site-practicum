@@ -19,6 +19,21 @@ namespace it_department_site.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("employee_disciplines", b =>
+                {
+                    b.Property<int>("discipline_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("employee_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("discipline_id", "employee_id");
+
+                    b.HasIndex("employee_id");
+
+                    b.ToTable("employee_disciplines");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
                 {
                     b.Property<int>("Id")
@@ -26,12 +41,8 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
                     b.Property<string>("Description")
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
@@ -44,13 +55,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("sort_order");
 
-                    b.Property<string>("Teacher")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("teacher");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("disciplines");
                 });
@@ -64,7 +72,7 @@ namespace it_department_site.Migrations
 
                     b.Property<string>("Bio")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("bio");
 
                     b.Property<string>("Email")
@@ -103,10 +111,13 @@ namespace it_department_site.Migrations
 
                     b.Property<string>("Specialization")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("specialization");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("employees");
                 });
@@ -496,6 +507,21 @@ namespace it_department_site.Migrations
                         .IsUnique();
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("employee_disciplines", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Discipline", null)
+                        .WithMany()
+                        .HasForeignKey("discipline_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("it_department_site.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("employee_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("it_department_site.Entities.EmployeeCertificate", b =>
