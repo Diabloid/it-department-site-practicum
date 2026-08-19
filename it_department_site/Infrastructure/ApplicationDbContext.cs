@@ -26,7 +26,24 @@ namespace it_department_site.Infrastructure
             modelBuilder.Entity<Post>()
                 .Property(p => p.Status)
                 .HasConversion<string>() 
-                .HasColumnType("ENUM('Draft', 'Published')"); 
+                .HasColumnType("ENUM('Draft', 'Published')");
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(e => e.Disciplines)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "employee_disciplines",
+                    join => join
+                        .HasOne<Discipline>()
+                        .WithMany()
+                        .HasForeignKey("discipline_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    join => join
+                        .HasOne<Employee>()
+                        .WithMany()
+                        .HasForeignKey("employee_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                );
         }
     }
 }
