@@ -1,5 +1,6 @@
 ﻿using it_department_site.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Controllers
 {
@@ -19,6 +20,7 @@ namespace it_department_site.Controllers
         private readonly IMainSliderService _mainSliderService;
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _env;
 
         public AdminController(
             IPageService pageService,
@@ -33,7 +35,8 @@ namespace it_department_site.Controllers
             Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
-            IUserService userService)
+            IUserService userService,
+            IWebHostEnvironment env)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -45,9 +48,10 @@ namespace it_department_site.Controllers
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
-      	     _mainSliderService = mainSliderService;
+      	    _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
-            _userService = userService; 
+            _userService = userService;
+            _env = env;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -79,7 +83,7 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-        
+
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
@@ -133,8 +137,9 @@ namespace it_department_site.Controllers
         }
 
         //===========================================
-        public IActionResult CreateEmployee()
+        public async Task<IActionResult> CreateEmployee()
         {
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_CreateEmployee", new Employee());
         }
 
@@ -153,12 +158,13 @@ namespace it_department_site.Controllers
             if (employee == null) return NotFound();
 
             ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(id);
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_EditEmployee", employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile)
+        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile, int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
@@ -173,6 +179,18 @@ namespace it_department_site.Controllers
             employee.Specialization ??= string.Empty;
             employee.Bio ??= string.Empty;
 
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
+            }
+
             await _employeeService.CreateAsync(employee);
             if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
                 await _employeeService.ApplyDrivePhotoFromFolderAsync(employee.Id);
@@ -184,13 +202,27 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> EditEmployee(
             Employee employee,
             IFormFile? photoFile,
-            string[]? selectedCertificateFileIds)
+            string[]? selectedCertificateFileIds,
+            int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid)
             {
                 ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(employee.Id);
+                ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
                 return PartialView("_EditEmployee", employee);
+            }
+
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
             }
 
             if (photoFile != null)
@@ -464,7 +496,7 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage(IFormFile? file)
         {
             if (file == null || file.Length == 0)
             {
@@ -533,9 +565,17 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
+        public async Task<IActionResult> UploadPartner(IFormFile? file, string name, string link)
         {
-            await _partnerService.AddPartnerAsync(file, name, link);
+            if (file == null || file.Length == 0)
+            {
+                return RedirectToAction("Index", new { section = "Partners" });
+            }
+
+            var webPath = await SaveImage(file, "partners");
+
+            await _partnerService.AddPartnerAsync(webPath, name, link);
+
             return RedirectToAction("Index", new { section = "Partners" });
         }
 
@@ -725,7 +765,7 @@ namespace it_department_site.Controllers
         private async Task<string> SaveImage(IFormFile file, string folderName)
         {
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
+            var rootPath = Path.Combine(_env.WebRootPath, "uploads", folderName);
 
             if (!Directory.Exists(rootPath))
             {

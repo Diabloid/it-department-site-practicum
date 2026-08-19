@@ -19,5 +19,6 @@ namespace it_department_site.ViewModels
         public string Email { get; set; } = string.Empty;
         public string Bio { get; set; } = string.Empty;
         public List<EmployeeCertificateViewModel> Certificates { get; set; } = new();
+        public List<Discipline> Disciplines { get; set; } = new();
     }
 }

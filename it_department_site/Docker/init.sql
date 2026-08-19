@@ -17,27 +17,28 @@ use website;
 
 LOCK TABLES `menu_items` WRITE;
 /*!40000 ALTER TABLE `menu_items` DISABLE KEYS */;
-INSERT INTO `menu_items` VALUES (1,'Home',NULL,1,1),(4,'Blog',NULL,NULL,2),(13,'About Us',NULL,2,3),(14,'Blog Post 1',4,36,99),(16,'Нова сторінка!!!',4,38,0),(17,'новий пункт',NULL,34,12);
+INSERT INTO `menu_items` VALUES (1,'Home',NULL,1,1, null),(4,'Blog',NULL,NULL,2, null),(13,'About Us',NULL,2,3, null),(14,'Blog Post 1',4,36,99, null),(16,'Нова сторінка!!!',4,38,0, null),(17,'новий пункт',NULL,34,12, null);
 /*!40000 ALTER TABLE `menu_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `pages` WRITE;
 /*!40000 ALTER TABLE `pages` DISABLE KEYS */;
-INSERT INTO `pages` VALUES
-(1,'Home Page','home-page','Published','2025-03-13 20:54:36','2025-06-20 04:07:22','no-sidebar','{\"main\": \"<p><strong>This is the content for the Home Page.</strong></p>\"}',1,4),
-(2,'About Us','about-us','Published','2025-03-13 20:54:36','2025-06-20 04:07:45','no-sidebar','{\"main\": \"This page contains information about our company.\"}',1,5),
-(3,'Contact Us','contact-us','Draft','2025-03-13 20:54:36','2025-05-22 19:48:40','no-sidebar','{\"main\": \"This page is under construction. Contact form will be available soon.\"}',1,0),
-(5,'Privacy Policy','privacy-policy','Published','2025-03-13 20:54:36','2026-08-05 11:44:37','no-sidebar','{\"main\":\"\\u003Cp\\u003E234\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\"}',1,0),
-(6,'Terms of Service','terms-of-service','Draft','2025-03-13 20:54:36','2025-05-22 19:48:40','no-sidebar','{\"main\": \"This page contains the terms of service for our website.\"}',1,0),
-(7,'FAQ','faq','Published','2025-03-13 20:54:36','2025-05-22 19:48:40','no-sidebar','{\"main\": \"Frequently Asked Questions about our products and services.\"}',1,0),
-(27,'hello!!!','hello','Draft','2025-05-23 22:36:42','2025-05-23 22:36:42','right-sidebar','{\"left\": \"\", \"main\": \"<p>hello!!!</p>\", \"right\": \"<p>hello!!!</p>\"}',1,0),
-(28,'ывывыв','storink','Draft','2025-05-26 12:37:53','2025-05-26 12:37:53','left-sidebar','{\"left\": \"<p>ывывывывывыв</p>\", \"main\": \"<p>ывывывыв</p>\", \"right\": \"\"}',1,0),
-(32,'encrypted','encrypted','Draft','2025-06-10 18:02:43','2026-08-05 11:44:37','no-sidebar','{\"main\":\"\\u003Cp\\u003Eencrypted1\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\"}',1,0),
-(33,'<script>alert(\"XSS\");</script>','encrypted-sidebar','Draft','2025-06-10 18:14:08','2026-08-05 11:44:37','right-sidebar','{\"main\":\"\\u003Cp\\u003Eencrypted-sidebar.alert(\\u0022qqq\\u0022)\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\\u003Cp\\u003Eencrypted-sidebar\\u003C/p\\u003E\"}',1,0),
-(34,'picture!!!','picture','Published','2025-06-10 19:42:26','2026-08-05 11:44:37','no-sidebar','{\"main\":\"\\u003Cfigure class=\\u0022image image-style-align-left image_resized\\u0022 style=\\u0022width:40.5%;\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/6562b57b-7180-4494-8fc0-3980c6b51020.jpg\\u0022\\u003E\\u003C/figure\\u003E\\u003Cp\\u003ELorem ipsum dolor sit amet...\",\"left\":\"\",\"right\":\"\"}',1,3),
-(35,'nov','nov','Published','2025-06-11 12:36:02','2026-08-05 11:44:38','right-sidebar','{\"main\":\"\\u003Cp\\u003Eergjiortjhhoiprtjgip4rthjip0ghj4pihj4igh4ijgpiefjvipdfhvipehrfpijpifhepfjepirgfjpiehjgfpiehipehvkpekpvhepkvhepkghperhgi\\u003C/p\\u003E\\u003Cfigure class=\\u0022image image_resized\\u0022 style=\\u0022width:53.06%;\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/d8a627f2-0d47-4507-bb43-b3bf1882d428.jpg\\u0022\\u003E\\u003C/figure\\u003E\",\"left\":\"\",\"right\":\"\\u003Cp\\u003Eednjvoerefipgjrighjeoigjhereoigehgiehvgvpidsdpkdvfjerpighiprvjiehjgip3rhjgpedhjdvpierhrvfpihepicnpiedcnpie3rhrpienievcip3jpiwev\\u003C/p\\u003E\\u003Cfigure class=\\u0022image\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/da7b40d6-b3ac-496e-bdc4-b66754a1ffa2.png\\u0022\\u003E\\u003C/figure\\u003E\"}',0,1),
-(36,'storink','storink2','Published','2025-06-12 11:21:11','2026-08-05 11:44:38','no-sidebar','{\"main\":\"\\u003Cfigure class=\\u0022image\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/f0593841-cb3d-442c-b3df-fc81467cfa21.gif\\u0022\\u003E\\u003C/figure\\u003E\",\"left\":\"\",\"right\":\"\"}',1,2),
-(38,'Нова сторінка!!!','new-page','Published','2025-06-20 04:09:03','2026-08-05 11:44:38','no-sidebar','{\"main\":\"\\u003Cp\\u003E\\u0446\\u0435 \\u0441\\u0443\\u043F\\u0435\\u0440 \\u043A\\u0440\\u0443\\u0442\\u0430 \\u0441\\u0442\\u043E\\u0440\\u0456\\u043D\\u043A\\u0430!!!\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\"}',0,2);
+INSERT INTO pages
+(id, title, slug, status, created_at, updated_at, layout_type, content, views_count) VALUES
+(1,'Home Page','home-page','Published','2025-03-13 20:54:36','2025-06-20 04:07:22','no-sidebar','{\"main\": \"<p><strong>This is the content for the Home Page.</strong></p>\"}',4),
+(2,'About Us','about-us','Published','2025-03-13 20:54:36','2025-06-20 04:07:45','no-sidebar','{\"main\": \"This page contains information about our company.\"}',5),
+(3,'Contact Us','contact-us','Draft','2025-03-13 20:54:36','2025-05-22 19:48:40','no-sidebar','{\"main\": \"This page is under construction. Contact form will be available soon.\"}',0),
+(5,'Privacy Policy','privacy-policy','Published','2025-03-13 20:54:36','2026-08-05 11:44:37','no-sidebar','{\"main\":\"\\u003Cp\\u003E234\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\"}',0),
+(6,'Terms of Service','terms-of-service','Draft','2025-03-13 20:54:36','2025-05-22 19:48:40','no-sidebar','{\"main\": \"This page contains the terms of service for our website.\"}',0),
+(7,'FAQ','faq','Published','2025-03-13 20:54:36','2025-05-22 19:48:40','no-sidebar','{\"main\": \"Frequently Asked Questions about our products and services.\"}',0),
+(27,'hello!!!','hello','Draft','2025-05-23 22:36:42','2025-05-23 22:36:42','right-sidebar','{\"left\": \"\", \"main\": \"<p>hello!!!</p>\", \"right\": \"<p>hello!!!</p>\"}',0),
+(28,'ывывыв','storink','Draft','2025-05-26 12:37:53','2025-05-26 12:37:53','left-sidebar','{\"left\": \"<p>ывывывывывыв</p>\", \"main\": \"<p>ывывывыв</p>\", \"right\": \"\"}',0),
+(32,'encrypted','encrypted','Draft','2025-06-10 18:02:43','2026-08-05 11:44:37','no-sidebar','{\"main\":\"\\u003Cp\\u003Eencrypted1\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\"}',0),
+(33,'<script>alert(\"XSS\");</script>','encrypted-sidebar','Draft','2025-06-10 18:14:08','2026-08-05 11:44:37','right-sidebar','{\"main\":\"\\u003Cp\\u003Eencrypted-sidebar.alert(\\u0022qqq\\u0022)\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\\u003Cp\\u003Eencrypted-sidebar\\u003C/p\\u003E\"}',0),
+(34,'picture!!!','picture','Published','2025-06-10 19:42:26','2026-08-05 11:44:37','no-sidebar','{\"main\":\"\\u003Cfigure class=\\u0022image image-style-align-left image_resized\\u0022 style=\\u0022width:40.5%;\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/6562b57b-7180-4494-8fc0-3980c6b51020.jpg\\u0022\\u003E\\u003C/figure\\u003E\\u003Cp\\u003ELorem ipsum dolor sit amet...\",\"left\":\"\",\"right\":\"\"}',3),
+(35,'nov','nov','Published','2025-06-11 12:36:02','2026-08-05 11:44:38','right-sidebar','{\"main\":\"\\u003Cp\\u003Eergjiortjhhoiprtjgip4rthjip0ghj4pihj4igh4ijgpiefjvipdfhvipehrfpijpifhepfjepirgfjpiehjgfpiehipehvkpekpvhepkvhepkghperhgi\\u003C/p\\u003E\\u003Cfigure class=\\u0022image image_resized\\u0022 style=\\u0022width:53.06%;\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/d8a627f2-0d47-4507-bb43-b3bf1882d428.jpg\\u0022\\u003E\\u003C/figure\\u003E\",\"left\":\"\",\"right\":\"\\u003Cp\\u003Eednjvoerefipgjrighjeoigjhereoigehgiehvgvpidsdpkdvfjerpighiprvjiehjgip3rhjgpedhjdvpierhrvfpihepicnpiedcnpie3rhrpienievcip3jpiwev\\u003C/p\\u003E\\u003Cfigure class=\\u0022image\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/da7b40d6-b3ac-496e-bdc4-b66754a1ffa2.png\\u0022\\u003E\\u003C/figure\\u003E\"}',1),
+(36,'storink','storink2','Published','2025-06-12 11:21:11','2026-08-05 11:44:38','no-sidebar','{\"main\":\"\\u003Cfigure class=\\u0022image\\u0022\\u003E\\u003Cimg src=\\u0022/uploads/f0593841-cb3d-442c-b3df-fc81467cfa21.gif\\u0022\\u003E\\u003C/figure\\u003E\",\"left\":\"\",\"right\":\"\"}',1),
+(38,'Нова сторінка!!!','new-page','Published','2025-06-20 04:09:03','2026-08-05 11:44:38','no-sidebar','{\"main\":\"\\u003Cp\\u003E\\u0446\\u0435 \\u0441\\u0443\\u043F\\u0435\\u0440 \\u043A\\u0440\\u0443\\u0442\\u0430 \\u0441\\u0442\\u043E\\u0440\\u0456\\u043D\\u043A\\u0430!!!\\u003C/p\\u003E\",\"left\":\"\",\"right\":\"\"}',0);
 UNLOCK TABLES;
 
 LOCK TABLES `site_settings` WRITE;
@@ -54,9 +55,6 @@ UNLOCK TABLES;
 
 INSERT INTO `partners` 
 VALUES 
-(6,'SoftServe','/images/partners/158dfc60-8098-4b55-bb6e-bff312b4bef7.png',1),
-(7,'valtech','/images/partners/b0b9aa9a-2e00-4c73-9756-094b75e149ed.png',0),
-(8,'yukon','/images/partners/fb19c67f-c425-4398-976d-0b52bf443e63.png',2);
 (10, 'Чернівецький національний університет імені Юрія Федьковича', '/images/partners/133bd514-6658-48de-998d-b72bf0fad8c0.jpg', 1, 'https://www.chnu.edu.ua/'),
 (11, 'Yukon Software', '/images/partners/d42be15e-beaa-4a91-8b1c-5a138a69d19b.png', 2, 'https://yukon.software/ua/'),
 (12, 'Elogic Commerce', '/images/partners/581dd57a-d469-40c1-a861-405a56dd17ff.png', 3, 'https://elogic.co/'),
@@ -68,3 +66,46 @@ INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
 (1, '/images/banner_photo_1.JPG', 'Слайд 1'),
 (2, '/images/banner_photo_1.JPG', 'Слайд 2'),
 (3, '/images/banner_photo_1.JPG', 'Слайд 3');
+
+INSERT INTO disciplines (name, description, sort_order) VALUES
+('Soft Skills для інженерів програмного забезпечення','', 0),
+('Алгоритми та структури даних','', 0),
+('Архітектура комп\'ютера','', 0),
+('Бази даних','', 0),
+('Вебдизайн','', 0),
+('Вебпрограмування','', 0),
+('Інформатика (Вступ до спеціальності)','', 0),
+('Інформатика (Основи програмування)','', 0),
+('Комп\'ютерна дискретна математика','', 0),
+('Компютерна графіка','', 0),
+('Людино-машинний інтерфейс','', 0),
+('Мова програмування Java','', 0),
+('Моделювання та проєктування програмного забезпечення','', 0),
+('Об\'єктно-орієнтоване програмування','', 0),
+('Операційні системи','', 0),
+('Організація комп\'ютерних мереж','', 0),
+('Основи кібербезпеки','', 0),
+('Основи командної розробки програмного забезпечення','', 0),
+('Основи програмної інженерії','', 0),
+('Основи програмування','', 0),
+('Практикум з програмної інженерії','', 0),
+('Прикладне програмування та штучний інтелект мовою Python','', 0),
+('Програмування мобільних додатків','', 0),
+('Технології (Вебдизайн)','', 0),
+('Технології (Операційні системи)','', 0),
+('Технології створення додатків для платформи .NET','', 0),
+('Управління ІТ проєктами','', 0),
+('Якість та тестування програмного забезпечення','', 0);
+
+INSERT INTO employees (id, lastname, firstname, patronymic_name, email, google_drive_folder_url, specialization, bio, photo_url) VALUES
+(1, 'Атвіновський','Олексій','Ігорович','oleksii.atvinovskyi@polytech.cv.ua', 'https://drive.google.com/drive/folders/1H-2NKUMYjiqDmLExP6UC39M55WEgftv7','','',''),
+(2, 'Басовська','Антоніна','Іванівна','toniabasovska@polytech.cv.ua', 'https://drive.google.com/drive/folders/1a5bcjGjVFUhuh-q3h3qW4CQtXI75WD5t','','',''),
+(3, 'Воронов','Максим','Олегович','mvoronov@polytech.cv.ua', 'https://drive.google.com/drive/folders/1-jGieVmcft7iGoRKKyZ8iVsBag510En5','','',''),
+(4, 'Воропаєва', 'Світлана', 'Львівна', 'voropaeva@chnu.edu.ua','https://drive.google.com/drive/folders/1wtQO68Nm30scTkGTN7N_vge2moHSXM1O','','',''),
+(5, 'Гуменна','Тетяна','Миколаївна','gumenna.t.m@polytech.cv.ua', 'https://drive.google.com/drive/folders/1gXaKebFswjvh_lyIuQGm5CbqigpXbV5S','','',''),
+(6, 'Кравченко','Лариса','Богданівна','lkravchenko@polytech.cv.ua', 'https://drive.google.com/drive/folders/1E7oO8kqDqHX0suM058FyvWY4L5NHdRIg','','',''),
+(7, 'Кравчук','Оксана','Миколаївна','oksana.kravchuk@polytech.cv.ua', 'https://drive.google.com/drive/folders/1CwEE1v9gssYoyvsnu6WmUosV4nF6siIN','','',''),
+(8, 'Серьогіна','Ірина','Вікторівна','seryogina.i.v@polytech.cv.ua', 'https://drive.google.com/drive/folders/1BqmoM2rmgCudSQtNVSIrG25Ygny7fQgT','','',''),
+(9, 'Скуртул', 'Сергій','Сергійович', 'Serhii.Skurtul@polytech.cv.ua', 'https://drive.google.com/drive/folders/1nksiaUgZ2TJeV58Ja7OVeHbf_fzaSXOR','','',''),
+(10, 'Смерека','Анна','Георгіївна','smereka.a.h@polytech.cv.ua', 'https://drive.google.com/drive/folders/1-DPYpxLY3hi2yKJtVhXasmGaOvoWMNAd','','',''),
+(11, 'Шпак','Андрій','Олексійович','shpak.andrii@polytech.cv.ua', 'https://drive.google.com/drive/folders/1N9RvV2_YcLg6D0D24k3cgcV4s1LwRJhZ','','','');
