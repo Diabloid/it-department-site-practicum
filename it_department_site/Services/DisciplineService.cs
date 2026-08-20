@@ -1,7 +1,7 @@
 using it_department_site.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace it_department_site.Repositories;
+namespace it_department_site.Services;
 
 public class DisciplineService : IDisciplineService
 {
