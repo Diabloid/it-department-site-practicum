@@ -1,5 +1,6 @@
 ﻿using it_department_site.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Controllers
 {
@@ -19,6 +20,7 @@ namespace it_department_site.Controllers
         private readonly IMainSliderService _mainSliderService;
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
+        private readonly IFileStorageService _fileStorageService;
         private readonly IOrganizationInfoService _organizationInfoService;
 
         public AdminController(
@@ -35,6 +37,7 @@ namespace it_department_site.Controllers
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
             IUserService userService,
+            IFileStorageService fileStorageService,
             IOrganizationInfoService organizationInfoService)
         {
             _pageService = pageService;
@@ -47,11 +50,12 @@ namespace it_department_site.Controllers
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
-      	     _mainSliderService = mainSliderService;
+      	    _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
             _userService = userService;
-            _organizationInfoService = organizationInfoService;
-        }
+            _fileStorageService = fileStorageService;
+           _organizationInfoService = organizationInfoService; 
+       }
 
         public async Task<IActionResult> LayoutSettings()
         {
@@ -82,7 +86,7 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-        
+
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
@@ -109,7 +113,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_CreateGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
+                graduate.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "graduates");
 
             await _graduateService.CreateAsync(graduate);
             return await Graduates();
@@ -123,7 +127,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_EditGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
+                graduate.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "graduates");
 
             await _graduateService.UpdateAsync(graduate.Id, graduate);
             return await Graduates();
@@ -136,8 +140,9 @@ namespace it_department_site.Controllers
         }
 
         //===========================================
-        public IActionResult CreateEmployee()
+        public async Task<IActionResult> CreateEmployee()
         {
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_CreateEmployee", new Employee());
         }
 
@@ -156,18 +161,19 @@ namespace it_department_site.Controllers
             if (employee == null) return NotFound();
 
             ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(id);
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_EditEmployee", employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile)
+        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile, int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
 
             if (photoFile != null)
-                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+                employee.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "employees");
             else
                 employee.PhotoUrl = "/images/banner_photo_2.jpg";
 
@@ -175,6 +181,18 @@ namespace it_department_site.Controllers
             employee.Email ??= string.Empty;
             employee.Specialization ??= string.Empty;
             employee.Bio ??= string.Empty;
+
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
+            }
 
             await _employeeService.CreateAsync(employee);
             if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
@@ -187,17 +205,31 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> EditEmployee(
             Employee employee,
             IFormFile? photoFile,
-            string[]? selectedCertificateFileIds)
+            string[]? selectedCertificateFileIds,
+            int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid)
             {
                 ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(employee.Id);
+                ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
                 return PartialView("_EditEmployee", employee);
             }
 
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
+            }
+
             if (photoFile != null)
-                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+                employee.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "employees");
 
             await _employeeService.UpdateAsync(employee.Id, employee);
 
@@ -467,7 +499,7 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage(IFormFile? file)
         {
             if (file == null || file.Length == 0)
             {
@@ -536,9 +568,17 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
+        public async Task<IActionResult> UploadPartner(IFormFile? file, string name, string link)
         {
-            await _partnerService.AddPartnerAsync(file, name, link);
+            if (file == null || file.Length == 0)
+            {
+                return RedirectToAction("Index", new { section = "Partners" });
+            }
+
+            var webPath = await _fileStorageService.SaveImage(file, "partners");
+
+            await _partnerService.AddPartnerAsync(webPath, name, link);
+
             return RedirectToAction("Index", new { section = "Partners" });
         }
 
@@ -645,7 +685,7 @@ namespace it_department_site.Controllers
                 post.Excerpt ??= string.Empty;
 
                 if (thumbnailFile != null)
-                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
+                    post.Thumbnail = await _fileStorageService.SaveImage(thumbnailFile, "posts");
                 else if (post.Id != 0)
                 {
                     var existing = await _postService.GetByIdAsync(post.Id);
@@ -723,28 +763,6 @@ namespace it_department_site.Controllers
                 .Distinct()
                 .Take(15)
                 .ToList();
-        }
-
-        private async Task<string> SaveImage(IFormFile file, string folderName)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
-
-            if (!Directory.Exists(rootPath))
-            {
-
-                Directory.CreateDirectory(rootPath);
-                _logger.LogInformation("Created directory for uploads at {RootPath}", rootPath);
-            }
-
-            var filePath = Path.Combine(rootPath, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                _logger.LogInformation("Saving file to {FilePath}", filePath);
-                await file.CopyToAsync(stream);
-            }
-            _logger.LogInformation("File saved successfully: {FileName}", fileName);
-            return $"/uploads/{folderName}/{fileName}";
         }
 
         [HttpPost]

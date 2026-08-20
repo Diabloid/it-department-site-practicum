@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-
 namespace it_department_site.Services
 {
     public class PostServiceService(ApplicationDbContext context) : IPostService
@@ -18,10 +17,24 @@ namespace it_department_site.Services
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<Post>> GetLatestAsync(int count)
+        public async Task<Post?> GetBySlugAsync(string slug)
         {
             return await context.Set<Post>()
-                .Where(p => p.Status == PostStatus.Published)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Slug == slug);
+        }
+
+        public async Task<IEnumerable<Post>> GetLatestAsync(int count, int? excludeId = null)
+        {
+            var query = context.Set<Post>()
+                .Where(p => p.Status == PostStatus.Published);
+
+            if (excludeId.HasValue)
+            {
+                query = query.Where(p => p.Id != excludeId.Value);
+            }
+
+            return await query
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(count)
                 .ToListAsync();
@@ -31,10 +44,8 @@ namespace it_department_site.Services
         {
             post.CreatedAt = DateTime.UtcNow;
             post.UpdatedAt = DateTime.UtcNow;
-
             context.Set<Post>().Add(post);
             await context.SaveChangesAsync();
-
             return post.Id;
         }
 
@@ -43,7 +54,6 @@ namespace it_department_site.Services
             var existing = await context.Set<Post>().FindAsync(post.Id);
             if (existing is null)
                 return;
-
             existing.Slug = post.Slug;
             existing.Title = post.Title;
             existing.Status = post.Status;
@@ -51,7 +61,6 @@ namespace it_department_site.Services
             existing.Content = post.Content;
             existing.Thumbnail = post.Thumbnail;
             existing.UpdatedAt = DateTime.UtcNow;
-
             await context.SaveChangesAsync();
         }
 
@@ -63,6 +72,15 @@ namespace it_department_site.Services
                 context.Set<Post>().Remove(post);
                 await context.SaveChangesAsync();
             }
+        }
+
+        public async Task IncrementViewsAsync(int postId)
+        {
+            await context.Set<Post>()
+                .Where(p => p.Id == postId)
+                .ExecuteUpdateAsync(s => s.SetProperty(
+                    p => p.ViewsCount,
+                    p => p.ViewsCount + 1));
         }
     }
 }

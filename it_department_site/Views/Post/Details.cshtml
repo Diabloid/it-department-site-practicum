@@ -5,7 +5,8 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/post-details.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/post-details.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/page-details.css" asp-append-version="true"/>
 }
 
 <div class="post-page">
@@ -22,9 +23,18 @@
         }
 
         <div class="post-body">
-            <div class="post-meta">
-             <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
-                @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+            <div class="page-meta-row page-meta-row--article">
+                <span class="page-meta-item ">
+                    <img src="~/svg/eye.svg" alt="" class="page-meta-icon" aria-hidden="true" />
+                    <span>@ViewBag.Views переглядів</span>
+                </span>
+                <span class="page-meta-dot" aria-hidden="true"></span>
+                <span class="page-meta-item ">
+                    <img src="~/svg/calendar.svg" alt="" class="page-meta-icon" aria-hidden="true" />
+                    <time datetime="@Model.CreatedAt.ToString("yyyy-MM-dd")">
+                        @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                    </time>
+                </span>
             </div>
 
             <div class="post-content">
@@ -36,7 +46,7 @@
     <div class="side-news-list">
         @foreach (var item in (IEnumerable<dynamic>)ViewBag.Posts) 
         {
-            <a href="/posts/@(item.Slug)-@(item.Id)">
+            <a href="/posts/@(item.Slug)">
                 <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default-news.jpg" : item.Thumbnail)');"></div>
                 
                 <div class="news-info-container">

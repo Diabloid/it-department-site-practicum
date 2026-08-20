@@ -5,25 +5,25 @@
 namespace it_department_site.Migrations
 {
     /// <inheritdoc />
-    public partial class RefactorMenuItems : Migration
+    public partial class AddViewsCountToPosts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "custom_url",
-                table: "menu_items",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.AddColumn<int>(
+                name: "views_count",
+                table: "posts",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "custom_url",
-                table: "menu_items");
+                name: "views_count",
+                table: "posts");
         }
     }
 }

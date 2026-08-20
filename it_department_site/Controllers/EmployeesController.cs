@@ -29,7 +29,7 @@ namespace it_department_site.Controllers
             var employee = await _employeeService.GetByIdAsync(id);
             if (employee == null)
             {
-                return View("~/Views/Shared/NotFound.cshtml");
+                return NotFound();
             }
             var viewModel = ToViewModel(employee);
             viewModel.Certificates = await LoadCertificatesAsync(employee, id);
@@ -119,7 +119,8 @@ namespace it_department_site.Controllers
                 ? "/images/banner_photo_2.jpg"
                 : employee.PhotoUrl,
             Email = employee.Email ?? string.Empty,
-            Bio = employee.Bio ?? string.Empty
+            Bio = employee.Bio ?? string.Empty,
+            Disciplines = employee.Disciplines?.ToList() ?? new List<Discipline>()
         };
     }
 }

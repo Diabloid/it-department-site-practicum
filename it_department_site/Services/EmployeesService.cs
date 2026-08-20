@@ -1,4 +1,4 @@
-namespace it_department_site.Repositories;
+namespace it_department_site.Services;
 
 using it_department_site.Entities;
 using it_department_site.Infrastructure;
@@ -28,7 +28,9 @@ public class EmployeeService : IEmployeeService
         await _context.Employees.ToListAsync();
 
     public async Task<Employee?> GetByIdAsync(int id) =>
-        await _context.Employees.FirstOrDefaultAsync(g => g.Id == id);
+        await _context.Employees
+        .Include(e => e.Disciplines)
+        .FirstOrDefaultAsync(g => g.Id == id);
 
     public async Task CreateAsync(Employee employee)
     {
@@ -51,6 +53,15 @@ public class EmployeeService : IEmployeeService
 
         if (!string.IsNullOrEmpty(employee.PhotoUrl))
             existing.PhotoUrl = employee.PhotoUrl;
+
+        existing.Disciplines.Clear();
+        if (employee.Disciplines != null && employee.Disciplines.Any())
+        {
+            foreach (var discipline in employee.Disciplines)
+            {
+                existing.Disciplines.Add(discipline);
+            }
+        }
 
         await _context.SaveChangesAsync();
     }

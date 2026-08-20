@@ -40,7 +40,9 @@
 
             var page = await _pageService.GetPageBySlugAsync(slug, isAdmin);
             if (page == null)
-                return View("~/Views/Shared/NotFound.cshtml");
+            {
+                return NotFound();
+            }
 
             // НОВА ЛОГІКА ПЕРЕГЛЯДІВ (COOKIES)
             string viewCookieName = $"viewed_page_{page.Id}";
