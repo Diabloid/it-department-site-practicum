@@ -15,7 +15,5 @@ global using it_department_site.ViewModels;
 global using it_department_site.DTOs;
 global using it_department_site.Services;
 global using it_department_site.Services.Interfaces;
-global using it_department_site.Repositories;
-global using it_department_site.Repositories.Interfaces;
 global using it_department_site.Infrastructure;
 global using it_department_site.Infrastructure.Mappers;
