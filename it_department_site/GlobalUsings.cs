@@ -2,8 +2,6 @@
 // Ці using працюватимуть у кожному файлі проекту автоматично
 
 // Системні
-global using System.Data;
-global using System.Text;
 global using System.Text.Json;
 
 // ASP.NET Core
