@@ -1,4 +1,4 @@
-namespace it_department_site.Repositories.Interfaces
+namespace it_department_site.Services.Interfaces
 {
     public interface IDisciplineService
     {

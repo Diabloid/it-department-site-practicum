@@ -46,7 +46,7 @@
     <div class="side-news-list">
         @foreach (var item in (IEnumerable<dynamic>)ViewBag.Posts) 
         {
-            <a href="/posts/@(item.Slug)-@(item.Id)">
+            <a href="/posts/@(item.Slug)">
                 <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default-news.jpg" : item.Thumbnail)');"></div>
                 
                 <div class="news-info-container">

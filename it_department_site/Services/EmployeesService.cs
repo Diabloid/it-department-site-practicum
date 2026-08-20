@@ -1,4 +1,4 @@
-namespace it_department_site.Repositories;
+namespace it_department_site.Services;
 
 using it_department_site.Entities;
 using it_department_site.Infrastructure;
