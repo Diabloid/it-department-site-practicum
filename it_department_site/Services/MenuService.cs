@@ -16,6 +16,7 @@ namespace it_department_site.Services
             return await dbContext.Set<MenuItem>()
                 .Include(m => m.Page)
                 .Include(m => m.Children)
+                .ThenInclude(m => m.Page)
                 .Where( m => m.ParentId == null)
                 .OrderBy(m => m.SortOrder)
                 .ToListAsync();

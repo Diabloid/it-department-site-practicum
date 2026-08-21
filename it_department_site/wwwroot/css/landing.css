@@ -579,181 +579,146 @@ h3 {
 
 /* Стилі для основної секції хедера */
 .header {
-  background-image: linear-gradient(to bottom, #949dff 0%, #ecedff 100%);
-  padding: 5px 0;
-  position: fixed; /* Закріплює хедер у верхній частині екрана */
+  background: #353b7a;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
   transition: transform 1.5s;
   box-shadow: 0 2px 12px rgba(44, 50, 88, 0.1);
-  height: 80px;
+  height: 100px;
   display: flex;
-  will-change: transform;
   align-items: center;
-
-  .header-content {
-    width: 100%;
-    margin: 0 auto; /* Центруємо */
-    padding: 0 20px;
-    height: 100%; /* На всю висоту хедера */
-  }
+  padding: 0 3%; /* the 3% is questionable value */
+  will-change: transform;
 
   &.header-out {
     transform: translateY(-100%);
   }
 
-  .logo-and-navigation-buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    /* max-width: 1200px; */ /* Закоментовано у вихідному коді */
-    margin: 0 auto;
-    padding: 0 0px;
-    box-sizing: border-box;
-  }
-
-  /* Розділення контенту на ліву та праву сторони */
-
-  .left-side,
-  .right-side {
-    height: 100%;
-    flex: 1; /* гнучкий займання місця замість фіксованого 50% */
-  }
-
   .left-side {
     display: flex;
     justify-content: flex-start;
-    padding-left: 3%;
   }
 
   .right-side {
+    flex: 1;
     display: flex;
     justify-content: flex-end;
-    padding-right: 3%;
-  }
-
-  /* Стилі для логотипу */
-
-  .logo {
-    margin-left: 0px;
-    display: flex;
-    align-items: center;
   }
 
   .logo img {
-    height: 100%;
-    max-height: 70px; /* Фіксуємо висоту, щоб не розтягувало хедер */
-    width: auto; /* Ширина підлаштується сама */
+    height: 70px;
+    width: auto;
     object-fit: contain;
   }
 
-  /* Стилі для основних навігаційних кнопок */
-
-  .navigation-buttons {
+  .main-nav {
     display: flex;
     align-items: center;
-    margin-left: 0;
-    width: auto;
-    /* overflow-x: auto; */
-    /* max-width: 50%; */
-  }
-
-  .navigation-buttons ul {
-    display: flex;
-    align-items: center; /* Центруємо по вертикалі */
-    flex-direction: row;
-    margin: 0;
-    padding: 0;
-  }
-
-  .navigation-buttons li {
-    display: flex; /* Або inline-block */
-    align-items: center;
-  }
-
-  .navigation-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    gap: 8px;
+    height: 100%;
     list-style: none;
     margin: 0;
     padding: 0;
-    flex-wrap: nowrap;
-  }
 
-  .navigation-buttons a {
-    display: block;
-    text-decoration: none;
-    color: #3d1d76;
-    font-weight: 500;
-    font-size: 14px;
-    padding: 6px 10px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
+    .main-nav-item {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease;
 
-  .navigation-buttons a:hover {
-    background-color: rgba(61, 29, 118, 0.1);
-    color: #5a2eb0;
-  }
+      > a {
+        text-decoration: none;
+        color: inherit;
+      }
 
-  .navigation-buttons li.dropdown {
-    position: relative;
-    display: inline-block;
-  }
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+      }
 
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #ffffff;
-    width: max-content;
-    min-width: 0;
-    box-shadow: 0px 8px 20px rgba(61, 29, 118, 0.15);
-    z-index: 1100;
-    border-radius: 8px;
-    top: 100%;
-    left: 0;
-    padding: 0;
-    border: 1px solid rgba(61, 29, 118, 0.1);
-    overflow: hidden;
-  }
+      &.is-active {
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        font-weight: 700;
+      }
 
-  .dropdown-content a.dropdown-link {
-    color: #3d1d76;
-    padding: 10px 16px;
-    display: block;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background 0.2s;
-    margin: 0;
-  }
+      &.group {
+        position: relative;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        &:hover {
+          .caret {
+            transform: rotate(180deg);
+            }
+          .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+          }
+        }
+      }
+    }
 
-  .dropdown-content a.dropdown-link:first-child {
-    border-radius: 8px 8px 0 0;
-  }
+    .caret {
+      font-size: 9px;
+      opacity: 0.7;
+      transition: transform 0.15s ease;
+      color: inherit;
+    }
 
-  .dropdown-content a.dropdown-link:last-child {
-    border-radius: 0 0 8px 8px;
-  }
+    .divider {
+      width: 1px;
+      height: 26px;
+      margin: 0 10px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  
+    .dropdown-content {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 240px;
+      padding: 8px;
+      margin: 0;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 26px 46px -20px rgba(20, 22, 50, 0.7);
+      list-style: none;
 
-  .dropdown-content a.dropdown-link:only-child {
-    border-radius: 8px;
-  }
-
-  .dropdown-content a.dropdown-link:hover {
-    background-color: rgba(61, 29, 118, 0.08);
-  }
-
-  .dropdown:hover .dropdown-content,
-  .dropdown.is-open .dropdown-content {
-    display: block;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+      > a {
+        padding: 11px 14px;
+        border-radius: 12px;
+        color: #575979;
+        font-size: 14px;
+        font-weight: 600;
+        white-space: nowrap;
+        text-decoration: none;
+        transition: background-color 0.15s ease;
+        &:hover {
+          background: #ecedff;
+          color: #333;
+        }
+      }
+    }
   }
 }
 

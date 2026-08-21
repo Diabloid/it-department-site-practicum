@@ -21,9 +21,9 @@
 {
     if (item.Children.Any())
     {
-        <li class="dropdown">
+        <li class="main-nav-item group">
             <a href="@ResolveMenuUrl(item)">@item.Name</a>
-
+            <span class="caret">▼</span>
             <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
@@ -34,6 +34,6 @@
     }
     else
     {
-        <li><a href="@ResolveMenuUrl(item)">@item.Name</a></li>
+        <li class="main-nav-item"><a href="@ResolveMenuUrl(item)">@item.Name</a></li>
     }
 }
