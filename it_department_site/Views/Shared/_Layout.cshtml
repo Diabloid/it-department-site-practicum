@@ -54,13 +54,18 @@
         </div>
 
         <div class="right-side">
-                 <ul class="main-nav">
-                    @Html.Raw(menuHtml)
-                    @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
-                        <li class="divider"></li>
-                        <li class="main-nav-item admin-panel"><a href='/Admin/Index'>Панель адміністатора</a></li>
-                    }
-                </ul>
+            <ul class="main-nav">
+                @Html.Raw(menuHtml)
+                @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
+                    <li class="divider"></li>
+                    <li class="main-nav-item admin-panel"><a href='/Admin/Index'>Панель адміністатора</a></li>
+                }
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             </div>
     </header>
 
