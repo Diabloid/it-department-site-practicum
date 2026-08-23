@@ -45,11 +45,11 @@ document.querySelectorAll('.nav-toggle').forEach(burgerBtn => {
 
 document.querySelectorAll('.main-nav-item.group').forEach(menuItem => {
     menuItem.addEventListener('click', () => {
-        const isOpen = !menuItem.classList.contains('is-open');
+        const isNotOpen = !menuItem.classList.contains('is-open');
         document.querySelectorAll('.main-nav-item.group.is-open').forEach((d) => {
             d.classList.remove('is-open');
          });
-        menuItem.classList.toggle('is-open', isOpen);
+        menuItem.classList.toggle('is-open', isNotOpen);
     })
 })
 
