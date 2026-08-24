@@ -13,6 +13,14 @@
     <article class="post-card">
         <div class="post-header">
             <h1 class="post-title">@Model.Title</h1>
+
+            @if (Model.Author?.Employee != null)
+            {
+                <div class="post-author">
+                    <img src="@Model.Author.Employee.PhotoUrl" alt="@Model.Author.Employee.FirstName @Model.Author.Employee.LastName" class="post-author-photo" />
+                    <span class="post-author-name">@Model.Author.Employee.FirstName @Model.Author.Employee.LastName</span>
+                </div>
+            }
         </div>
 
         @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))

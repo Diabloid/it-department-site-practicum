@@ -190,3 +190,21 @@
     height: 300px;
   }
 }
+
+.post-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.post-author-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-author-name {
+    font-weight: 500;
+}
