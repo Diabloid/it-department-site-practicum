@@ -19,44 +19,11 @@ namespace it_department_site.Entities
         [MaxLength(100)]
         public string Email { get; set; } = "";
 
-        // ТЕЛЕФОНИ
-        [Column("phone_numbers_json", TypeName = "text")]
-        public string PhoneNumbersJson { get; set; } = "[]";
-
-        [NotMapped]
+        [Column("phone_numbers", TypeName = "text")]
         public List<string> PhoneNumbers { get; set; } = new();
 
-        // СОЦІАЛЬНІ МЕРЕЖІ
-        [Column("social_links_json", TypeName = "text")]
-        public string SocialLinksJson { get; set; } = "[]";
-
-        [NotMapped]
+        [Column("social_links", TypeName = "text")]
         public List<SocialLinkItem> SocialLinks { get; set; } = new();
-
-        public void Serialize()
-        {
-            PhoneNumbersJson = JsonSerializer.Serialize(PhoneNumbers);
-            SocialLinksJson = JsonSerializer.Serialize(SocialLinks);
-        }
-
-        public void Deserialize()
-        {
-            try
-            {
-                PhoneNumbers = string.IsNullOrWhiteSpace(PhoneNumbersJson)
-                    ? new List<string>()
-                    : JsonSerializer.Deserialize<List<string>>(PhoneNumbersJson) ?? new List<string>();
-
-                SocialLinks = string.IsNullOrWhiteSpace(SocialLinksJson)
-                    ? new List<SocialLinkItem>()
-                    : JsonSerializer.Deserialize<List<SocialLinkItem>>(SocialLinksJson) ?? new List<SocialLinkItem>();
-            }
-            catch
-            {
-                PhoneNumbers = new List<string>();
-                SocialLinks = new List<SocialLinkItem>();
-            }
-        }
     }
 
     public class SocialLinkItem

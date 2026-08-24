@@ -31,14 +31,9 @@ namespace it_department_site.Services
                         new SocialLinkItem { Name = "Instagram", Icon = "bi bi-instagram", Link = "https://www.instagram.com/polytech_cv_ua?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" }
                     }
                 };
-                info.Serialize();
 
                 _context.OrganizationInfos.Add(info);
                 await _context.SaveChangesAsync();
-            }
-            else
-            {
-                info.Deserialize();
             }
 
             return info;
@@ -47,8 +42,6 @@ namespace it_department_site.Services
         public async Task UpdateAsync(OrganizationInfo updatedInfo)
         {
             var existing = await _context.OrganizationInfos.FirstOrDefaultAsync(x => x.Id == 1);
-
-            updatedInfo.Serialize();
 
             if (existing == null)
             {
@@ -59,8 +52,8 @@ namespace it_department_site.Services
             {
                 existing.Address = updatedInfo.Address;
                 existing.Email = updatedInfo.Email;
-                existing.PhoneNumbersJson = updatedInfo.PhoneNumbersJson;
-                existing.SocialLinksJson = updatedInfo.SocialLinksJson;
+                existing.PhoneNumbers = updatedInfo.PhoneNumbers;
+                existing.SocialLinks = updatedInfo.SocialLinks;
             }
 
             await _context.SaveChangesAsync();

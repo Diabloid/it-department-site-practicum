@@ -295,15 +295,15 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
 
-                    b.Property<string>("PhoneNumbersJson")
+                    b.Property<string>("PhoneNumbers")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("phone_numbers_json");
+                        .HasColumnName("phone_numbers");
 
-                    b.Property<string>("SocialLinksJson")
+                    b.Property<string>("SocialLinks")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("social_links_json");
+                        .HasColumnName("social_links");
 
                     b.HasKey("Id");
 

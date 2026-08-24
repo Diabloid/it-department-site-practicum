@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Infrastructure
@@ -44,6 +45,21 @@ namespace it_department_site.Infrastructure
                         .WithMany()
                         .HasForeignKey("employee_id")
                         .OnDelete(DeleteBehavior.Cascade)
+                );
+
+            // Налаштування конвертерів для OrganizationInfo
+            modelBuilder.Entity<OrganizationInfo>()
+                .Property(o => o.PhoneNumbers)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => string.IsNullOrEmpty(v) ? new List<string>() : v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                );
+
+            modelBuilder.Entity<OrganizationInfo>()
+                .Property(o => o.SocialLinks)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => string.IsNullOrEmpty(v) ? new List<SocialLinkItem>() : JsonSerializer.Deserialize<List<SocialLinkItem>>(v, (JsonSerializerOptions)null)
                 );
         }
     }
