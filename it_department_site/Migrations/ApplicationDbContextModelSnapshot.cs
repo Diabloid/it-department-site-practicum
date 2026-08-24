@@ -379,6 +379,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(300)")
                         .HasColumnName("excerpt");
 
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("published_at");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(150)

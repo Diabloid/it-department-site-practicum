@@ -3,6 +3,7 @@ using it_department_site.Services;
 using it_department_site.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,9 +42,32 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 builder.Services.AddScoped<IMainSliderService, MainSliderService>();
 
-builder.Services.AddScoped<IPostService, PostServiceService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
+
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+
+    q.UsePersistentStore(s =>
+    {
+        // Використовуємо JSON для серіалізації параметрів завдання
+        s.UseJsonSerializer();
+
+        s.UseMySqlConnector(mySqlOptions =>
+        {
+            mySqlOptions.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            mySqlOptions.TablePrefix = "QRTZ_";
+        });
+    });
+});
+
+// Додаємо Quartz як фоновий сервіс, який чекатиме завершення задач при вимкненні програми
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
 
 var app = builder.Build();
 
