@@ -13,7 +13,7 @@ body {
 }
 
 main {
-  padding-top: 80px; /* Компенсація висоти шапки */
+  padding-top: 100px; /* Компенсація висоти шапки */
   min-height: 100vh;
   flex-grow: 1;
 }
