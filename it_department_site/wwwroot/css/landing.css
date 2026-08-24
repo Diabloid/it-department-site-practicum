@@ -656,6 +656,13 @@ h3 {
           }
         }
 
+        &:last-child {
+          .dropdown-content {
+            right: 0;
+            left: auto;
+          }
+        }
+
         .main-nav-item-group {
           display: flex;
           align-items: center;
