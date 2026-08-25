@@ -195,7 +195,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 8px;
+    flex: 1;
 }
 
 .post-author-photo {
@@ -205,6 +205,16 @@
     object-fit: cover;
 }
 
-.post-author-name {
+a.post-author-name {
     font-weight: 500;
+    color: #636ac0;
+    text-decoration: none;
+
+  &:hover {
+    color: #6366f1;
+    text-decoration: underline;
+  }
+  &:visited {
+    color: #636ac0;
+  }
 }
