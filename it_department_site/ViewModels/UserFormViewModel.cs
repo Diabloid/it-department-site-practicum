@@ -7,8 +7,11 @@ namespace it_department_site.ViewModels
         public int Id { get; set; }
         public string Username { get; set; } = string.Empty;
         [Required]
-        [EmailAddress]
-        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Некоректна електронна пошта")]
+        [EmailAddress(ErrorMessage = "Некоректна електронна пошта")]
+        [RegularExpression(
+            @"(?i)^[^@\s]+@(polytech\.cv\.ua|polytech\.pp\.ua)$",
+            ErrorMessage = "Дозволені лише адреси polytech.cv.ua або polytech.pp.ua"
+        )]
         public string Email { get; set; } = string.Empty;
         public string? Password { get; set; }
         public int? EmployeeId { get; set; }
