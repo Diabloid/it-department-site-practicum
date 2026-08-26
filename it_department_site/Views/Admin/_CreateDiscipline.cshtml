@@ -49,29 +49,3 @@
     <button class="btn btn-success">Зберегти</button>
     <button type="button" class="btn btn-secondary" onclick="loadContent('Disciplines')">Назад</button>
 </form>
-
-<script>
-    let linkIndex = 0;
-
-    function addLinkRow(title = '', url = '', order = 0) {
-        const container = document.getElementById('links-container');
-        const row = document.createElement('div');
-        row.className = 'row g-2 mb-2 align-items-center link-row';
-        row.innerHTML = `
-            <div class="col-4">
-                <input type="text" name="ResourceLinks[${linkIndex}].Title" class="form-control" placeholder="Назва" value="${title}" required />
-            </div>
-            <div class="col-5">
-                <input type="url" name="ResourceLinks[${linkIndex}].Url" class="form-control" placeholder="URL" value="${url}" required />
-            </div>
-            <div class="col-2">
-                <input type="number" name="ResourceLinks[${linkIndex}].Order" class="form-control" placeholder="Порядок" value="${order}" required />
-            </div>
-            <div class="col-1">
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.link-row').remove()">✕</button>
-            </div>
-        `;
-        container.appendChild(row);
-        linkIndex++;
-    }
-</script>
