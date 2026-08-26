@@ -54,7 +54,7 @@
                                <a href="/posts/@(mainPost.Slug)-@(mainPost.Id)">
                                  <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default-news.jpg" : mainPost.Thumbnail)');"></div>
                                   <span class="news-date">
-                                       <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
+                                       <img class="news-date-icon" src="/svg/calendar.svg" alt="calendar" />
                                         @mainPost.CreatedAt.ToString("dd.MM.yyyy")
                                   </span>
                                   <h3>@mainPost.Title</h3>
@@ -71,7 +71,7 @@
                                                <div class="news-info-container">
                                                    <small>
                                                         <div class="news-meta" >
-                                                             <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
+                                                             <img class="news-date-icon" src="/svg/calendar.svg" alt="calendar" />
                                                               @item.CreatedAt.ToString("dd.MM.yyyy")
                                                         </div>
                                                       
