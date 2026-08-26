@@ -48,7 +48,7 @@ namespace it_department_site.Controllers
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
-      	    _mainSliderService = mainSliderService;
+            _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
             _userService = userService;
             _fileStorageService = fileStorageService;
@@ -301,6 +301,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_CreateDiscipline", discipline);
 
             await _disciplineService.CreateAsync(discipline);
@@ -311,6 +316,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_EditDiscipline", discipline);
 
             await _disciplineService.UpdateAsync(discipline.Id, discipline);

@@ -20,12 +20,12 @@ namespace it_department_site.Infrastructure
         {
             modelBuilder.Entity<Page>()
                 .Property(p => p.Status)
-                .HasConversion<string>() 
-                .HasColumnType("ENUM('Draft', 'Published')"); 
-            
+                .HasConversion<string>()
+                .HasColumnType("ENUM('Draft', 'Published')");
+
             modelBuilder.Entity<Post>()
                 .Property(p => p.Status)
-                .HasConversion<string>() 
+                .HasConversion<string>()
                 .HasColumnType("ENUM('Draft', 'Published')");
 
             modelBuilder.Entity<Employee>()
@@ -44,6 +44,9 @@ namespace it_department_site.Infrastructure
                         .HasForeignKey("employee_id")
                         .OnDelete(DeleteBehavior.Cascade)
                 );
+            modelBuilder.Entity<Discipline>()
+                .Property(d => d.IsRequired)
+                .HasDefaultValue(true);
         }
     }
 }

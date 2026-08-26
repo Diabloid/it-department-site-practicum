@@ -45,6 +45,12 @@ namespace it_department_site.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<bool>("IsRequired")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_required");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -210,6 +216,40 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("graduates");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Link", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("DisciplineId")
+                        .HasColumnType("int")
+                        .HasColumnName("discipline_id");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int")
+                        .HasColumnName("order");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.ToTable("discipline_links");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.MainSliderSlide", b =>
@@ -535,6 +575,17 @@ namespace it_department_site.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.Link", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Discipline", "Discipline")
+                        .WithMany("ResourceLinks")
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discipline");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>
                 {
                     b.HasOne("it_department_site.Entities.Page", "Page")
@@ -559,6 +610,11 @@ namespace it_department_site.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
+                {
+                    b.Navigation("ResourceLinks");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>

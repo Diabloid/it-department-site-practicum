@@ -23,5 +23,11 @@ namespace it_department_site.Entities
         [Required]
         [Column("sort_order")]
         public int SortOrder { get; set; }
+
+        [Required]
+        [Column("is_required")]
+        public bool IsRequired { get; set; } = true;
+
+        public ICollection<Link> ResourceLinks { get; set; } = new List<Link>();
     }
 }
