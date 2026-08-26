@@ -229,10 +229,6 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("image_url");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
                     b.HasKey("Slot");
 
                     b.ToTable("main_slider_slides");
