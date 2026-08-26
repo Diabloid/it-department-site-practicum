@@ -1,6 +1,7 @@
 ﻿using it_department_site.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 
 namespace it_department_site.Controllers
 {
@@ -88,7 +89,120 @@ namespace it_department_site.Controllers
         {
             return PartialView("_CreateGraduate", new Graduate());
         }
+        public async Task<IActionResult> CreateUser()
+        {
+            var employees = await _userService.GetAvailableEmployeesAsync();
+            var model = new UserFormViewModel { AvailableEmployees = employees.ToList() };
+            return PartialView("_CreateUser", model);
+        }
 
+        public async Task<IActionResult> EditUser(int id)
+        {
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var employees = await _userService.GetAvailableEmployeesAsync(excludeUserId: id);
+
+            var model = new UserFormViewModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                EmployeeId = user.EmployeeId,
+                AvailableEmployees = employees.ToList()
+            };
+            return PartialView("_EditUser", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(UserFormViewModel model)
+        {
+            ModelState.Remove("Password");
+            if (string.IsNullOrWhiteSpace(model.Password))
+            {
+                ModelState.AddModelError(nameof(model.Password), "Пароль обов'язковий");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
+                return PartialView("_CreateUser", model);
+            }
+
+            try
+            {
+                var user = new User
+                {
+                    Username = model.Username,
+                    Email = model.Email,
+                    EmployeeId = model.EmployeeId
+                };
+                await _userService.CreateAsync(user, model.Password!);
+                return await Users();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
+            {
+                if (mysqlEx.Message.Contains("IX_users_username"))
+                {
+                    ModelState.AddModelError(nameof(model.Username), "Користувач з таким логіном вже існує");
+                }
+                else if (mysqlEx.Message.Contains("employee_id"))
+                {
+                    ModelState.AddModelError(nameof(model.EmployeeId), "Цей співробітник вже прив'язаний до іншого користувача");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Не вдалося зберегти користувача через конфлікт даних");
+                }
+
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
+                return PartialView("_CreateUser", model);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(UserFormViewModel model)
+        {
+            ModelState.Remove("Password");
+            if (!ModelState.IsValid)
+            {
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync(excludeUserId: model.Id)).ToList();
+                return PartialView("_EditUser", model);
+            }
+
+            try
+            {
+                var user = new User
+                {
+                    Username = model.Username,
+                    Email = model.Email,
+                    EmployeeId = model.EmployeeId
+                };
+                await _userService.UpdateAsync(model.Id, user, model.Password);
+                return await Users();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
+            {
+                if (mysqlEx.Message.Contains("IX_users_username"))
+                {
+                    ModelState.AddModelError(nameof(model.Username), "Користувач з таким логіном вже існує");
+                }
+                else if (mysqlEx.Message.Contains("employee_id"))
+                {
+                    ModelState.AddModelError(nameof(model.EmployeeId), "Цей співробітник вже прив'язаний до іншого користувача");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Не вдалося зберегти користувача через конфлікт даних");
+                }
+
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync(excludeUserId: model.Id)).ToList();
+                return PartialView("_EditUser", model);
+            }
+        }
         public async Task<IActionResult> Graduates()
         {
             var graduates = await _graduateService.GetAllAsync();
