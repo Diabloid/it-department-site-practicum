@@ -83,10 +83,10 @@ VALUES
 (5, 'Chernivtsi IT Cluster', '/uploads/partners/3bdbc070-8131-461a-88bc-b9958bb395c7.png', 5, 'https://www.it-cluster.cv.ua/'),
 (6, 'Datawiz.io', '/uploads/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
 
-INSERT INTO main_slider_slides (slot, image_url, alt_text, updated_at) VALUES
-(1, '/images/banner_photo_1.JPG', 'Слайд 1', now()),
-(2, '/images/banner_photo_1.JPG', 'Слайд 2', now()),
-(3, '/images/banner_photo_1.JPG', 'Слайд 3', now());
+INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
+(1, '/images/banner_photo_1.JPG', 'Слайд 1'),
+(2, '/images/banner_photo_1.JPG', 'Слайд 2'),
+(3, '/images/banner_photo_1.JPG', 'Слайд 3');
 
 INSERT INTO disciplines (name, description, sort_order) VALUES
 ('Soft Skills для інженерів програмного забезпечення','', 0),
