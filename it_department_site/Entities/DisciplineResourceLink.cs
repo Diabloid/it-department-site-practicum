@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace it_department_site.Entities
 {
     [Table("discipline_links")]
-    public class Link
+    public class DisciplineResourceLink
     {
         [Key]
         [Column("id")]

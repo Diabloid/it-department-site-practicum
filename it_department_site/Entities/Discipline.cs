@@ -28,6 +28,6 @@ namespace it_department_site.Entities
         [Column("is_required")]
         public bool IsRequired { get; set; } = true;
 
-        public ICollection<Link> ResourceLinks { get; set; } = new List<Link>();
+        public ICollection<DisciplineResourceLink> ResourceLinks { get; set; } = new List<DisciplineResourceLink>();
     }
 }

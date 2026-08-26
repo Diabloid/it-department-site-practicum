@@ -69,6 +69,40 @@ namespace it_department_site.Migrations
                     b.ToTable("disciplines");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.DisciplineResourceLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("DisciplineId")
+                        .HasColumnType("int")
+                        .HasColumnName("discipline_id");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int")
+                        .HasColumnName("order");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.ToTable("discipline_links");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
@@ -216,40 +250,6 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("graduates");
-                });
-
-            modelBuilder.Entity("it_department_site.Entities.Link", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int>("DisciplineId")
-                        .HasColumnType("int")
-                        .HasColumnName("discipline_id");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int")
-                        .HasColumnName("order");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("title");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("url");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DisciplineId");
-
-                    b.ToTable("discipline_links");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.MainSliderSlide", b =>
@@ -564,6 +564,17 @@ namespace it_department_site.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.DisciplineResourceLink", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Discipline", "Discipline")
+                        .WithMany("ResourceLinks")
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discipline");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.EmployeeCertificate", b =>
                 {
                     b.HasOne("it_department_site.Entities.Employee", "Employee")
@@ -573,17 +584,6 @@ namespace it_department_site.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("it_department_site.Entities.Link", b =>
-                {
-                    b.HasOne("it_department_site.Entities.Discipline", "Discipline")
-                        .WithMany("ResourceLinks")
-                        .HasForeignKey("DisciplineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Discipline");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.MenuItem", b =>

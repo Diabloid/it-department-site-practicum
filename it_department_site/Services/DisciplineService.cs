@@ -48,7 +48,7 @@ public class DisciplineService : IDisciplineService
 
         _context.RemoveRange(existing.ResourceLinks);
         existing.ResourceLinks = discipline.ResourceLinks
-            .Select(l => new Link { Title = l.Title, Url = l.Url, Order = l.Order, DisciplineId = id })
+            .Select(l => new DisciplineResourceLink { Title = l.Title, Url = l.Url, Order = l.Order, DisciplineId = id })
             .ToList();
 
         await _context.SaveChangesAsync();
