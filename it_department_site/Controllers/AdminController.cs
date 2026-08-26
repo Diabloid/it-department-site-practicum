@@ -281,7 +281,7 @@ namespace it_department_site.Controllers
 
         public IActionResult CreateDiscipline()
         {
-            return PartialView("_CreateDiscipline", new Discipline());
+            return PartialView("_CreateDiscipline", new Discipline{Name = ""});
         }
 
         public async Task<IActionResult> Disciplines()
