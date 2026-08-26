@@ -2,6 +2,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4>Користувачі</h4>
+    <button class="btn btn-primary" onclick="loadContent('CreateUser')">Додати користувача</button>
 </div>
 
 <table class="table table-bordered table-striped">
@@ -10,7 +11,9 @@
             <th>Id</th>
             <th>Ім'я</th>
             <th>Електронна пошта</th>
+            <th>Співробітник</th>
             <th>Дата створення</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -20,7 +23,11 @@
                 <td>@user.Id</td>
                 <td>@user.Username</td>
                 <td>@user.Email</td>
+                <td>@(user.Employee != null ? $"{user.Employee.LastName} {user.Employee.FirstName}" : "-")</td>
                 <td>@user.CreatedAt</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadContent('EditUser', '/@user.Id')">Редагувати</button>
+                </td>
             </tr>
         }
     </tbody>

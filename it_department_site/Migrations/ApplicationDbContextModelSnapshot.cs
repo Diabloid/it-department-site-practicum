@@ -229,10 +229,6 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("image_url");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
                     b.HasKey("Slot");
 
                     b.ToTable("main_slider_slides");
@@ -489,6 +485,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int")
+                        .HasColumnName("employee_id");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -502,6 +502,9 @@ namespace it_department_site.Migrations
                         .HasColumnName("username");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
 
                     b.HasIndex("Username")
                         .IsUnique();
@@ -559,6 +562,15 @@ namespace it_department_site.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.User", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
