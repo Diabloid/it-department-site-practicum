@@ -13,12 +13,12 @@ namespace it_department_site.Entities
         [Required]
         [MaxLength(200)]
         [Column("title")]
-        public string Title { get; set; } = string.Empty;
+        public required string Title { get; set; }
 
         [Required]
         [MaxLength(500)]
         [Column("url")]
-        public string Url { get; set; } = string.Empty;
+        public required string Url { get; set; }
 
         [Required]
         [Column("order")]
