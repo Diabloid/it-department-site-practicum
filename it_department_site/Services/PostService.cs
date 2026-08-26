@@ -21,6 +21,8 @@ namespace it_department_site.Services
         {
             return await context.Set<Post>()
                 .AsNoTracking()
+                .Include(p => p.Author)
+                .ThenInclude(a => a!.Employee)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }
 
