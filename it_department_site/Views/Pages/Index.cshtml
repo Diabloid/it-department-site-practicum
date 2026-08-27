@@ -31,7 +31,7 @@
                            <p>Студентське життя сповнене подій та емоцій. Тут ми ділимося найяскравішими моментами нашого навчання та відпочинку.</p>
                        </div>
                        <div class="image-field">
-                           <img src="~/images/banner_photo_3.JPG" alt="Our Life Image" />
+                           <img src="~/images/our-life.jpg" alt="Our Life Image" />
                        </div>
                    </div>
                </div>
@@ -52,9 +52,9 @@
                        <div class="news-grid-container">
                            <div class="main-news-block">
                                <a href="/posts/@(mainPost.Slug)">
-                                 <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default-news.jpg" : mainPost.Thumbnail)');"></div>
+                                 <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default/news-thumbnail.jpg" : mainPost.Thumbnail)');"></div>
                                   <span class="news-date">
-                                       <img class="news-date-icon" src="/svg/calendar.svg" alt="calendar" />
+                                       <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
                                         @mainPost.CreatedAt.ToString("dd.MM.yyyy")
                                   </span>
                                   <h3>@mainPost.Title</h3>
@@ -67,11 +67,11 @@
                                        @foreach (var item in sidePosts)
                                    {
                                        <a href="/posts/@(item.Slug)">
-                                           <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default-news.jpg" : item.Thumbnail)');"></div>
+                                           <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default/news-thumbnail.jpg" : item.Thumbnail)');"></div>
                                                <div class="news-info-container">
                                                    <small>
                                                         <div class="news-meta" >
-                                                             <img class="news-date-icon" src="/svg/calendar.svg" alt="calendar" />
+                                                             <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
                                                               @item.CreatedAt.ToString("dd.MM.yyyy")
                                                         </div>
                                                       
@@ -101,7 +101,7 @@
         <div class="reviews-field active fade">
             <div class="pfp-name-status">
                 <div class="profile-picture">
-                    <img src="~/images/banner_photo_2.jpg" alt="Олександр Петренко" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
+                    <img src="~/images/default/avatar.jpg" alt="Олександр Петренко" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
                 </div>
                 <div class="name-and-status">
                     <h3>Олександр Петренко</h3>
@@ -125,7 +125,7 @@
         <div class="reviews-field fade">
             <div class="pfp-name-status">
                 <div class="profile-picture">
-                    <img src="~/images/banner_photo_2.jpg" alt="Марія Ковальчук" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
+                    <img src="~/images/default/avatar.jpg" alt="Марія Ковальчук" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
                 </div>
                 <div class="name-and-status">
                     <h3>Марія Ковальчук</h3>
@@ -149,7 +149,7 @@
         <div class="reviews-field fade">
             <div class="pfp-name-status">
                 <div class="profile-picture">
-                    <img src="~/images/banner_photo_2.jpg" alt="Дмитро Іванов" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
+                    <img src="~/images/default/avatar.jpg" alt="Дмитро Іванов" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
                 </div>
                 <div class="name-and-status">
                     <h3>Дмитро Іванов</h3>
@@ -173,7 +173,7 @@
         <div class="reviews-field fade">
             <div class="pfp-name-status">
                 <div class="profile-picture">
-                    <img src="~/images/banner_photo_2.jpg" alt="Олена Козак" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
+                    <img src="~/images/default/avatar.jpg" alt="Олена Козак" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
                 </div>
                 <div class="name-and-status">
                     <h3>Олена Козак</h3>

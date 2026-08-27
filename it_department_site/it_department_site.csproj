@@ -27,4 +27,12 @@
     <Folder Include="wwwroot\ckeditor\src\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\svg\calendar.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\svg\email-icon.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\svg\eye.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\svg\instagram-icon.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\svg\youtube-icon.svg" />
+  </ItemGroup>
+
 </Project>
