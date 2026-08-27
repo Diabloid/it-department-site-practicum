@@ -201,7 +201,7 @@
     </div>
 </div>
             <!-- кінець відгука -->
-           @await Html.PartialAsync("Partials/_PartnerSlider", (List<it_department_site.Entities.Partner>)(ViewBag.Partners ?? new List<it_department_site.Entities.Partner>()))
        </div>
    </div>
 </div>
+@await Html.PartialAsync("Partials/_PartnerSlider", (List<Partner>)(ViewBag.Partners ?? new List<Partner>()))

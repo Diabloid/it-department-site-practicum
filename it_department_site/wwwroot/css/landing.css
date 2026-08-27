@@ -38,42 +38,6 @@ main {
 }
 
 /* ====================================================================== */
-/* 2. СТИЛІ START-BANNER */
-/* ====================================================================== */
-
-.start-banner {
-  background-color: #636ac0;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 78vh;
-  width: 100%;
-  overflow: hidden;
-}
-
-.banner-container {
-  width: 100%;
-  display: flex;
-  white-space: nowrap;
-}
-
-.banner-element {
-  flex-shrink: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-.banner_image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ====================================================================== */
 /* 3. СТИЛІ OUR LIFE та NEWS */
 /* ====================================================================== */
 /* Рівняння рядка */
@@ -504,7 +468,6 @@ h3 {
 /* ====================================================================== */
 
 /* Загальні налаштування для плавного переходу */
-.start-banner,
 .ourlife-area,
 .news-area,
 .reviews-general-title,
@@ -515,18 +478,6 @@ h3 {
     opacity 0.8s ease-out,
     transform 0.8s ease-out; /* */
   will-change: opacity, transform;
-}
-
-/* --- 7.1. Start Banner --- */
-.start-banner {
-  transition: none; /*але треба збільшити час для появлення. для цього треба  */
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.start-banner.show {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* --- 7.2. Scroll Reveal: Our Life (Знизу) та News (Справа) --- */
@@ -1092,66 +1043,3 @@ h3 {
     }
   }
 }
-
-.banner-track {
-   display: flex;
-   transition: transform 0.6s ease;
-   will-change: transform;
-}
-
-.banner-slide {
-   min-width: 100%;
-}
-
-.banner-dots {
-   position: absolute;
-   left: 50%;
-   bottom: 20px;
-   transform: translateX(-50%);
-   display: flex;
-   align-items: center;
-   gap: 10px;
-   z-index: 3;
-}
-
-.banner-dot {
-   width: 10px;
-   height: 10px;
-   border-radius: 50%;
-   border: 0;
-   background: rgba(255, 255, 255, 0.55);
-   padding: 0;
-   cursor: pointer;
-   transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.banner-dot.is-active {
-   transform: scale(1.2);
-   background: #ffffff;
-}
-
-.banner-arrow {
-   position: absolute;
-   top: 50%;
-   transform: translateY(-50%);
-   width: 42px;
-   height: 42px;
-   border: 0;
-   border-radius: 50%;
-   background: rgba(0, 0, 0, 0.35);
-   color: #fff;
-   font-size: 22px;
-   line-height: 1;
-   cursor: pointer;
-   z-index: 3;
-}
-
-.banner-arrow-prev {
-   left: 18px;
-}
-
-.banner-arrow-next {
-   right: 18px;
-}
-
-/* ====================================================================== */
