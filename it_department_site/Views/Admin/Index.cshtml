@@ -202,16 +202,19 @@
           if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = '';
         }
 
-        function fillForm(id, name, parentId, pageId, sortOrder, customUrl) {
-          const modalLabel = document.getElementById('menuModalLabel');
-          if(modalLabel) modalLabel.textContent = 'Редагування пункту меню';
-
-          if(document.getElementById('menuId')) document.getElementById('menuId').value = id;
-          if(document.getElementById('menuName')) document.getElementById('menuName').value = name;
-          if(document.getElementById('parentId')) document.getElementById('parentId').value = parentId;
-          if(document.getElementById('pageId')) document.getElementById('pageId').value = pageId;
-          if(document.getElementById('customUrl')) document.getElementById('customUrl').value = customUrl || '';
-          if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = sortOrder;
+        function fillFormFromButton(el) {
+            const modalLabel = document.getElementById('menuModalLabel');
+            if(modalLabel) modalLabel.textContent = 'Редагування пункту меню';
+            if(document.getElementById('menuId')) document.getElementById('menuId').value = el.dataset.id;
+            if(document.getElementById('menuName')) document.getElementById('menuName').value = el.dataset.name;
+            if(document.getElementById('parentId')) document.getElementById('parentId').value = el.dataset.parentId;
+            if(document.getElementById('pageId')) document.getElementById('pageId').value = el.dataset.pageId;
+            if(document.getElementById('customUrl')) document.getElementById('customUrl').value = el.dataset.customUrl || '';
+            if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = el.dataset.sortOrder;
+            if(document.getElementById('menuType')) document.getElementById('menuType').value = el.dataset.type;
+            if(document.getElementById('menuDisabled')) document.getElementById('menuDisabled').checked = el.dataset.disabled === 'true';
         }
     </script>
+    if(document.getElementById('menuType')) document.getElementById('menuType').value = 'Item';
+    if(document.getElementById('menuDisabled')) document.getElementById('menuDisabled').checked = false;
 }

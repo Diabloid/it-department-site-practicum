@@ -13,14 +13,21 @@ namespace it_department_site.Services
 
         public async Task<List<MenuItem>> GetRootMenuItemsAsync()
         {
-            return await dbContext.Set<MenuItem>()
+            var items = await dbContext.Set<MenuItem>()
                 .Include(m => m.Page)
-                .Include(m => m.Children)
-                .Where( m => m.ParentId == null)
+                .Include(m => m.Children.Where(c => !c.Disabled))
+                .Where(m => m.ParentId == null && !m.Disabled)
                 .OrderBy(m => m.SortOrder)
                 .ToListAsync();
+
+            foreach (var item in items)
+            {
+                item.Children = item.Children.OrderBy(c => c.SortOrder).ToList();
+            }
+
+            return items;
         }
-    
+
         public async Task LinkPageToMenuAsync(int pageId, int? parentId, string title)
         {
             var existingItem = await dbContext.Set<MenuItem>()
@@ -53,12 +60,22 @@ namespace it_department_site.Services
 
         public async Task CreateMenuItemAsync(MenuItem item)
         {
+            if (item.Type == MenuItemType.Separator)
+            {
+                item.Name = string.Empty;
+            }
+
             dbContext.Set<MenuItem>().Add(item);
             await dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateMenuItemAsync(MenuItem item)
         {
+            if (item.Type == MenuItemType.Separator)
+            {
+                item.Name = string.Empty;
+            }
+
             dbContext.Set<MenuItem>().Update(item);
             await dbContext.SaveChangesAsync();
         }
