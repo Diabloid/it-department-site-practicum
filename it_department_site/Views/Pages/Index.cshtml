@@ -5,9 +5,7 @@
        ?? new List<MainSliderSlide>();
 }
 
-
 <div class="main-content">
-
 
    @if (mainSliderSlides.Any())
    {
@@ -15,7 +13,6 @@
            @await Html.PartialAsync("Partials/_MainBannerSlider", mainSliderSlides)
        </div>
    }
-
 
    <div class="content-part-line">
        <div class="content-part">
