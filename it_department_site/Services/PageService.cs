@@ -2,9 +2,7 @@
 
 namespace it_department_site.Services
 {
-    public class PageService(
-        ApplicationDbContext dbContext,
-        EncryptionService encryption) : IPageService
+    public class PageService(ApplicationDbContext dbContext) : IPageService
     {
         public async Task<Page?> GetPageBySlugAsync(string slug, bool isAdmin)
         {
@@ -14,7 +12,7 @@ namespace it_department_site.Services
             if (page.Status == PageStatus.Draft && !isAdmin)
                 return null;
 
-            DecryptContent(page);
+            DeserializeContent(page);
             return page;
         }
 
@@ -23,7 +21,7 @@ namespace it_department_site.Services
             var page = await dbContext.Set<Page>().AsNoTracking().FirstOrDefaultAsync(page => page.Id == id);
             if (page != null)
             {
-                DecryptContent(page);
+                DeserializeContent(page);
             }
 
             return page;
@@ -33,7 +31,7 @@ namespace it_department_site.Services
         {
             var pages = await dbContext.Set<Page>().AsNoTracking().ToListAsync();
             foreach (var page in pages)
-                DecryptContent(page);
+                DeserializeContent(page);
             return pages;
         }
 
@@ -45,7 +43,7 @@ namespace it_department_site.Services
                 .ToListAsync();
 
             foreach (var page in pages)
-                DecryptContent(page);
+                DeserializeContent(page);
             return pages;
         }
 
@@ -57,7 +55,7 @@ namespace it_department_site.Services
 
         public async Task<int> CreatePageAsync(Page page)
         {
-            EncryptContent(page);
+            SerializeContent(page);
             await dbContext.Set<Page>().AddAsync(page);
             await dbContext.SaveChangesAsync();
             return page.Id;
@@ -65,7 +63,7 @@ namespace it_department_site.Services
 
         public async Task UpdatePageAsync(Page page)
         {
-            EncryptContent(page);
+            SerializeContent(page);
             dbContext.Set<Page>().Update(page);
             await dbContext.SaveChangesAsync();
         }
@@ -86,17 +84,14 @@ namespace it_department_site.Services
                     p => p.ViewsCount + 1));
         }
 
-        // --- Private Methods (Encryption) ---
-        // Вони лишаються синхронними, бо це робота з пам'яттю/CPU
+        // --- Private Methods (JSON serialization, no encryption) ---
 
-        private void EncryptContent(Page page)
+        private void SerializeContent(Page page)
         {
-            var json = JsonSerializer.Serialize(page.Content);
-            var encrypted = encryption.Encrypt(json);
-            page.ContentJson = encrypted;
+            page.ContentJson = JsonSerializer.Serialize(page.Content);
         }
 
-        private void DecryptContent(Page page)
+        private void DeserializeContent(Page page)
         {
             try
             {
@@ -106,27 +101,7 @@ namespace it_department_site.Services
                     return;
                 }
 
-                var decrypted = encryption.Decrypt(page.ContentJson);
-
-                if (string.IsNullOrWhiteSpace(decrypted))
-                {
-                    page.Content = new ContentSections();
-                    return;
-                }
-
-                page.Content = JsonSerializer.Deserialize<ContentSections>(decrypted) ?? new ContentSections();
-            }
-            catch (FormatException)
-            {
-                try
-                {
-                    page.Content = JsonSerializer.Deserialize<ContentSections>(page.ContentJson) ??
-                                   new ContentSections();
-                }
-                catch
-                {
-                    page.Content = new ContentSections();
-                }
+                page.Content = JsonSerializer.Deserialize<ContentSections>(page.ContentJson) ?? new ContentSections();
             }
             catch (JsonException)
             {

@@ -11,8 +11,8 @@ using it_department_site.Infrastructure;
 namespace it_department_site.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260728074154_RefactorMenuItems")]
-    partial class RefactorMenuItems
+    [Migration("20260731172858_AddEmployeeDisciplinesManyToMany")]
+    partial class AddEmployeeDisciplinesManyToMany
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,6 +22,21 @@ namespace it_department_site.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("DisciplineEmployee", b =>
+                {
+                    b.Property<int>("DisciplinesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DisciplinesId", "EmployeesId");
+
+                    b.HasIndex("EmployeesId");
+
+                    b.ToTable("employee_disciplines", (string)null);
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
                 {
                     b.Property<int>("Id")
@@ -29,12 +44,8 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
                     b.Property<string>("Description")
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
@@ -47,13 +58,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("sort_order");
 
-                    b.Property<string>("Teacher")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("teacher");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("disciplines");
                 });
@@ -67,7 +75,7 @@ namespace it_department_site.Migrations
 
                     b.Property<string>("Bio")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("bio");
 
                     b.Property<string>("Email")
@@ -106,10 +114,13 @@ namespace it_department_site.Migrations
 
                     b.Property<string>("Specialization")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("specialization");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("employees");
                 });
@@ -251,11 +262,6 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("page_id");
 
-                    b.Property<string>("PageSlug")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("page_slug");
-
                     b.Property<int?>("ParentId")
                         .HasColumnType("int")
                         .HasColumnName("parent_id");
@@ -362,6 +368,66 @@ namespace it_department_site.Migrations
                     b.ToTable("partners");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int")
+                        .HasColumnName("author_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Excerpt")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)")
+                        .HasColumnName("excerpt");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("slug");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("ENUM('Draft', 'Published')")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("longtext")
+                        .HasColumnName("thumbnail");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("posts");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.SiteSettings", b =>
                 {
                     b.Property<int>("Id")
@@ -442,6 +508,21 @@ namespace it_department_site.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("DisciplineEmployee", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Discipline", null)
+                        .WithMany()
+                        .HasForeignKey("DisciplinesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("it_department_site.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("EmployeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("it_department_site.Entities.EmployeeCertificate", b =>
                 {
                     b.HasOne("it_department_site.Entities.Employee", "Employee")
@@ -466,6 +547,17 @@ namespace it_department_site.Migrations
                     b.Navigation("Page");
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Post", b =>
+                {
+                    b.HasOne("it_department_site.Entities.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>

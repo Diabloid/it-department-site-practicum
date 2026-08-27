@@ -1,5 +1,7 @@
 ﻿using it_department_site.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 
 namespace it_department_site.Controllers
 {
@@ -19,6 +21,7 @@ namespace it_department_site.Controllers
         private readonly IMainSliderService _mainSliderService;
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
+        private readonly IFileStorageService _fileStorageService;
 
         public AdminController(
             IPageService pageService,
@@ -33,7 +36,8 @@ namespace it_department_site.Controllers
             Microsoft.Extensions.Options.IOptions<GoogleDriveOptions> driveOptions,
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
-            IUserService userService)
+            IUserService userService,
+            IFileStorageService fileStorageService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -45,9 +49,10 @@ namespace it_department_site.Controllers
             _employeeService = employeeService;
             _driveService = driveService;
             _driveOptions = driveOptions.Value;
-      	     _mainSliderService = mainSliderService;
+            _mainSliderService = mainSliderService;
             _disciplineService = disciplineService;
-            _userService = userService; 
+            _userService = userService;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<IActionResult> LayoutSettings()
@@ -79,12 +84,125 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-        
+
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
         }
+        public async Task<IActionResult> CreateUser()
+        {
+            var employees = await _userService.GetAvailableEmployeesAsync();
+            var model = new UserFormViewModel { AvailableEmployees = employees.ToList() };
+            return PartialView("_CreateUser", model);
+        }
 
+        public async Task<IActionResult> EditUser(int id)
+        {
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var employees = await _userService.GetAvailableEmployeesAsync(excludeUserId: id);
+
+            var model = new UserFormViewModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                EmployeeId = user.EmployeeId,
+                AvailableEmployees = employees.ToList()
+            };
+            return PartialView("_EditUser", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(UserFormViewModel model)
+        {
+            ModelState.Remove("Password");
+            if (string.IsNullOrWhiteSpace(model.Password))
+            {
+                ModelState.AddModelError(nameof(model.Password), "Пароль обов'язковий");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
+                return PartialView("_CreateUser", model);
+            }
+
+            try
+            {
+                var user = new User
+                {
+                    Username = model.Username,
+                    Email = model.Email,
+                    EmployeeId = model.EmployeeId
+                };
+                await _userService.CreateAsync(user, model.Password!);
+                return await Users();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
+            {
+                if (mysqlEx.Message.Contains("IX_users_username"))
+                {
+                    ModelState.AddModelError(nameof(model.Username), "Користувач з таким логіном вже існує");
+                }
+                else if (mysqlEx.Message.Contains("employee_id"))
+                {
+                    ModelState.AddModelError(nameof(model.EmployeeId), "Цей співробітник вже прив'язаний до іншого користувача");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Не вдалося зберегти користувача через конфлікт даних");
+                }
+
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
+                return PartialView("_CreateUser", model);
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(UserFormViewModel model)
+        {
+            ModelState.Remove("Password");
+            if (!ModelState.IsValid)
+            {
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync(excludeUserId: model.Id)).ToList();
+                return PartialView("_EditUser", model);
+            }
+
+            try
+            {
+                var user = new User
+                {
+                    Username = model.Username,
+                    Email = model.Email,
+                    EmployeeId = model.EmployeeId
+                };
+                await _userService.UpdateAsync(model.Id, user, model.Password);
+                return await Users();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
+            {
+                if (mysqlEx.Message.Contains("IX_users_username"))
+                {
+                    ModelState.AddModelError(nameof(model.Username), "Користувач з таким логіном вже існує");
+                }
+                else if (mysqlEx.Message.Contains("employee_id"))
+                {
+                    ModelState.AddModelError(nameof(model.EmployeeId), "Цей співробітник вже прив'язаний до іншого користувача");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Не вдалося зберегти користувача через конфлікт даних");
+                }
+
+                model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync(excludeUserId: model.Id)).ToList();
+                return PartialView("_EditUser", model);
+            }
+        }
         public async Task<IActionResult> Graduates()
         {
             var graduates = await _graduateService.GetAllAsync();
@@ -106,7 +224,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_CreateGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
+                graduate.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "graduates");
 
             await _graduateService.CreateAsync(graduate);
             return await Graduates();
@@ -120,7 +238,7 @@ namespace it_department_site.Controllers
             if (!ModelState.IsValid) return PartialView("_EditGraduate", graduate);
 
             if (photoFile != null)
-                graduate.PhotoUrl = await SaveImage(photoFile, "graduates");
+                graduate.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "graduates");
 
             await _graduateService.UpdateAsync(graduate.Id, graduate);
             return await Graduates();
@@ -133,8 +251,9 @@ namespace it_department_site.Controllers
         }
 
         //===========================================
-        public IActionResult CreateEmployee()
+        public async Task<IActionResult> CreateEmployee()
         {
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_CreateEmployee", new Employee());
         }
 
@@ -153,18 +272,19 @@ namespace it_department_site.Controllers
             if (employee == null) return NotFound();
 
             ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(id);
+            ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
             return PartialView("_EditEmployee", employee);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile)
+        public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile, int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
 
             if (photoFile != null)
-                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+                employee.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "employees");
             else
                 employee.PhotoUrl = "/images/banner_photo_2.jpg";
 
@@ -172,6 +292,18 @@ namespace it_department_site.Controllers
             employee.Email ??= string.Empty;
             employee.Specialization ??= string.Empty;
             employee.Bio ??= string.Empty;
+
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
+            }
 
             await _employeeService.CreateAsync(employee);
             if (!string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl))
@@ -184,17 +316,31 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> EditEmployee(
             Employee employee,
             IFormFile? photoFile,
-            string[]? selectedCertificateFileIds)
+            string[]? selectedCertificateFileIds,
+            int[]? selectedDisciplines)
         {
             ModelState.Remove("PhotoUrl");
             if (!ModelState.IsValid)
             {
                 ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(employee.Id);
+                ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
                 return PartialView("_EditEmployee", employee);
             }
 
+            if (selectedDisciplines != null && selectedDisciplines.Length > 0)
+            {
+                var allDisciplines = await _disciplineService.GetAllAsync();
+                employee.Disciplines = allDisciplines
+                    .Where(d => selectedDisciplines.Contains(d.Id))
+                    .ToList();
+            }
+            else
+            {
+                employee.Disciplines = new List<Discipline>();
+            }
+
             if (photoFile != null)
-                employee.PhotoUrl = await SaveImage(photoFile, "employees");
+                employee.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "employees");
 
             await _employeeService.UpdateAsync(employee.Id, employee);
 
@@ -249,7 +395,7 @@ namespace it_department_site.Controllers
 
         public IActionResult CreateDiscipline()
         {
-            return PartialView("_CreateDiscipline", new Discipline());
+            return PartialView("_CreateDiscipline", new Discipline{Name = ""});
         }
 
         public async Task<IActionResult> Disciplines()
@@ -269,6 +415,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_CreateDiscipline", discipline);
 
             await _disciplineService.CreateAsync(discipline);
@@ -279,6 +430,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_EditDiscipline", discipline);
 
             await _disciplineService.UpdateAsync(discipline.Id, discipline);
@@ -464,7 +620,7 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file)
+        public async Task<IActionResult> UploadImage(IFormFile? file)
         {
             if (file == null || file.Length == 0)
             {
@@ -533,9 +689,17 @@ namespace it_department_site.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPartner(IFormFile file, string name, string link)
+        public async Task<IActionResult> UploadPartner(IFormFile? file, string name, string link)
         {
-            await _partnerService.AddPartnerAsync(file, name, link);
+            if (file == null || file.Length == 0)
+            {
+                return RedirectToAction("Index", new { section = "Partners" });
+            }
+
+            var webPath = await _fileStorageService.SaveImage(file, "partners");
+
+            await _partnerService.AddPartnerAsync(webPath, name, link);
+
             return RedirectToAction("Index", new { section = "Partners" });
         }
 
@@ -642,7 +806,7 @@ namespace it_department_site.Controllers
                 post.Excerpt ??= string.Empty;
 
                 if (thumbnailFile != null)
-                    post.Thumbnail = await SaveImage(thumbnailFile, "posts");
+                    post.Thumbnail = await _fileStorageService.SaveImage(thumbnailFile, "posts");
                 else if (post.Id != 0)
                 {
                     var existing = await _postService.GetByIdAsync(post.Id);
@@ -720,28 +884,6 @@ namespace it_department_site.Controllers
                 .Distinct()
                 .Take(15)
                 .ToList();
-        }
-
-        private async Task<string> SaveImage(IFormFile file, string folderName)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folderName);
-
-            if (!Directory.Exists(rootPath))
-            {
-
-                Directory.CreateDirectory(rootPath);
-                _logger.LogInformation("Created directory for uploads at {RootPath}", rootPath);
-            }
-
-            var filePath = Path.Combine(rootPath, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                _logger.LogInformation("Saving file to {FilePath}", filePath);
-                await file.CopyToAsync(stream);
-            }
-            _logger.LogInformation("File saved successfully: {FileName}", fileName);
-            return $"/uploads/{folderName}/{fileName}";
         }
 
         [HttpPost]

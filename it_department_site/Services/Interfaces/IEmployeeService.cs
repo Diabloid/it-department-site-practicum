@@ -1,7 +1,7 @@
 using it_department_site.Entities;
 using it_department_site.ViewModels;
 
-namespace it_department_site.Repositories.Interfaces
+namespace it_department_site.Services.Interfaces
 {
     public interface IEmployeeService
     {

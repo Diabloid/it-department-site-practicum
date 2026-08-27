@@ -7,6 +7,7 @@ namespace it_department_site.Entities
 {
     
     [Table("employees")]
+    [Index(nameof(Email), IsUnique = true)]
     public class Employee
     {
         [Key]
@@ -34,11 +35,11 @@ namespace it_department_site.Entities
         public string Email { get; set; }
 
         [Required]
-        [Column("specialization")]
+        [Column("specialization", TypeName = "text")]
         public string Specialization { get; set; }
 
         [Required]
-        [Column("bio")]
+        [Column("bio", TypeName = "text")]
         public string Bio { get; set; }
 
         [Required]
@@ -50,5 +51,7 @@ namespace it_department_site.Entities
         public string? GoogleDriveFolderUrl { get; set; }
 
         public ICollection<EmployeeCertificate> Certificates { get; set; } = new List<EmployeeCertificate>();
+
+        public virtual ICollection<Discipline> Disciplines { get; set; } = new List<Discipline>();
     }
 }

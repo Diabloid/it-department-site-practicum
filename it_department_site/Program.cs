@@ -21,10 +21,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 
-// 3. Реєстрація підключення до БД (Dapper)
-builder.Services.AddScoped<IDbConnection>(sp =>
-    new MySqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 // 4. Реєстрація Репозиторіїв та Сервісів (Всі Scoped)
@@ -38,11 +34,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 
-builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddScoped<EncryptionService>();
 
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 builder.Services.AddScoped<IMainSliderService, MainSliderService>();
@@ -50,13 +44,13 @@ builder.Services.AddScoped<IMainSliderService, MainSliderService>();
 builder.Services.AddScoped<IPostService, PostServiceService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
@@ -74,6 +68,8 @@ app.UseRouting();
 app.UseAuthentication(); // Хто ти?
 app.UseAuthorization();  // Що тобі можна?
 
+app.UseStatusCodePagesWithReExecute("/Error", "?code={0}");
+
 app.UseSession();
 
 // Маршрути
@@ -81,13 +77,6 @@ app.MapControllerRoute(
     name: "admin",
     pattern: "Admin",
     defaults: new { controller = "Admin", action = "Index" }
-);
-
-// ВАЖЛИВО: маршрут постів має бути ВИЩЕ, ніж pageBySlug
-app.MapControllerRoute(
-    name: "posts",
-    pattern: "posts/{slug}-{id:int}",
-    defaults: new { controller = "Posts", action = "Details" }
 );
 
 app.MapControllerRoute(

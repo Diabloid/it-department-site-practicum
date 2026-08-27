@@ -22,35 +22,14 @@ namespace it_department_site.Services
             return await _context.Partners.OrderBy(p => p.SortOrder).ToListAsync();
         }
 
-        public async Task AddPartnerAsync(IFormFile file, string name, string link)
+        public async Task AddPartnerAsync(string logoUrl, string name, string link)
         {
-            if (file == null || file.Length == 0) return;
-
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "images", "partners");
-            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(uploadsFolder, fileName);
-            var webPath = "/images/partners/" + fileName;
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-
-            // Якщо ім'я не передали, беремо з назви файлу
-            var finalName = string.IsNullOrWhiteSpace(name)
-                ? Path.GetFileNameWithoutExtension(file.FileName)
-                : name;
-
-            // Шукаємо максимальний порядок сортування через LINQ
-            // Якщо таблиця порожня, повертаємо 0
             var maxOrder = await _context.Partners.MaxAsync(p => (int?)p.SortOrder) ?? 0;
 
             var partner = new Partner
             {
-                Name = finalName,
-                LogoFileName = webPath,
+                Name = name,
+                LogoFileName = logoUrl,
                 SortOrder = maxOrder + 1,
                 Link = link
             };

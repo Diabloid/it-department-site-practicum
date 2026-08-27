@@ -19,6 +19,21 @@ namespace it_department_site.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("employee_disciplines", b =>
+                {
+                    b.Property<int>("discipline_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("employee_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("discipline_id", "employee_id");
+
+                    b.HasIndex("employee_id");
+
+                    b.ToTable("employee_disciplines");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
                 {
                     b.Property<int>("Id")
@@ -26,13 +41,15 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
                     b.Property<string>("Description")
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("description");
+
+                    b.Property<bool>("IsRequired")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_required");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -44,15 +61,46 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("sort_order");
 
-                    b.Property<string>("Teacher")
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("disciplines");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.DisciplineResourceLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("DisciplineId")
+                        .HasColumnType("int")
+                        .HasColumnName("discipline_id");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int")
+                        .HasColumnName("order");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)")
-                        .HasColumnName("teacher");
+                        .HasColumnName("title");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("url");
 
                     b.HasKey("Id");
 
-                    b.ToTable("disciplines");
+                    b.HasIndex("DisciplineId");
+
+                    b.ToTable("discipline_links");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
@@ -64,7 +112,7 @@ namespace it_department_site.Migrations
 
                     b.Property<string>("Bio")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("bio");
 
                     b.Property<string>("Email")
@@ -103,10 +151,13 @@ namespace it_department_site.Migrations
 
                     b.Property<string>("Specialization")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("text")
                         .HasColumnName("specialization");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("employees");
                 });
@@ -217,10 +268,6 @@ namespace it_department_site.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)")
                         .HasColumnName("image_url");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
 
                     b.HasKey("Slot");
 
@@ -404,6 +451,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at");
 
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("int")
+                        .HasColumnName("views_count");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -474,6 +525,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
 
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int")
+                        .HasColumnName("employee_id");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -488,10 +543,39 @@ namespace it_department_site.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
                     b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("employee_disciplines", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Discipline", null)
+                        .WithMany()
+                        .HasForeignKey("discipline_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("it_department_site.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("employee_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.DisciplineResourceLink", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Discipline", "Discipline")
+                        .WithMany("ResourceLinks")
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discipline");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.EmployeeCertificate", b =>
@@ -529,6 +613,20 @@ namespace it_department_site.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.User", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
+                {
+                    b.Navigation("ResourceLinks");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>

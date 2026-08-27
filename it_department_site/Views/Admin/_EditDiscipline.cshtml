@@ -5,7 +5,6 @@
 <form method="post"
       asp-action="EditDiscipline"
       onsubmit="return submitForm(this)">
-
     @Html.AntiForgeryToken()
 
     <input asp-for="Id" type="hidden" />
@@ -16,11 +15,6 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Викладач</label>
-        <input asp-for="Teacher" class="form-control" required />
-    </div>
-
-    <div class="mb-3">
         <label class="form-label">Опис</label>
         <textarea asp-for="Description" rows="6" class="form-control"></textarea>
     </div>
@@ -28,6 +22,38 @@
     <div class="mb-3">
         <label class="form-label">Порядок сортування</label>
         <input asp-for="SortOrder" type="number" class="form-control" />
+    </div>
+
+    <div class="mb-3 form-check">
+        <input asp-for="IsRequired" type="checkbox" class="form-check-input" />
+        <label class="form-check-label">Обов'язкова</label>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Посилання на матеріали</label>
+        <div id="links-container">
+            @{ var links = Model.ResourceLinks.OrderBy(l => l.Order).ToList(); }
+            @foreach(var link in links)
+            {
+                var uniqueId = Guid.NewGuid().ToString();
+                <div class="row g-2 mb-2 align-items-center link-row">
+                    <input type="hidden" name="ResourceLinks.Index" value="@uniqueId" />
+                    <div class="col-4">
+                        <input type="text" name="ResourceLinks[@uniqueId].Title" class="form-control" placeholder="Назва" value="@link.Title" required />
+                    </div>
+                    <div class="col-5">
+                        <input type="url" name="ResourceLinks[@uniqueId].Url" class="form-control" placeholder="URL" value="@link.Url" required />
+                    </div>
+                    <div class="col-2">
+                        <input type="number" name="ResourceLinks[@uniqueId].Order" class="form-control" placeholder="Порядок" value="@link.Order" required />
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.link-row').remove()">✕</button>
+                    </div>
+                </div>
+            }
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addLinkRow()">+ Додати посилання</button>
     </div>
 
     <button class="btn btn-success">Зберегти</button>
