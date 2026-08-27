@@ -395,7 +395,7 @@ namespace it_department_site.Controllers
 
         public IActionResult CreateDiscipline()
         {
-            return PartialView("_CreateDiscipline", new Discipline());
+            return PartialView("_CreateDiscipline", new Discipline{Name = ""});
         }
 
         public async Task<IActionResult> Disciplines()
@@ -415,6 +415,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_CreateDiscipline", discipline);
 
             await _disciplineService.CreateAsync(discipline);
@@ -425,6 +430,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_EditDiscipline", discipline);
 
             await _disciplineService.UpdateAsync(discipline.Id, discipline);
