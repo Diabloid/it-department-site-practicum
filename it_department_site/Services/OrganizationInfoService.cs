@@ -15,7 +15,9 @@ namespace it_department_site.Services
 
         public async Task<OrganizationInfo> GetAsync()
         {
-            var info = await _context.OrganizationInfos.FirstOrDefaultAsync(x => x.Id == 1);
+            var info = await _context.OrganizationInfos
+                .Include(x => x.SocialLinks)
+                .FirstOrDefaultAsync(x => x.Id == 1);
 
             // Якщо таблиця порожня — створюємо базовий запис
             if (info == null)
@@ -41,7 +43,9 @@ namespace it_department_site.Services
 
         public async Task UpdateAsync(OrganizationInfo updatedInfo)
         {
-            var existing = await _context.OrganizationInfos.FirstOrDefaultAsync(x => x.Id == 1);
+            var existing = await _context.OrganizationInfos
+                .Include(x => x.SocialLinks)
+                .FirstOrDefaultAsync(x => x.Id == 1);
 
             if (existing == null)
             {
@@ -53,6 +57,7 @@ namespace it_department_site.Services
                 existing.Address = updatedInfo.Address;
                 existing.Email = updatedInfo.Email;
                 existing.PhoneNumbers = updatedInfo.PhoneNumbers;
+                _context.RemoveRange(existing.SocialLinks);
                 existing.SocialLinks = updatedInfo.SocialLinks;
             }
 

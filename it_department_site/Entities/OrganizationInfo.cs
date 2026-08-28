@@ -22,14 +22,6 @@ namespace it_department_site.Entities
         [Column("phone_numbers", TypeName = "text")]
         public List<string> PhoneNumbers { get; set; } = new();
 
-        [Column("social_links", TypeName = "text")]
         public List<SocialLinkItem> SocialLinks { get; set; } = new();
-    }
-
-    public class SocialLinkItem
-    {
-        public string Name { get; set; } = "";
-        public string Icon { get; set; } = "";
-        public string Link { get; set; } = "";
     }
 }
