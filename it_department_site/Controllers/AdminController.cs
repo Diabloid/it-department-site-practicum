@@ -22,6 +22,7 @@ namespace it_department_site.Controllers
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IOrganizationInfoService _organizationInfoService;
 
         public AdminController(
             IPageService pageService,
@@ -37,7 +38,8 @@ namespace it_department_site.Controllers
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
             IUserService userService,
-            IFileStorageService fileStorageService)
+            IFileStorageService fileStorageService,
+            IOrganizationInfoService organizationInfoService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -53,7 +55,8 @@ namespace it_department_site.Controllers
             _disciplineService = disciplineService;
             _userService = userService;
             _fileStorageService = fileStorageService;
-        }
+           _organizationInfoService = organizationInfoService; 
+       }
 
         public async Task<IActionResult> LayoutSettings()
         {
@@ -892,6 +895,27 @@ namespace it_department_site.Controllers
             await _postService.DeleteAsync(id);
             _logger.LogInformation("Admin deleted post with ID {PostId}", id);
             return await Posts();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            var info = await _organizationInfoService.GetAsync();
+            return View(info);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Settings(OrganizationInfo model)
+        {
+            ModelState.Clear();
+
+            model.PhoneNumbers = model.PhoneNumbers.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            model.SocialLinks = model.SocialLinks.Where(s => !string.IsNullOrWhiteSpace(s.Url)).ToList();
+
+            await _organizationInfoService.UpdateAsync(model);
+
+            TempData["SuccessMessage"] = "Налаштування організації успішно збережено!";
+            return RedirectToAction(nameof(Settings));
         }
     }
 }
