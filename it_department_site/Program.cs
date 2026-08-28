@@ -46,6 +46,8 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
+builder.Services.AddScoped<IOrganizationInfoService, OrganizationInfoService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

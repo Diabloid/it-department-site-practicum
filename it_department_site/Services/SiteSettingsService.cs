@@ -41,6 +41,7 @@ namespace it_department_site.Services
                 existingSettings.CustomCss = settings.CustomCss;
                 existingSettings.SiteTitle = settings.SiteTitle;
                 existingSettings.SiteLogoUrl = settings.SiteLogoUrl;
+                existingSettings.HomePageId = settings.HomePageId;
             }
 
             await dbContext.SaveChangesAsync();

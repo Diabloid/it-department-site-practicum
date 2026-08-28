@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 @inject it_department_site.Services.Interfaces.ISiteSettingsService SettingsService
 @inject it_department_site.Services.Interfaces.ICurrentUserService CurrentUserService
+@inject it_department_site.Services.Interfaces.IOrganizationInfoService OrgInfoService
 @using Microsoft.AspNetCore.Html
 @using System.Text.Encodings.Web
 
@@ -21,6 +22,10 @@
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
 
     
+}
+
+@{
+    var orgInfo = await OrgInfoService.GetAsync();
 }
 
 <html lang="en">
@@ -131,9 +136,9 @@
                 <div class="f-col">
                     <h4 class="f-contacts-title">Контакти</h4>
                     <div class="f-contact-info">
-                        <p>58029, Чернівці, вул. Павла Каспрука, 2</p>
-                        <p>+38 (0372) 56-70-47 | +38 (095) 700-64-51</p>
-                        <p>mail@polytech.cv.ua</p>
+       			 <p>@orgInfo.Address</p>
+                          <p>@string.Join(" | ", orgInfo.PhoneNumbers)</p>
+                          <p>@orgInfo.Email</p>
                     </div>
                     <div class="live-map-container">
                         <iframe
@@ -162,9 +167,12 @@
 
         <div class="f-social-area">
             <div class="f-soc-list">
-                <a href="https://www.instagram.com/ckprogr" target="_blank" class="sm-link"><img src="~/images/icons/instagram-icon.svg" alt="Instagram"/></a>
-                <a href="https://www.youtube.com/channel/UC2wIoLJ20hBEZhvrqtOSRBw" target="_blank" class="sm-link"><img src="~/images/icons/youtube-icon.svg" alt="YouTube"/></a>
-                <a href="mailto:ipz@polytech.cv.ua" target="_blank" class="sm-link"><img src="~/images/icons/email-icon.svg" alt="Email"/></a>
+              @foreach (var social in orgInfo.SocialLinks)
+                {
+                    <a href="@social.Url" target="_blank" class="sm-link">
+                        <img src="~/images/icons/@social.Icon" alt="@social.Title" />
+                    </a>
+                }
             </div>
         </div>
     </div>
