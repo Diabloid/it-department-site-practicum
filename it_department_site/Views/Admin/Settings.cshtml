@@ -48,20 +48,21 @@
 
                     @for (int i = 0; i < Math.Max(3, Model.SocialLinks.Count + 1); i++)
                     {
-                        var link = i < Model.SocialLinks.Count ? Model.SocialLinks[i] : new it_department_site.Entities.SocialLinkItem();
+                        var link = i < Model.SocialLinks.Count ? Model.SocialLinks[i] : new OrganizationSocialLinkItem{Title = "", Url = "", Icon =  ""};
 
                         <div class="border rounded p-3 mb-3 bg-light">
+                            <input type="hidden" name="SocialLinks[@i].Order" value="@i" />
                             <div class="mb-2">
                                 <label class="form-label small">Назва (для alt-тексту)</label>
-                                <input type="text" name="SocialLinks[@i].Name" value="@link.Name" class="form-control form-control-sm" placeholder="Instagram" />
+                                <input type="text" name="SocialLinks[@i].Title" value="@link.Title" class="form-control form-control-sm" placeholder="Instagram"/>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small">Шлях до SVG-іконки</label>
-                                <input type="text" name="SocialLinks[@i].Icon" value="@link.Icon" class="form-control form-control-sm" placeholder="/svg/instagram-icon.svg" />
+                                <input type="text" name="SocialLinks[@i].Icon" value="@link.Url" class="form-control form-control-sm" placeholder="/svg/instagram-icon.svg"/>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label small">Посилання (URL або mailto:)</label>
-                                <input type="text" name="SocialLinks[@i].Link" value="@link.Link" class="form-control form-control-sm" placeholder="https://..." />
+                                <input type="text" name="SocialLinks[@i].Url" value="@link.Url" class="form-control form-control-sm" placeholder="https://..."/>
                             </div>
                         </div>
                     }

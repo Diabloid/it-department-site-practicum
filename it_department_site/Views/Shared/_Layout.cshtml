@@ -170,14 +170,11 @@
             </div>
                 <div class="f-social-area">
                     <div class="f-soc-list">
-                        @if (orgInfo.SocialLinks != null)
+                        @foreach (var social in orgInfo.SocialLinks)
                         {
-                            foreach (var social in orgInfo.SocialLinks)
-                            {
-                                <a href="@social.Link" target="_blank" class="sm-link">
-                                    <img src="@social.Icon" alt="@social.Name" />
-                                </a>
-                            }
+                            <a href="@social.Url" target="_blank" class="sm-link">
+                                <img src="~/images/icons/@social.Icon" alt="@social.Title" />
+                            </a>
                         }
                     </div>
                 </div>

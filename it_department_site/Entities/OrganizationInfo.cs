@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
 
 namespace it_department_site.Entities
 {
@@ -9,19 +8,19 @@ namespace it_department_site.Entities
     {
         [Key]
         [Column("id")]
-        public int Id { get; set; } = 1;
+        public int Id { get; set; }
 
-        [Column("address")]
         [MaxLength(300)]
-        public string Address { get; set; } = "";
+        [Column("address")]
+        public string? Address { get; set; }
 
-        [Column("email")]
         [MaxLength(100)]
-        public string Email { get; set; } = "";
+        [Column("email")]
+        public string? Email { get; set; }
 
         [Column("phone_numbers", TypeName = "text")]
         public List<string> PhoneNumbers { get; set; } = new();
 
-        public List<SocialLinkItem> SocialLinks { get; set; } = new();
+        public List<OrganizationSocialLinkItem> SocialLinks { get; set; } = new();
     }
 }

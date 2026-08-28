@@ -773,8 +773,6 @@ namespace it_department_site.Controllers
             return await Posts();
         }
 
-        // ІНФОРМАЦІЯ ПРО ОРГАНІЗАЦІЮ
-
         [HttpGet]
         public async Task<IActionResult> Settings()
         {
@@ -787,16 +785,13 @@ namespace it_department_site.Controllers
         {
             ModelState.Clear();
 
-            model.PhoneNumbers ??= new List<string>();
-            model.SocialLinks ??= new List<SocialLinkItem>();
-
             model.PhoneNumbers = model.PhoneNumbers.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
-            model.SocialLinks = model.SocialLinks.Where(s => !string.IsNullOrWhiteSpace(s.Link)).ToList();
+            model.SocialLinks = model.SocialLinks.Where(s => !string.IsNullOrWhiteSpace(s.Url)).ToList();
 
             await _organizationInfoService.UpdateAsync(model);
 
             TempData["SuccessMessage"] = "Налаштування організації успішно збережено!";
-            return RedirectToAction("Settings");
+            return RedirectToAction(nameof(Settings));
         }
     }
 }

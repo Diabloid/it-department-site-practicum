@@ -284,13 +284,11 @@ namespace it_department_site.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("varchar(300)")
                         .HasColumnName("address");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("email");
@@ -303,6 +301,46 @@ namespace it_department_site.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("organization_info");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.OrganizationSocialLinkItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("icon");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int")
+                        .HasColumnName("order");
+
+                    b.Property<int>("OrganizationInfoId")
+                        .HasColumnType("int")
+                        .HasColumnName("organization_info_id");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationInfoId");
+
+                    b.ToTable("organization_info_social_links");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Page", b =>
@@ -501,34 +539,6 @@ namespace it_department_site.Migrations
                     b.ToTable("site_settings");
                 });
 
-            modelBuilder.Entity("it_department_site.Entities.SocialLinkItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("OrganizationInfoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationInfoId");
-
-                    b.ToTable("SocialLinkItem");
-                });
-
             modelBuilder.Entity("it_department_site.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -607,6 +617,17 @@ namespace it_department_site.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.OrganizationSocialLinkItem", b =>
+                {
+                    b.HasOne("it_department_site.Entities.OrganizationInfo", "OrganizationInfo")
+                        .WithMany("SocialLinks")
+                        .HasForeignKey("OrganizationInfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrganizationInfo");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Post", b =>
                 {
                     b.HasOne("it_department_site.Entities.User", "Author")
@@ -616,17 +637,6 @@ namespace it_department_site.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("it_department_site.Entities.SocialLinkItem", b =>
-                {
-                    b.HasOne("it_department_site.Entities.OrganizationInfo", "OrganizationInfo")
-                        .WithMany("SocialLinks")
-                        .HasForeignKey("OrganizationInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrganizationInfo");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Employee", b =>
