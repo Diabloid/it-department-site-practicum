@@ -17,10 +17,6 @@ namespace it_department_site.Entities
         [Column("alt_text")]
         [MaxLength(200)]
         public string AltText { get; set; } = string.Empty;
-
-        [Column("updated_at")]
-        public DateTime UpdatedAt { get; set; }
-
         public bool IsEmpty => string.IsNullOrWhiteSpace(ImageUrl);
     }
 }

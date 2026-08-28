@@ -46,7 +46,6 @@
         <link rel="stylesheet" href="~/css/adminStyle.css" asp-append-version="true" />
     }
 
-    <link rel="icon" type="image/x-icon" href="~/logopolytech-1.ico" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -170,7 +169,7 @@
             </div>
                 <div class="f-social-area">
                     <div class="f-soc-list">
-                        @foreach (var social in orgInfo.SocialLinks)
+                      @foreach (var social in orgInfo.SocialLinks)
                         {
                             <a href="@social.Url" target="_blank" class="sm-link">
                                 <img src="~/images/icons/@social.Icon" alt="@social.Title" />
@@ -178,7 +177,7 @@
                         }
                     </div>
                 </div>
-        </div>
+            </div>
     </div>
 </footer>
 

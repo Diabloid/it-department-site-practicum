@@ -15,6 +15,7 @@ public class DisciplineService : IDisciplineService
     public async Task<IEnumerable<Discipline>> GetAllAsync()
     {
         return await _context.Disciplines
+            .Include(d => d.ResourceLinks.OrderBy(l => l.Order))
             .OrderBy(d => d.SortOrder)
             .ThenBy(d => d.Name)
             .ToListAsync();
@@ -22,7 +23,9 @@ public class DisciplineService : IDisciplineService
 
     public async Task<Discipline?> GetByIdAsync(int id)
     {
-        return await _context.Disciplines.FirstOrDefaultAsync(d => d.Id == id);
+        return await _context.Disciplines
+            .Include(d => d.ResourceLinks.OrderBy(l => l.Order))
+            .FirstOrDefaultAsync(d => d.Id == id);
     }
 
     public async Task CreateAsync(Discipline discipline)
@@ -33,12 +36,20 @@ public class DisciplineService : IDisciplineService
 
     public async Task UpdateAsync(int id, Discipline discipline)
     {
-        var existing = await GetByIdAsync(id);
+        var existing = await _context.Disciplines
+            .Include(d => d.ResourceLinks)
+            .FirstOrDefaultAsync(d => d.Id == id);
         if (existing == null) return;
 
         existing.Name = discipline.Name;
         existing.Description = discipline.Description;
         existing.SortOrder = discipline.SortOrder;
+        existing.IsRequired = discipline.IsRequired;
+
+        _context.RemoveRange(existing.ResourceLinks);
+        existing.ResourceLinks = discipline.ResourceLinks
+            .Select(l => new DisciplineResourceLink { Title = l.Title, Url = l.Url, Order = l.Order, DisciplineId = id })
+            .ToList();
 
         await _context.SaveChangesAsync();
     }
