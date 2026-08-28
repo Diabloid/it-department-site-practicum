@@ -61,9 +61,9 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> LayoutSettings()
         {
             var settings = await _settingsService.GetAsync();
+            ViewBag.Pages = await _pageService.GetAllPagesAsync();
             return View("EditLayout", settings);
         }
-
         [HttpPost]
         public async Task<IActionResult> LayoutSettings(SiteSettings model)
         {
@@ -72,13 +72,11 @@ namespace it_department_site.Controllers
                 TempData["Error"] = "Назва сайту не може бути порожньою!";
                 return RedirectToAction(nameof(LayoutSettings));
             }
-
             var current = await _settingsService.GetAsync();
             current.SiteTitle = model.SiteTitle;
             current.FooterHtml = model.FooterHtml;
-
+            current.HomePageId = model.HomePageId;
             await _settingsService.SaveAsync(current);
-
             TempData["Success"] = "Зміни збережено!";
             return RedirectToAction(nameof(LayoutSettings));
         }
@@ -87,7 +85,7 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-
+        [HttpPost]
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
@@ -398,7 +396,7 @@ namespace it_department_site.Controllers
 
         public IActionResult CreateDiscipline()
         {
-            return PartialView("_CreateDiscipline", new Discipline{Name = ""});
+            return PartialView("_CreateDiscipline", new Discipline { Name = "" });
         }
 
         public async Task<IActionResult> Disciplines()

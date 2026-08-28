@@ -559,6 +559,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("text")
                         .HasColumnName("header_html");
 
+                    b.Property<int?>("HomePageId")
+                        .HasColumnType("int")
+                        .HasColumnName("home_page_id");
+
                     b.Property<string>("SiteLogoUrl")
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
@@ -571,6 +575,8 @@ namespace it_department_site.Migrations
                         .HasColumnName("site_title");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HomePageId");
 
                     b.ToTable("site_settings");
                 });
@@ -691,6 +697,15 @@ namespace it_department_site.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("it_department_site.Entities.SiteSettings", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Page", "HomePage")
+                        .WithMany()
+                        .HasForeignKey("HomePageId");
+
+                    b.Navigation("HomePage");
                 });
 
             modelBuilder.Entity("it_department_site.Entities.User", b =>
