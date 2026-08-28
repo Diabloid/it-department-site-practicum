@@ -21,6 +21,16 @@
         <label for="FooterHtml">Редагування футера (HTML):</label>
         <textarea id="FooterHtml" name="FooterHtml" class="form-control">@Model.FooterHtml</textarea>
     </div>
+    <div class="mb-3">
+    <label for="HomePageId">Головна сторінка сайту:</label>
+    <select class="form-control" id="HomePageId" name="HomePageId">
+        <option value="">— не обрано —</option>
+        @foreach (var p in ViewBag.Pages as List<it_department_site.Entities.Page>)
+        {
+            <option value="@p.Id" selected="@(Model.HomePageId == p.Id)">@p.Title</option>
+        }
+    </select>
+    </div>
 
     <button type="submit" class="btn btn-success mt-3">💾 Зберегти</button>
 </form>
