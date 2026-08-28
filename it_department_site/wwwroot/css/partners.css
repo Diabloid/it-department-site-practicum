@@ -7,7 +7,6 @@
     text-align: center;
     margin: 20px 0;
     font-weight: bold;
-    text-transform: uppercase;
 }
 
 .partners-mask-wrapper {
@@ -108,11 +107,6 @@
     padding: 0;
     font-size: 40px;
     font-weight: 700;
-}
-
-.partners-general-title h2 {
-    font-size: 32px;
-    margin-bottom: 25px;
 }
 
 .name-and-status h3 {
