@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace it_department_site.Infrastructure
 {
@@ -55,7 +56,13 @@ namespace it_department_site.Infrastructure
                 .Property(o => o.PhoneNumbers)
                 .HasConversion(
                     v => string.Join(',', v),
-                    v => string.IsNullOrEmpty(v) ? new List<string>() : v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                    v => string.IsNullOrEmpty(v) ? new List<string>() : v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+                   // REFACTOR_HINT: after migration to EF9 this value comparer could be removed
+                    new ValueComparer<List<string>>(
+                        (c1, c2) => c1 != null && c2 != null ? c1.SequenceEqual(c2) : c1 == c2,
+                        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                        c => c.ToList()
+                    )
                 );
         }
     }
