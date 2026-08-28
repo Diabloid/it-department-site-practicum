@@ -130,3 +130,9 @@ INSERT INTO employees (id, lastname, firstname, patronymic_name, email, google_d
 (9, 'Скуртул', 'Сергій','Сергійович', 'Serhii.Skurtul@polytech.cv.ua', 'https://drive.google.com/drive/folders/1nksiaUgZ2TJeV58Ja7OVeHbf_fzaSXOR','','',''),
 (10, 'Смерека','Анна','Георгіївна','smereka.a.h@polytech.cv.ua', 'https://drive.google.com/drive/folders/1-DPYpxLY3hi2yKJtVhXasmGaOvoWMNAd','','',''),
 (11, 'Шпак','Андрій','Олексійович','shpak.andrii@polytech.cv.ua', 'https://drive.google.com/drive/folders/1N9RvV2_YcLg6D0D24k3cgcV4s1LwRJhZ','','','');
+
+INSERT INTO organization_info (id, address, email, phone_numbers) VALUES(1, '58029, Чернівці, вул. Павла Каспрука, 2', 'ipz@polytech.cv.ua', '(0372) 56-70-47,+38 (095) 700-64-51');
+
+INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(1, 'Instagram', 'https://www.instagram.com/ckprogr', 'instagram-icon.svg', 0, 1);
+INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(2, 'YouTube', 'https://www.youtube.com/channel/UC2wIoLJ20hBEZhvrqtOSRBw', 'youtube-icon.svg', 1, 1);
+INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(3, 'Email', 'mailto:ipz@polytech.cv.ua', 'email-icon.svg', 2, 1);

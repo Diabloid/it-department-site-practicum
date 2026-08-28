@@ -46,6 +46,7 @@ namespace it_department_site.Startup
 
             builder.Services.AddScoped<IPostService, PostServiceService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IOrganizationInfoService, OrganizationInfoService>();
             builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
