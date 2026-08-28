@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace it_department_site.Migrations
 {
     /// <inheritdoc />
-    public partial class bla : Migration
+    public partial class OrganizationResourceLink : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -11,8 +11,8 @@ using it_department_site.Infrastructure;
 namespace it_department_site.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260828151309_bla")]
-    partial class bla
+    [Migration("20260828151309_OrganizationResourceLink")]
+    partial class OrganizationResourceLink
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
