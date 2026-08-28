@@ -18,7 +18,7 @@ use website;
 LOCK TABLES `menu_items` WRITE;
 /*!40000 ALTER TABLE `menu_items` DISABLE KEYS */;
 INSERT INTO menu_items (id, name, parent_id, page_id, sort_order, custom_url) VALUES
-(18, 'Співробітники', 113, NULL, 1, 'Employees');
+(18, 'Співробітники', 113, NULL, 1, 'Employees'),
 (113, 'Про нас', NULL, NULL, 0, NULL),
 (114, 'Історія спеціальності', 113, NULL, 0, NULL),
 (115, 'Наукова діяльність', 113, NULL, 2, NULL),
