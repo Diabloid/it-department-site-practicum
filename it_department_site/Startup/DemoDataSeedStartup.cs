@@ -15,8 +15,10 @@ namespace it_department_site.Startup
 
             var projectRoot = Directory.GetCurrentDirectory();
             var scriptPath = Path.Combine(projectRoot, "Docker", "init.sql");
-            var script = File.ReadAllText(scriptPath);
-            await dbContext.Database.ExecuteSqlRawAsync(script);
+            var script = await File.ReadAllTextAsync(scriptPath);
+            // escape the JSON curly braces as ExecuteSqlRawAsync method treats them as placeholders
+            var sanitizedScript = script.Replace("{", "{{").Replace("}", "}}");
+            await dbContext.Database.ExecuteSqlRawAsync(sanitizedScript);
         }
     }
 }
