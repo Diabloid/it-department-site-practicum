@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace it_department_site.Infrastructure
 {
@@ -47,6 +48,37 @@ namespace it_department_site.Infrastructure
             modelBuilder.Entity<Discipline>()
                 .Property(d => d.IsRequired)
                 .HasDefaultValue(true);
+                            modelBuilder.Entity<User>()
+                .Property(u => u.Roles)
+                .HasConversion(
+                    roles => string.Join(',', roles),
+                    value => value == ""
+                        ? new List<UserRole>()
+                        : value.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(r => Enum.Parse<UserRole>(r))
+                            .ToList()
+                )
+                .Metadata.SetValueComparer(new ValueComparer<List<UserRole>>(
+                    (a, b) => a!.SequenceEqual(b!),
+                    r => r.Aggregate(0, (hash, role) => HashCode.Combine(hash, role.GetHashCode())),
+                    r => r.ToList()
+                ));
+                modelBuilder.Entity<User>()
+                .Property(u => u.Roles)
+                .HasConversion(
+                    roles => string.Join(',', roles),
+                    value => value == ""
+                        ? new List<UserRole>()
+                        : value.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(r => Enum.Parse<UserRole>(r))
+                            .ToList()
+                )
+                .HasDefaultValue(new List<UserRole>())
+                .Metadata.SetValueComparer(new ValueComparer<List<UserRole>>(
+                    (a, b) => a!.SequenceEqual(b!),
+                    r => r.Aggregate(0, (hash, role) => HashCode.Combine(hash, role.GetHashCode())),
+                    r => r.ToList()
+                ));
         }
     }
 }
