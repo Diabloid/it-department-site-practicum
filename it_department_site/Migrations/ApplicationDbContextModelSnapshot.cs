@@ -610,9 +610,7 @@ namespace it_department_site.Migrations
 
                     b.Property<string>("Roles")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("longtext")
-                        .HasDefaultValue("")
+                        .HasColumnType("json")
                         .HasColumnName("roles");
 
                     b.Property<string>("Username")
@@ -623,7 +621,8 @@ namespace it_department_site.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
 
                     b.HasIndex("Username")
                         .IsUnique();
