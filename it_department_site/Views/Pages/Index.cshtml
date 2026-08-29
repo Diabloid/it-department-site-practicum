@@ -12,11 +12,6 @@
     </div>
 }
 <div class="main-content">
-
-    <div class="content-part-line">
-        <div class="content-part">
-
-
             <div class="ourlife-and-news">
 
 
@@ -27,7 +22,6 @@
                             <p>Студентське життя сповнене подій та емоцій. Тут ми ділимося найяскравішими моментами нашого навчання та відпочинку.</p>
                         </div>
                         <div class="image-field">
-                            <img src="~/images/our-life.jpg" alt="Our Life Image" />
                         </div>
                     </div>
                 </div>
@@ -44,49 +38,44 @@
                                 var mainPost = newsList.First();
                                 var sidePosts = newsList.Skip(1).Take(3).ToList();
 
-
-                                <div class="news-grid-container">
-                                    <div class="main-news-block">
-                                        <a href="/posts/@(mainPost.Slug)">
-                                            <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default/news-thumbnail.jpg" : mainPost.Thumbnail)');"></div>
-                                            <span class="news-date">
-                                                <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
-                                                @mainPost.CreatedAt.ToString("dd.MM.yyyy")
-                                            </span>
-                                            <h3>@mainPost.Title</h3>
-                                            <div class="news-excerpt">@Html.Raw(mainPost.Excerpt)</div>
-                                        </a>
-                                    </div>
+                                <div class="main-news-block">
+                                    <a href="/posts/@(mainPost.Slug)">
+                                        <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default/news-thumbnail.jpg" : mainPost.Thumbnail)');"></div>
+                                        <span class="news-date">
+                                            <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
+                                            @mainPost.CreatedAt.ToString("dd.MM.yyyy")
+                                        </span>
+                                        <h3>@mainPost.Title</h3>
+                                        <div class="news-excerpt">@Html.Raw(mainPost.Excerpt)</div>
+                                    </a>
+                                </div>
 
 
-                                    <div class="side-news-list">
-                                        @foreach (var item in sidePosts)
-                                        {
-                                            <a href="/posts/@(item.Slug)">
-                                                <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default/news-thumbnail.jpg" : item.Thumbnail)');"></div>
-                                                <div class="news-info-container">
-                                                    <small>
-                                                        <div class="news-meta" >
-                                                            <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
-                                                            @item.CreatedAt.ToString("dd.MM.yyyy")
-                                                        </div>
-                                                      
-                                                    </small>
-                                                    <div class="news-title-wrapper">
-                                                        <div class="news-title-small">@item.Title</div>
+                                <div class="side-news-list">
+                                    @foreach (var item in sidePosts)
+                                    {
+                                        <a href="/posts/@(item.Slug)">
+                                            <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default/news-thumbnail.jpg" : item.Thumbnail)');"></div>
+                                            <div class="news-info-container">
+                                                <small>
+                                                    <div class="news-meta" >
+                                                        <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
+                                                        @item.CreatedAt.ToString("dd.MM.yyyy")
                                                     </div>
+                                                  
+                                                </small>
+                                                <div class="news-title-wrapper">
+                                                    <div class="news-title-small">@item.Title</div>
                                                 </div>
-                                            </a>
-                                        }
-                                    </div>
+                                            </div>
+                                        </a>
+                                    }
                                 </div>
                             }
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 </div>
 @await Html.PartialAsync("Partials/_Reviews")
 @await Html.PartialAsync("Partials/_PartnerSlider", (List<Partner>)(ViewBag.Partners ?? new List<Partner>()))

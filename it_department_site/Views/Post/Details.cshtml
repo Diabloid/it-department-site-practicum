@@ -26,7 +26,7 @@
                 {
                     <div class="post-author">
                         @* TODO: Define fallback picture for the avatar https://github.com/polytech-st/it-department-site/issues/126 *@
-                        <img src="@(string.IsNullOrWhiteSpace(@Model.Author.Employee.PhotoUrl) ? "~/images/default/avatar.jpg" : @Model.Author.Employee.PhotoUrl)"
+                        <img src="@(string.IsNullOrWhiteSpace(@Model.Author.Employee.PhotoUrl) ? "/images/default/avatar.jpg" : @Model.Author.Employee.PhotoUrl)"
                              alt="@Model.Author.Employee.FirstName @Model.Author.Employee.LastName" class="post-author-photo"/>
                         <a asp-controller="Employees" asp-action="Details" asp-route-id="@Model.Author.Employee.Id" class="post-author-name">@Model.Author.Employee.FirstName @Model.Author.Employee.LastName</a>
                     </div>
