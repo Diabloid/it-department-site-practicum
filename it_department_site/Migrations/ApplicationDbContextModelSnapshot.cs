@@ -608,6 +608,11 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("password");
 
+                    b.Property<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("json")
+                        .HasColumnName("roles");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
