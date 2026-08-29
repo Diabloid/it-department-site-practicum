@@ -16,6 +16,7 @@ namespace it_department_site.Infrastructure
         public DbSet<SiteSettings> SiteSettings { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<OrganizationInfo> OrganizationInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,10 +46,26 @@ namespace it_department_site.Infrastructure
                         .HasForeignKey("employee_id")
                         .OnDelete(DeleteBehavior.Cascade)
                 );
+
             modelBuilder.Entity<Discipline>()
                 .Property(d => d.IsRequired)
                 .HasDefaultValue(true);
-                            modelBuilder.Entity<User>()
+
+            modelBuilder.Entity<OrganizationInfo>()
+                .Property(o => o.PhoneNumbers)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => string.IsNullOrEmpty(v)
+                        ? new List<string>()
+                        : v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+                    // REFACTOR_HINT: after migration to EF9 this value comparer could be removed
+                    new ValueComparer<List<string>>(
+                        (c1, c2) => c1 != null && c2 != null ? c1.SequenceEqual(c2) : c1 == c2,
+                        c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                        c => c.ToList()
+                    )
+                );
+            modelBuilder.Entity<User>()
                 .Property(u => u.Roles)
                 .HasConversion(
                     roles => string.Join(',', roles),
@@ -63,7 +80,7 @@ namespace it_department_site.Infrastructure
                     r => r.Aggregate(0, (hash, role) => HashCode.Combine(hash, role.GetHashCode())),
                     r => r.ToList()
                 ));
-                modelBuilder.Entity<User>()
+            modelBuilder.Entity<User>()
                 .Property(u => u.Roles)
                 .HasConversion(
                     roles => string.Join(',', roles),

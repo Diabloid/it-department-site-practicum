@@ -17,7 +17,28 @@ use website;
 
 LOCK TABLES `menu_items` WRITE;
 /*!40000 ALTER TABLE `menu_items` DISABLE KEYS */;
-INSERT INTO `menu_items` VALUES (1,'Home',NULL,1,1, null),(4,'Blog',NULL,NULL,2, null),(13,'About Us',NULL,2,3, null),(14,'Blog Post 1',4,36,99, null),(16,'Нова сторінка!!!',4,38,0, null),(17,'новий пункт',NULL,34,12, null);
+INSERT INTO menu_items (id, name, parent_id, page_id, sort_order, custom_url) VALUES
+(18, 'Співробітники', 113, NULL, 1, 'Employees'),
+(113, 'Про нас', NULL, NULL, 0, NULL),
+(114, 'Історія спеціальності', 113, NULL, 0, NULL),
+(115, 'Наукова діяльність', 113, NULL, 2, NULL),
+(116, 'Стейкхолдери', 113, NULL, 3, NULL),
+(117, 'Освітній процес', NULL, NULL, 1, NULL),
+(118, 'Освітні програми', 117, NULL, 0, NULL),
+(121, 'Вибіркові дисципліни', 117, NULL, 3, NULL),
+(122, 'Освітня траєкторія', 117, NULL, 4, NULL),
+(123, 'Нормативно-правове забезпечення', 117, NULL, 5, NULL),
+(124, 'Обовязкові дисципліни', 117, NULL, 2, 'Disciplines'),
+(125, 'Студентам', NULL, NULL, 2, NULL),
+(127, 'Система електронного навчання', 125, NULL, 1, NULL),
+(128, 'Анкетування', 125, NULL, 2, NULL),
+(129, 'Абітурієнтам', NULL, NULL, 3, NULL),
+(130, 'Вступ 2026', 129, NULL, 0, NULL),
+(131, 'Чому саме ми ?', 129, NULL, 2, NULL),
+(132, 'Інформація про спеціальність', 129, NULL, 2, 'proudofyou'),
+(133, 'Чому обирають IT', 129, NULL, 3, NULL),
+(134, 'Розклад', 125, 39, 0, NULL);
+
 /*!40000 ALTER TABLE `menu_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,12 +76,12 @@ UNLOCK TABLES;
 
 INSERT INTO `partners` 
 VALUES 
-(10, 'Чернівецький національний університет імені Юрія Федьковича', '/images/partners/133bd514-6658-48de-998d-b72bf0fad8c0.jpg', 1, 'https://www.chnu.edu.ua/'),
-(11, 'Yukon Software', '/images/partners/d42be15e-beaa-4a91-8b1c-5a138a69d19b.png', 2, 'https://yukon.software/ua/'),
-(12, 'Elogic Commerce', '/images/partners/581dd57a-d469-40c1-a861-405a56dd17ff.png', 3, 'https://elogic.co/'),
-(13, 'SoftServe', '/images/partners/36af068e-18f8-43ac-9a1d-a44d3341b042.png', 4, 'https://www.softserveinc.com/uk-ua'),
-(14, 'Chernivtsi IT Cluster', '/images/partners/3bdbc070-8131-461a-88bc-b9958bb395c7.png', 5, 'https://www.it-cluster.cv.ua/'),
-(15, 'Datawiz.io', '/images/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
+(1, 'Чернівецький національний університет імені Юрія Федьковича', '/uploads/partners/133bd514-6658-48de-998d-b72bf0fad8c0.jpg', 1, 'https://www.chnu.edu.ua/'),
+(2, 'Yukon Software', '/uploads/partners/d42be15e-beaa-4a91-8b1c-5a138a69d19b.png', 2, 'https://yukon.software/ua/'),
+(3, 'Elogic Commerce', '/uploads/partners/581dd57a-d469-40c1-a861-405a56dd17ff.png', 3, 'https://elogic.co/'),
+(4, 'SoftServe', '/uploads/partners/36af068e-18f8-43ac-9a1d-a44d3341b042.png', 4, 'https://www.softserveinc.com/uk-ua'),
+(5, 'Chernivtsi IT Cluster', '/uploads/partners/3bdbc070-8131-461a-88bc-b9958bb395c7.png', 5, 'https://www.it-cluster.cv.ua/'),
+(6, 'Datawiz.io', '/uploads/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
 
 INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
 (1, '/images/default/slider.jpg', 'Слайд 1'),
@@ -70,20 +91,20 @@ INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
 INSERT INTO disciplines (name, description, sort_order) VALUES
 ('Soft Skills для інженерів програмного забезпечення','', 0),
 ('Алгоритми та структури даних','', 0),
-('Архітектура комп\'ютера','', 0),
+('Архітектура комп''ютера','', 0),
 ('Бази даних','', 0),
 ('Вебдизайн','', 0),
 ('Вебпрограмування','', 0),
 ('Інформатика (Вступ до спеціальності)','', 0),
 ('Інформатика (Основи програмування)','', 0),
-('Комп\'ютерна дискретна математика','', 0),
+('Комп''ютерна дискретна математика','', 0),
 ('Компютерна графіка','', 0),
 ('Людино-машинний інтерфейс','', 0),
 ('Мова програмування Java','', 0),
 ('Моделювання та проєктування програмного забезпечення','', 0),
-('Об\'єктно-орієнтоване програмування','', 0),
+('Об''єктно-орієнтоване програмування','', 0),
 ('Операційні системи','', 0),
-('Організація комп\'ютерних мереж','', 0),
+('Організація комп''ютерних мереж','', 0),
 ('Основи кібербезпеки','', 0),
 ('Основи командної розробки програмного забезпечення','', 0),
 ('Основи програмної інженерії','', 0),
@@ -109,3 +130,9 @@ INSERT INTO employees (id, lastname, firstname, patronymic_name, email, google_d
 (9, 'Скуртул', 'Сергій','Сергійович', 'Serhii.Skurtul@polytech.cv.ua', 'https://drive.google.com/drive/folders/1nksiaUgZ2TJeV58Ja7OVeHbf_fzaSXOR','','',''),
 (10, 'Смерека','Анна','Георгіївна','smereka.a.h@polytech.cv.ua', 'https://drive.google.com/drive/folders/1-DPYpxLY3hi2yKJtVhXasmGaOvoWMNAd','','',''),
 (11, 'Шпак','Андрій','Олексійович','shpak.andrii@polytech.cv.ua', 'https://drive.google.com/drive/folders/1N9RvV2_YcLg6D0D24k3cgcV4s1LwRJhZ','','','');
+
+INSERT INTO organization_info (id, address, email, phone_numbers) VALUES(1, '58029, Чернівці, вул. Павла Каспрука, 2', 'ipz@polytech.cv.ua', '(0372) 56-70-47,+38 (095) 700-64-51');
+
+INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(1, 'Instagram', 'https://www.instagram.com/ckprogr', 'instagram-icon.svg', 0, 1);
+INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(2, 'YouTube', 'https://www.youtube.com/channel/UC2wIoLJ20hBEZhvrqtOSRBw', 'youtube-icon.svg', 1, 1);
+INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(3, 'Email', 'mailto:ipz@polytech.cv.ua', 'email-icon.svg', 2, 1);
