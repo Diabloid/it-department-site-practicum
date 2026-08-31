@@ -1,6 +1,7 @@
 @model IEnumerable<it_department_site.Entities.Discipline>
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
 }
 
 <section class="disciplines-page">
@@ -11,6 +12,28 @@
         <span aria-hidden="true">/</span>
         <span class="discipline-breadcrumb-current">@ViewData["Title"]</span>
     </nav>
+
+    <header class="employees-hero" aria-labelledby="employees-page-title">
+        <div class="employees-hero-glow employees-hero-glow--left" aria-hidden="true"></div>
+        <div class="employees-hero-glow employees-hero-glow--right" aria-hidden="true"></div>
+
+        <div class="employees-hero-inner">
+            <h1 id="employees-page-title" class="employees-title-main">
+                <span class="employees-title-line">@ViewData["Title"]</span>
+                <span class="employees-title-accent">спеціальності</span>
+            </h1>
+
+            <p class="employees-subtitle">
+                Перелік навчальних дисциплін спеціальності "Інженерія програмного забезпечення"
+            </p>
+
+            <div class="employees-hero-divider" aria-hidden="true">
+                <span class="employees-hero-divider-line"></span>
+
+                <span class="employees-hero-divider-line"></span>
+            </div>
+        </div>
+    </header>
 
     @if (!Model.Any())
     {
