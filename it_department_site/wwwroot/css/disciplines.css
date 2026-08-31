@@ -147,6 +147,8 @@
 }
 
 .discipline-card {
+    display: flex;
+    align-items: center;
     height: 100px;
     position: relative;
     overflow: hidden;
@@ -181,6 +183,7 @@
     padding: 1.5rem 1.5rem 1.5rem 1.75rem;
     text-decoration: none;
     color: inherit;
+    width: 100%;
 }
 
 .discipline-card-name {
