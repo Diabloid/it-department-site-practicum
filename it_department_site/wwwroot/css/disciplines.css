@@ -13,9 +13,10 @@
 }
 
 .disciplines-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
-    gap: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
 }
 
 .tabs-container {
