@@ -4,6 +4,11 @@
     ViewData["Title"] = Model.Title;
     Layout = "_Layout";
     var viewsCount = ViewBag.Views as int? ?? Model.ViewsCount;
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new(Model.Title)
+    };
 }
 
 @section Styles {
@@ -12,12 +17,6 @@
 
 <div class="page-details">
     <div class="page-shell">
-        <nav class="page-breadcrumb" aria-label="Breadcrumb">
-            <a href="/">Головна</a>
-            <span class="page-breadcrumb-sep">/</span>
-            <span class="page-breadcrumb-current">@Model.Title</span>
-        </nav>
-
         <header class="page-header">
             <h1 class="page-title">@Model.Title</h1>
         </header>

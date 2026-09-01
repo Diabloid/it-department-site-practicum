@@ -1,6 +1,12 @@
 @model IEnumerable<Graduate>
 @{
     ViewData["Title"] = "Випускники";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Випускники", "/timeline"),
+        new("Ми вами пишаємось")
+    };
 }
 
 @section Styles {

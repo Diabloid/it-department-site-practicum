@@ -2,6 +2,13 @@
 
 @{
     ViewData["Title"] = "Деталі співробітника";
+    var employeeName = $"{Model.LastName} {Model.FirstName} {Model.PatronymicName}".Trim();
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Співробітники", "/Employees"),
+        new(employeeName)
+    };
 }
 
 @section Styles {

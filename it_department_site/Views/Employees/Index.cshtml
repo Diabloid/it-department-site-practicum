@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = "Співробітники";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Співробітники")
+    };
 }
 
 @section Styles {

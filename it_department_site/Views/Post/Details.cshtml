@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Усі новини", "/Post/Index"),
+        new(Model.Title)
+    };
 }
 
 @section Styles {

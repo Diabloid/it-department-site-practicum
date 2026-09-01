@@ -1,6 +1,11 @@
 @model IEnumerable<it_department_site.Entities.Discipline>
 @{
     ViewData["Title"] = "Дисципліни";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Дисципліни")
+    };
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />

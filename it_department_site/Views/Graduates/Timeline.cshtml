@@ -1,6 +1,11 @@
 @model IEnumerable<it_department_site.Entities.Graduate>
 @{
     ViewData["Title"] = "Випускники";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Випускники")
+    };
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/graduates.css" asp-append-version="true" />

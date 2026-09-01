@@ -1,20 +1,18 @@
 @model it_department_site.Entities.Discipline
 @{
     ViewData["Title"] = Model.Name;
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Дисципліни", Url.Action("Index", "Disciplines")),
+        new(Model.Name)
+    };
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
 }
 
 <section class="discipline-details-page">
-    <nav class="discipline-breadcrumb" aria-label="Breadcrumb">
-        <a asp-controller="Pages" asp-action="Index">Головна</a>
-        <span aria-hidden="true">/</span>
-        <a asp-controller="Disciplines" asp-action="Index">Дисципліни</a>
-        <span aria-hidden="true">/</span>
-        <span class="discipline-breadcrumb-current">@Model.Name</span>
-    </nav>
-
     <header class="discipline-header">
         <h1 class="discipline-header-title">@Model.Name</h1>
     </header>

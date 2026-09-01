@@ -39,6 +39,10 @@
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
+    @if (!isAdminPage)
+    {
+        <link rel="stylesheet" href="~/css/breadcrumbs.css" asp-append-version="true" />
+    }
     @await RenderSectionAsync("Styles", required: false)
 
     @if (isAdminPage)
@@ -79,6 +83,12 @@
     </header>
 
     <main>
+        @if (!isAdminPage && ViewData["Breadcrumbs"] is IReadOnlyList<BreadcrumbItem> crumbs && crumbs.Count > 0)
+        {
+            <div class="site-breadcrumb-wrap">
+                @await Html.PartialAsync("Partials/_Breadcrumb", crumbs)
+            </div>
+        }
         @RenderBody()
     </main>
 
