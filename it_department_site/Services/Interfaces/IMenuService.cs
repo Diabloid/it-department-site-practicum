@@ -3,7 +3,7 @@
     public interface IMenuService
     {
         Task<List<MenuItem>> GetAllMenuItemsAsync();
-        Task<List<MenuItem>> GetRootMenuItemsAsync();
+        Task<List<MenuItem>> GetMenuItemsTreeAsync();
         Task LinkPageToMenuAsync(int id, int? parentMenuItemId, string title);
         Task<MenuItem?> GetMenuItemByIdAsync(int id);
         Task CreateMenuItemAsync(MenuItem item);

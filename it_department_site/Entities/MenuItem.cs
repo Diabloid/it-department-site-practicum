@@ -34,8 +34,22 @@ namespace it_department_site.Entities
         [Column("custom_url")]
         public string? CustomUrl { get; set; }
 
+        [Required]
+        [Column("type")]
+        public MenuItemType Type { get; set; } = MenuItemType.Item;
+
+        [Required]
+        [Column("disabled")]
+        public bool Disabled { get; set; }
+
         [InverseProperty(nameof(Parent))]
         public List<MenuItem> Children { get; set; } = new();
     }
-
+    
+    public enum MenuItemType
+    {
+        Item,
+        Group,
+        Separator
+    }
 }
