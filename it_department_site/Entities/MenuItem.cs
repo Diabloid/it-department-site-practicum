@@ -3,13 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace it_department_site.Entities
 {
-    public enum MenuItemType
-    {
-        Item,
-        Group,
-        Separator
-    }
-
     [Table("menu_items")]
     public class MenuItem
     {
@@ -47,9 +40,16 @@ namespace it_department_site.Entities
 
         [Required]
         [Column("disabled")]
-        public bool Disabled { get; set; } = false;
+        public bool Disabled { get; set; }
 
         [InverseProperty(nameof(Parent))]
         public List<MenuItem> Children { get; set; } = new();
+    }
+    
+    public enum MenuItemType
+    {
+        Item,
+        Group,
+        Separator
     }
 }

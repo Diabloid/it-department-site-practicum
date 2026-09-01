@@ -44,20 +44,16 @@ namespace it_department_site.Infrastructure
                         .HasForeignKey("employee_id")
                         .OnDelete(DeleteBehavior.Cascade)
                 );
-            modelBuilder.Entity<MenuItem>()
-                .Property(m => m.Type)
-                .HasConversion<string>()
-                .HasColumnType("ENUM('Item', 'Group', 'Separator')");
-
-            modelBuilder.Entity<MenuItem>()
-                .Property(m => m.Disabled)
-                .HasDefaultValue(false);
-
+ 
             modelBuilder.Entity<MenuItem>()
                 .Property(m => m.Type)
                 .HasConversion<string>()
                 .HasColumnType("ENUM('Item', 'Group', 'Separator')")
                 .HasDefaultValue(MenuItemType.Item);
+
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Disabled)
+                .HasDefaultValue(false);
         }
     }
 }
