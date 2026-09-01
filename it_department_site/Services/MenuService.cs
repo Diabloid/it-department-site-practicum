@@ -11,20 +11,14 @@ namespace it_department_site.Services
                 .ToListAsync();
         }
 
-        public async Task<List<MenuItem>> GetRootMenuItemsAsync()
+        public async Task<List<MenuItem>> GetMenuItemsTreeAsync()
         {
             var items = await dbContext.Set<MenuItem>()
                 .Include(m => m.Page)
-                .Include(m => m.Children.Where(c => !c.Disabled))
+                .Include(m => m.Children.Where(c => !c.Disabled).OrderBy(c => c.SortOrder))
                 .Where(m => m.ParentId == null && !m.Disabled)
                 .OrderBy(m => m.SortOrder)
                 .ToListAsync();
-
-            foreach (var item in items)
-            {
-                item.Children = item.Children.OrderBy(c => c.SortOrder).ToList();
-            }
-
             return items;
         }
 
