@@ -64,13 +64,14 @@ UNLOCK TABLES;
 
 LOCK TABLES `site_settings` WRITE;
 /*!40000 ALTER TABLE `site_settings` DISABLE KEYS */;
-INSERT INTO `site_settings` VALUES (1,'<header>     <nav class=\"navbar navbar-expand-sm navbar-toggleable-sm bg-primary border-bottom box-shadow mb-3\" data-bs-theme=\"dark\">         <div class=\"container\">             <a class=\"navbar-brand\" href=\"/Pages/Index\">@SiteTitle</a>             <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#navbarContent\" aria-controls=\"navbarContent\"                     aria-expanded=\"false\" aria-label=\"Toggle navigation\">                 <span class=\"navbar-toggler-icon\"></span>             </button>             <div class=\"collapse navbar-collapse\" id=\"navbarContent\">                 <ul class=\"navbar-nav ms-auto\">      <li class=\"nav-item\" data-dynamic=\"search\">[пошук]</li>                     <li class=\"nav-item\" data-dynamic=\"menu\">[меню]</li>                     <li class=\"nav-item\" data-dynamic=\"login-button\">[вхід/адмін]</li>     </ul>             </div>         </div>     </nav> </header>','<p><span style=\"font-size:18px;\">© 2025 - супер - </span><a href=\"/about-us\"><span style=\"font-size:18px;\">посилання</span></a></p>','','','','Супер крутий сайт',NULL);
+INSERT INTO `site_settings` VALUES (1,'<header>     <nav class=\"navbar navbar-expand-sm navbar-toggleable-sm bg-primary border-bottom box-shadow mb-3\" data-bs-theme=\"dark\">         <div class=\"container\">             <a class=\"navbar-brand\" href=\"/Pages/Index\">@SiteTitle</a>             <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#navbarContent\" aria-controls=\"navbarContent\"                     aria-expanded=\"false\" aria-label=\"Toggle navigation\">                 <span class=\"navbar-toggler-icon\"></span>             </button>             <div class=\"collapse navbar-collapse\" id=\"navbarContent\">                 <ul class=\"navbar-nav ms-auto\">      <li class=\"nav-item\" data-dynamic=\"search\">[пошук]</li>                     <li class=\"nav-item\" data-dynamic=\"menu\">[меню]</li>                     <li class=\"nav-item\" data-dynamic=\"login-button\">[вхід/адмін]</li>     </ul>             </div>         </div>     </nav> </header>','<p><span style=\"font-size:18px;\">© 2025 - супер - </span><a href=\"/about-us\"><span style=\"font-size:18px;\">посилання</span></a></p>','','','','Супер крутий сайт',NULL, NULL);
 /*!40000 ALTER TABLE `site_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','admin@example.com','$2a$11$Fcmgk/lA.JA1k8A8BPtjVu7bKcy/l/33gcQDbI3xH39T/qFtvm43e','2025-02-13 19:26:22');
+INSERT INTO `users`
+VALUES (1,'admin','admin@example.com','$2a$11$Fcmgk/lA.JA1k8A8BPtjVu7bKcy/l/33gcQDbI3xH39T/qFtvm43e','2025-02-13 19:26:22', NULL, '["Admin"]');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,39 +85,39 @@ VALUES
 (6, 'Datawiz.io', '/uploads/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
 
 INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
-(1, '/images/default/slider.jpg', 'Слайд 1'),
-(2, '/images/default/slider.jpg', 'Слайд 2'),
-(3, '/images/default/slider.jpg', 'Слайд 3');
+(1, '/images/default/slide.jpg', 'Слайд 1'),
+(2, '/images/default/slide.jpg', 'Слайд 2'),
+(3, '/images/default/slide.jpg', 'Слайд 3');
 
-INSERT INTO disciplines (name, description, sort_order) VALUES
-('Soft Skills для інженерів програмного забезпечення','', 0),
-('Алгоритми та структури даних','', 0),
-('Архітектура комп''ютера','', 0),
-('Бази даних','', 0),
-('Вебдизайн','', 0),
-('Вебпрограмування','', 0),
-('Інформатика (Вступ до спеціальності)','', 0),
-('Інформатика (Основи програмування)','', 0),
-('Комп''ютерна дискретна математика','', 0),
-('Компютерна графіка','', 0),
-('Людино-машинний інтерфейс','', 0),
-('Мова програмування Java','', 0),
-('Моделювання та проєктування програмного забезпечення','', 0),
-('Об''єктно-орієнтоване програмування','', 0),
-('Операційні системи','', 0),
-('Організація комп''ютерних мереж','', 0),
-('Основи кібербезпеки','', 0),
-('Основи командної розробки програмного забезпечення','', 0),
-('Основи програмної інженерії','', 0),
-('Основи програмування','', 0),
-('Практикум з програмної інженерії','', 0),
-('Прикладне програмування та штучний інтелект мовою Python','', 0),
-('Програмування мобільних додатків','', 0),
-('Технології (Вебдизайн)','', 0),
-('Технології (Операційні системи)','', 0),
-('Технології створення додатків для платформи .NET','', 0),
-('Управління ІТ проєктами','', 0),
-('Якість та тестування програмного забезпечення','', 0);
+INSERT INTO disciplines (name, description, sort_order, is_required) VALUES
+('Soft Skills для інженерів програмного забезпечення','', 0, true),
+('Алгоритми та структури даних','', 0, true),
+('Архітектура комп''ютера','', 0, true),
+('Бази даних','', 0, true),
+('Вебдизайн','', 0, true),
+('Вебпрограмування','', 0, true),
+('Інформатика (Вступ до спеціальності)','', 0, true),
+('Інформатика (Основи програмування)','', 0, true),
+('Комп''ютерна дискретна математика','', 0, true),
+('Компютерна графіка','', 0, true),
+('Людино-машинний інтерфейс','', 0, true),
+('Мова програмування Java','', 0, true),
+('Моделювання та проєктування програмного забезпечення','', 0, true),
+('Об''єктно-орієнтоване програмування','', 0, true),
+('Операційні системи','', 0, true),
+('Організація комп''ютерних мереж','', 0, true),
+('Основи кібербезпеки','', 0, true),
+('Основи командної розробки програмного забезпечення','', 0, true),
+('Основи програмної інженерії','', 0, true),
+('Основи програмування','', 0, true),
+('Практикум з програмної інженерії','', 0, true),
+('Прикладне програмування та штучний інтелект мовою Python','', 0, true),
+('Програмування мобільних додатків','', 0, true),
+('Технології (Вебдизайн)','', 0, true),
+('Технології (Операційні системи)','', 0, true),
+('Технології створення додатків для платформи .NET','', 0, true),
+('Управління ІТ проєктами','', 0, true),
+('Якість та тестування програмного забезпечення','', 0, true);
 
 INSERT INTO employees (id, lastname, firstname, patronymic_name, email, google_drive_folder_url, specialization, bio, photo_url) VALUES
 (1, 'Атвіновський','Олексій','Ігорович','oleksii.atvinovskyi@polytech.cv.ua', 'https://drive.google.com/drive/folders/1H-2NKUMYjiqDmLExP6UC39M55WEgftv7','','',''),
