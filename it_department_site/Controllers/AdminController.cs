@@ -22,6 +22,7 @@ namespace it_department_site.Controllers
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IOrganizationInfoService _organizationInfoService;
 
         public AdminController(
             IPageService pageService,
@@ -37,7 +38,8 @@ namespace it_department_site.Controllers
             IMainSliderService mainSliderService,
             IDisciplineService disciplineService,
             IUserService userService,
-            IFileStorageService fileStorageService)
+            IFileStorageService fileStorageService,
+            IOrganizationInfoService organizationInfoService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -53,14 +55,15 @@ namespace it_department_site.Controllers
             _disciplineService = disciplineService;
             _userService = userService;
             _fileStorageService = fileStorageService;
-        }
+           _organizationInfoService = organizationInfoService; 
+       }
 
         public async Task<IActionResult> LayoutSettings()
         {
             var settings = await _settingsService.GetAsync();
+            ViewBag.Pages = await _pageService.GetAllPagesAsync();
             return View("EditLayout", settings);
         }
-
         [HttpPost]
         public async Task<IActionResult> LayoutSettings(SiteSettings model)
         {
@@ -69,13 +72,11 @@ namespace it_department_site.Controllers
                 TempData["Error"] = "Назва сайту не може бути порожньою!";
                 return RedirectToAction(nameof(LayoutSettings));
             }
-
             var current = await _settingsService.GetAsync();
             current.SiteTitle = model.SiteTitle;
             current.FooterHtml = model.FooterHtml;
-
+            current.HomePageId = model.HomePageId;
             await _settingsService.SaveAsync(current);
-
             TempData["Success"] = "Зміни збережено!";
             return RedirectToAction(nameof(LayoutSettings));
         }
@@ -84,7 +85,7 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-
+        [HttpPost]
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
@@ -109,7 +110,8 @@ namespace it_department_site.Controllers
                 Username = user.Username,
                 Email = user.Email,
                 EmployeeId = user.EmployeeId,
-                AvailableEmployees = employees.ToList()
+                AvailableEmployees = employees.ToList(),
+                SelectedRoles = user.Roles.ToList()
             };
             return PartialView("_EditUser", model);
         }
@@ -137,7 +139,8 @@ namespace it_department_site.Controllers
                 {
                     Username = model.Username,
                     Email = model.Email,
-                    EmployeeId = model.EmployeeId
+                    EmployeeId = model.EmployeeId,
+                    Roles = model.SelectedRoles
                 };
                 await _userService.CreateAsync(user, model.Password!);
                 return await Users();
@@ -179,7 +182,8 @@ namespace it_department_site.Controllers
                 {
                     Username = model.Username,
                     Email = model.Email,
-                    EmployeeId = model.EmployeeId
+                    EmployeeId = model.EmployeeId,
+                    Roles = model.SelectedRoles
                 };
                 await _userService.UpdateAsync(model.Id, user, model.Password);
                 return await Users();
@@ -395,7 +399,7 @@ namespace it_department_site.Controllers
 
         public IActionResult CreateDiscipline()
         {
-            return PartialView("_CreateDiscipline", new Discipline());
+            return PartialView("_CreateDiscipline", new Discipline { Name = "" });
         }
 
         public async Task<IActionResult> Disciplines()
@@ -415,6 +419,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_CreateDiscipline", discipline);
 
             await _disciplineService.CreateAsync(discipline);
@@ -425,6 +434,11 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDiscipline(Discipline discipline)
         {
+            for (int i = 0; i < discipline.ResourceLinks.Count; i++)
+            {
+                ModelState.Remove($"ResourceLinks[{i}].DisciplineId");
+            }
+
             if (!ModelState.IsValid) return PartialView("_EditDiscipline", discipline);
 
             await _disciplineService.UpdateAsync(discipline.Id, discipline);
@@ -882,6 +896,27 @@ namespace it_department_site.Controllers
             await _postService.DeleteAsync(id);
             _logger.LogInformation("Admin deleted post with ID {PostId}", id);
             return await Posts();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            var info = await _organizationInfoService.GetAsync();
+            return View(info);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Settings(OrganizationInfo model)
+        {
+            ModelState.Clear();
+
+            model.PhoneNumbers = model.PhoneNumbers.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            model.SocialLinks = model.SocialLinks.Where(s => !string.IsNullOrWhiteSpace(s.Url)).ToList();
+
+            await _organizationInfoService.UpdateAsync(model);
+
+            TempData["SuccessMessage"] = "Налаштування організації успішно збережено!";
+            return RedirectToAction(nameof(Settings));
         }
     }
 }

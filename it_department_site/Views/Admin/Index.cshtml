@@ -22,6 +22,9 @@
                 <a class="list-group-item list-group-item-action" asp-action="LayoutSettings" asp-controller="Admin">
                     ⚙️ Редагувати хедер і футер
                 </a>
+                <a class="list-group-item list-group-item-action" asp-action="Settings" asp-controller="Admin">
+                    🏢 Налаштування організації
+                </a>
                 <a class="list-group-item list-group-item-action" asp-action="EditTheme" asp-controller="Admin">
                     ⚙️ Редагувати тему
                 </a>
@@ -213,6 +216,28 @@
             if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = el.dataset.sortOrder;
             if(document.getElementById('menuType')) document.getElementById('menuType').value = el.dataset.type;
             if(document.getElementById('menuDisabled')) document.getElementById('menuDisabled').checked = el.dataset.disabled === 'true';
+        }
+        function addLinkRow(title = '', url = '', order = 0) {
+            const container = document.getElementById('links-container');
+            const row = document.createElement('div');
+            const uniqueId = 'link-row' + Math.random().toString(36).slice(2, 9);
+            row.className = 'row g-2 mb-2 align-items-center link-row';
+            row.innerHTML = `
+            <input type="hidden" name="ResourceLinks.Index" value="${uniqueId}" />
+            <div class="col-4">
+                <input type="text" name="ResourceLinks[${uniqueId}].Title" class="form-control" placeholder="Назва" value="${title}" required />
+            </div>
+            <div class="col-5">
+                <input type="url" name="ResourceLinks[${uniqueId}].Url" class="form-control" placeholder="URL" value="${url}" required />
+            </div>
+            <div class="col-2">
+                <input type="number" name="ResourceLinks[${uniqueId}].Order" class="form-control" placeholder="Порядок" value="${order}" required />
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.link-row').remove()">✕</button>
+            </div>
+        `;
+            container.appendChild(row);
         }
     </script>
     if(document.getElementById('menuType')) document.getElementById('menuType').value = 'Item';

@@ -115,9 +115,7 @@ namespace it_department_site.Controllers
             LastName = employee.LastName,
             PatronymicName = employee.PatronymicName ?? string.Empty,
             Specialization = employee.Specialization ?? string.Empty,
-            PhotoUrl = string.IsNullOrWhiteSpace(employee.PhotoUrl)
-                ? "/images/banner_photo_2.jpg"
-                : employee.PhotoUrl,
+            PhotoUrl =  employee.PhotoUrl,
             Email = employee.Email ?? string.Empty,
             Bio = employee.Bio ?? string.Empty,
             Disciplines = employee.Disciplines?.ToList() ?? new List<Discipline>()
