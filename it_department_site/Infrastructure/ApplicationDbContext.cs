@@ -89,6 +89,16 @@ namespace it_department_site.Infrastructure
                     .ElementType()
                     .HasConversion<string>();
             });
+
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Type)
+                .HasConversion<string>()
+                .HasColumnType("ENUM('Item', 'Group', 'Separator')")
+                .HasDefaultValue(MenuItemType.Item);
+
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Disabled)
+                .HasDefaultValue(false);
         }
     }
 }
