@@ -285,6 +285,12 @@ namespace it_department_site.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("custom_url");
 
+                    b.Property<bool>("Disabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false)
+                        .HasColumnName("disabled");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -302,6 +308,13 @@ namespace it_department_site.Migrations
                     b.Property<int>("SortOrder")
                         .HasColumnType("int")
                         .HasColumnName("sort_order");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("ENUM('Item', 'Group', 'Separator')")
+                        .HasDefaultValue("Item")
+                        .HasColumnName("type");
 
                     b.HasKey("Id");
 
@@ -607,6 +620,11 @@ namespace it_department_site.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("password");
+
+                    b.Property<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("json")
+                        .HasColumnName("roles");
 
                     b.Property<string>("Username")
                         .IsRequired()

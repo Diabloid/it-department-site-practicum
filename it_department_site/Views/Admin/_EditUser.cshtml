@@ -44,7 +44,19 @@
             }
         </select>
     </div>
-
+    <div class="mb-3">
+        <label class="form-label">Ролі</label>
+        @foreach (var role in Enum.GetValues<it_department_site.Entities.UserRole>())
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       name="SelectedRoles" value="@role"
+                       id="role_@role"
+                       checked="@Model.SelectedRoles.Contains(role)" />
+                <label class="form-check-label" for="role_@role">@role</label>
+            </div>
+        }
+    </div>
     <button class="btn btn-success">Зберегти</button>
     <button type="button" class="btn btn-secondary" onclick="loadContent('Users')">Назад</button>
 </form>

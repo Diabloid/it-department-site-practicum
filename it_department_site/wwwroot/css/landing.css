@@ -610,7 +610,7 @@ h3 {
       }
     }
 
-    .divider {
+    li.divider {
       width: 1px;
       height: 26px;
       margin: 0 10px;
@@ -638,7 +638,7 @@ h3 {
       transform: translateY(-6px);
       transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
 
-      > a {
+      > a:not(.divider) {
         padding: 11px 14px;
         border-radius: 12px;
         color: #575979;
@@ -652,6 +652,12 @@ h3 {
           background: #ecedff;
           color: #333;
         }
+      }
+
+      > a.divider {
+        background: #e8e9f4;
+        margin: 11px 14px;
+        height: 1px;
       }
     }
   }
@@ -977,7 +983,7 @@ h3 {
         visibility: visible;
         transform: none;
 
-        > a {
+        > a:not(.divider) {
           padding: 12px;
           color: rgba(255, 255, 255, 0.78);
           font-size: 15px;
@@ -987,9 +993,13 @@ h3 {
             color: rgba(255, 255, 255, 0.78);
           }
         }
+
+        > a.divider {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.22)
+        }
       }
 
-      .divider {
+      li.divider {
         width: 100%;
         height: 1px;
         margin: 10px 0;

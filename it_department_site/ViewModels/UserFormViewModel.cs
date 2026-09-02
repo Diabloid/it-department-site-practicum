@@ -16,5 +16,9 @@ namespace it_department_site.ViewModels
         public string? Password { get; set; }
         public int? EmployeeId { get; set; }
         public List<Employee> AvailableEmployees { get; set; } = new();
+
+        [Required(ErrorMessage = "Оберіть хоча б одну роль")]
+        [MinLength(1, ErrorMessage = "Оберіть хоча б одну роль")]
+        public List<UserRole> SelectedRoles { get; set; } = new();
     }
 }

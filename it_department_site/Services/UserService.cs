@@ -36,6 +36,7 @@ public class UserService(ApplicationDbContext context) : IUserService
         existing.Username = user.Username;
         existing.Email = user.Email;
         existing.EmployeeId = user.EmployeeId;
+        existing.Roles = user.Roles;
 
         if (!string.IsNullOrWhiteSpace(plainPassword))
         {
