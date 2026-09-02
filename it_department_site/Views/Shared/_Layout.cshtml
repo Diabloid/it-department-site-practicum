@@ -61,7 +61,9 @@
                 @Html.Raw(menuHtml)
                 @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
                     <li class="divider"></li>
-                    <li class="main-nav-item admin-panel"><a href='/Admin/Index'>Панель адміністатора</a></li>
+                    <li class="main-nav-item admin-panel">
+                        <a asp-controller="Admin" asp-action="Index">Панель адміністатора</a>
+                    </li>
                 }
             </ul>
             <div class="nav-toggle">
