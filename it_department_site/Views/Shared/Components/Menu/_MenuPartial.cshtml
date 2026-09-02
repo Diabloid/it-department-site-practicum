@@ -29,7 +29,7 @@
             <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
-                    <a href="@ResolveMenuUrl(child)">@child.Name</a>
+                    <a class="@(child.Type == MenuItemType.Separator ? "divider" : "")" href="@ResolveMenuUrl(child)">@child.Name</a>
                 }
             </div>
         </li>
