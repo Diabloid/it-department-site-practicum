@@ -24,20 +24,19 @@ public class AuthController : Controller
 
         if (user != null)
         {
-            string role = user.Username.ToLower() == "admin" ? "Admin" : "User";
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Name, user.Username)
             };
+            claims.AddRange(user.Roles.Select(r => new Claim(ClaimTypes.Role, r.ToString())));
+
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity)
             );
-
-            return role == "Admin"
+            return user.Roles.Contains(UserRole.Admin)
                 ? RedirectToAction("Index", "Admin")
                 : RedirectToAction("Index", "Pages");
         }

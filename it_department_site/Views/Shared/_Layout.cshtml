@@ -35,7 +35,7 @@
     <title>@ViewData["Title"] - @(siteSettings?.SiteTitle ?? "IT Department")</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-
+    <link rel="preload" href="~/fonts/inter/inter.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/slider.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
@@ -47,7 +47,6 @@
         <link rel="stylesheet" href="~/css/adminStyle.css" asp-append-version="true" />
     }
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -63,7 +62,9 @@
                 @Html.Raw(menuHtml)
                 @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
                     <li class="divider"></li>
-                    <li class="main-nav-item admin-panel"><a href='/Admin/Index'>Панель адміністатора</a></li>
+                    <li class="main-nav-item admin-panel">
+                        <a asp-controller="Admin" asp-action="Index">Панель адміністатора</a>
+                    </li>
                 }
             </ul>
             <div class="nav-toggle">

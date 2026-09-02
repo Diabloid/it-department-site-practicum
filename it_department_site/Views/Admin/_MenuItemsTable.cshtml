@@ -1,7 +1,6 @@
 ﻿@model List<it_department_site.Entities.MenuItem>
-<button type="button" class="btn btn-primary mb-3"
-        data-bs-toggle="modal" data-bs-target="#menuModal"
-        onclick="resetForm()">
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#menuModal"
+    onclick="resetForm()">
     ➕ Додати пункт
 </button>
 <table class="table table-bordered">
@@ -27,7 +26,8 @@
                 </td>
                 <td>
                     @{
-                        var page = (ViewBag.Pages as List<it_department_site.Entities.Page>)?.FirstOrDefault(p => p.Id == item.PageId);
+                        var page = (ViewBag.Pages as List<it_department_site.Entities.Page>)?.FirstOrDefault(p => p.Id ==
+                        item.PageId);
                         @: @(page?.Title ?? "-")
                     }
                 </td>
@@ -36,9 +36,11 @@
                 <td>@item.SortOrder</td>
                 <td>
                     <!-- Кнопка редагування -->
-                    <button type="button" class="btn btn-sm btn-warning"
-                            data-bs-toggle="modal" data-bs-target="#menuModal"
-                            onclick="fillForm('@item.Id', '@item.Name', '@item.ParentId', '@item.PageId', '@item.SortOrder', '@(item.CustomUrl ?? "")')">
+                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#menuModal"
+                        data-id="@item.Id" data-name="@item.Name" data-parent-id="@item.ParentId"
+                        data-page-id="@item.PageId" data-sort-order="@item.SortOrder"
+                        data-custom-url="@(item.CustomUrl ?? "")" data-type="@item.Type"
+                        data-disabled="@item.Disabled.ToString().ToLower()" onclick="fillFormFromButton(this)">
                         ✏️
                     </button>
                     <form asp-action="DeleteMenuItem" asp-route-id="@item.Id" method="post" style="display:inline">
@@ -77,20 +79,21 @@
                         </select>
                     </div>
 
-<div class="mb-3">
-    <label for="pageId" class="form-label">Прив’язана сторінка</label>
-    <select class="form-select" id="pageId" name="PageId">
-        <option value="">(немає)</option>
-        @foreach (var item in ViewBag.Pages as List<it_department_site.Entities.Page>)
-        {
-            <option value="@item.Id">@item.Title</option>
-        }
-    </select>
-</div>
+                    <div class="mb-3">
+                        <label for="pageId" class="form-label">Прив’язана сторінка</label>
+                        <select class="form-select" id="pageId" name="PageId">
+                            <option value="">(немає)</option>
+                            @foreach (var item in ViewBag.Pages as List<it_department_site.Entities.Page>)
+                            {
+                                <option value="@item.Id">@item.Title</option>
+                            }
+                        </select>
+                    </div>
 
                     <div class="mb-3">
                         <label for="customUrl" class="form-label">Custom URL</label>
-                        <input type="text" class="form-control" id="customUrl" name="CustomUrl" placeholder="/Disciplines">
+                        <input type="text" class="form-control" id="customUrl" name="CustomUrl"
+                            placeholder="/Disciplines">
                         <div class="form-text">Якщо вказано — використовується замість slug сторінки.</div>
                     </div>
 
@@ -98,13 +101,27 @@
                         <label for="sortOrder" class="form-label">Порядок</label>
                         <input type="number" class="form-control" id="sortOrder" name="SortOrder" required>
                     </div>
+                    <div class="mb-3">
+                    <label for="menuType" class="form-label">Тип пункту</label>
+                    <select class="form-select" id="menuType" name="Type">
+                        <option value="Item">Елемент</option>
+                        <option value="Group">Група</option>
+                        <option value="Separator">Розділювач</option>
+                    </select>
                 </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="menuDisabled" name="Disabled" value="true">
+                    <label class="form-check-label" for="menuDisabled">Вимкнено (не показувати в меню)</label>
+                </div>
+                </div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">Зберегти</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
                 </div>
-            </form>
-        </div>
+        </form>
     </div>
+</div>
 </div>
 

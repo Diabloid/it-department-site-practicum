@@ -110,7 +110,8 @@ namespace it_department_site.Controllers
                 Username = user.Username,
                 Email = user.Email,
                 EmployeeId = user.EmployeeId,
-                AvailableEmployees = employees.ToList()
+                AvailableEmployees = employees.ToList(),
+                SelectedRoles = user.Roles.ToList()
             };
             return PartialView("_EditUser", model);
         }
@@ -138,7 +139,8 @@ namespace it_department_site.Controllers
                 {
                     Username = model.Username,
                     Email = model.Email,
-                    EmployeeId = model.EmployeeId
+                    EmployeeId = model.EmployeeId,
+                    Roles = model.SelectedRoles
                 };
                 await _userService.CreateAsync(user, model.Password!);
                 return await Users();
@@ -180,7 +182,8 @@ namespace it_department_site.Controllers
                 {
                     Username = model.Username,
                     Email = model.Email,
-                    EmployeeId = model.EmployeeId
+                    EmployeeId = model.EmployeeId,
+                    Roles = model.SelectedRoles
                 };
                 await _userService.UpdateAsync(model.Id, user, model.Password);
                 return await Users();
