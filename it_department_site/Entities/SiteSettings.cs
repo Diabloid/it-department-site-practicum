@@ -33,5 +33,11 @@ namespace it_department_site.Entities
         [MaxLength(255)]
         [Column("logo_url")]
         public string? SiteLogoUrl { get; set; }
+
+        [Column("home_page_id")]
+        public int? HomePageId { get; set; }
+        
+        [ForeignKey(nameof(HomePageId))]
+        public Page? HomePage { get; set; }
     }
 }

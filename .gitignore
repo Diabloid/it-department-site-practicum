@@ -400,3 +400,6 @@ FodyWeavers.xsd
 # Google Drive service account
 it_department_site/secrets/
 **/google-drive-service-account.json
+
+# wwwroot
+*/wwwroot/uploads/

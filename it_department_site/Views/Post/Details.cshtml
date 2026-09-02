@@ -14,12 +14,10 @@
             <h1 class="post-title">@Model.Title</h1>
         </div>
 
-        @if (!string.IsNullOrWhiteSpace(Model.Thumbnail))
-        {
-            <div class="post-image-wrap">
-                <img src="@Model.Thumbnail" alt="@Model.Title" class="post-image" />
-            </div>
-        }
+        @* TODO: Mabe remove showing thumbnail in details page ? *@
+        <div class="post-image-wrap">
+            <img src="@(string.IsNullOrWhiteSpace(@Model.Thumbnail) ? "/images/default/news-thumbnail.jpg" : @Model.Thumbnail)" alt="@Model.Title" class="post-image" />
+        </div>
 
         <div class="post-body">
             <div class="page-meta-row page-meta-row--article">
@@ -27,18 +25,18 @@
                 {
                     <div class="post-author">
                         @* TODO: Define fallback picture for the avatar https://github.com/polytech-st/it-department-site/issues/126 *@
-                        <img src="@(string.IsNullOrWhiteSpace(@Model.Author.Employee.PhotoUrl) ? "/images/banner_photo_2.jpg" : @Model.Author.Employee.PhotoUrl)"
+                        <img src="@(string.IsNullOrWhiteSpace(@Model.Author.Employee.PhotoUrl) ? "~/images/default/avatar.jpg" : @Model.Author.Employee.PhotoUrl)"
                              alt="@Model.Author.Employee.FirstName @Model.Author.Employee.LastName" class="post-author-photo"/>
                         <a asp-controller="Employees" asp-action="Details" asp-route-id="@Model.Author.Employee.Id" class="post-author-name">@Model.Author.Employee.FirstName @Model.Author.Employee.LastName</a>
                     </div>
                 }
                 <span class="page-meta-item ">
-                    <img src="~/svg/eye.svg" alt="" class="page-meta-icon" aria-hidden="true"/>
+                    <img src="~/images/icons/eye.svg" alt="" class="page-meta-icon" aria-hidden="true"/>
                     <span>@ViewBag.Views переглядів</span>
                 </span>
                 <span class="page-meta-dot" aria-hidden="true"></span>
                 <span class="page-meta-item ">
-                    <img src="~/svg/calendar.svg" alt="" class="page-meta-icon" aria-hidden="true"/>
+                    <img src="~/images/icons/calendar.svg" alt="" class="page-meta-icon" aria-hidden="true"/>
                     <time datetime="@Model.CreatedAt.ToString("yyyy-MM-dd")">
                         @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
                     </time>
@@ -55,11 +53,11 @@
         @foreach (var item in (IEnumerable<dynamic>)ViewBag.Posts) 
         {
             <a href="/posts/@(item.Slug)">
-                <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default-news.jpg" : item.Thumbnail)');"></div>
+                <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default/news-thumbnail.jpg" : item.Thumbnail)');"></div>
                 
                 <div class="news-info-container">
                     <div class="news-meta">
-                        <img class="news-date-icon" src="/images/calendar.svg" alt="calendar" />
+                        <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
                         @item.CreatedAt.ToString("dd.MM.yyyy")
                     </div>
                     
