@@ -27,16 +27,22 @@
         <tr>
             <td><strong>@post.Title</strong></td>
             <td>@post.Slug</td>
-            <td>
-                @if (post.Status == PostStatus.Published)
-                {
-                    <span class="badge bg-success">Опубліковано</span>
-                }
-                else
-                {
-                    <span class="badge bg-secondary">Чернетка</span>
-                }
-            </td>
+                <td>
+                    @if (post.Status == PostStatus.Published)
+                    {
+                        <span class="badge bg-success">Опубліковано</span>
+                    }
+                    else if (post.Status == PostStatus.Draft && post.PublishedAt.HasValue && post.PublishedAt.Value > DateTime.UtcNow)
+                    {
+                        <span class="badge bg-warning text-dark" title="Спрацює таймер">
+                            ⏳ Заплановано:<br />@post.PublishedAt.Value.ToString("dd.MM.yyyy HH:mm")
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Чернетка</span>
+                    }
+                </td>
             <td>@post.CreatedAt.ToString("yyyy-MM-dd")</td>
             <td>@post.UpdatedAt.ToString("yyyy-MM-dd")</td>
             <td class="d-flex align-items-center gap-2">
