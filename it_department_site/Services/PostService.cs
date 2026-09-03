@@ -13,8 +13,9 @@ namespace it_department_site.Services
         public async Task<Post?> GetByIdAsync(int id)
         {
             return await context.Set<Post>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == id);
+            .AsNoTracking()
+            .Include(p => p.Categories)
+            .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Post?> GetBySlugAsync(string slug)
@@ -46,6 +47,15 @@ namespace it_department_site.Services
         {
             post.CreatedAt = DateTime.UtcNow;
             post.UpdatedAt = DateTime.UtcNow;
+
+            if (post.Categories.Count > 0)
+            {
+                var categoryIds = post.Categories.Select(c => c.Id).ToList();
+                post.Categories = await context.Set<Category>()
+                    .Where(c => categoryIds.Contains(c.Id))
+                    .ToListAsync();
+            }
+
             context.Set<Post>().Add(post);
             await context.SaveChangesAsync();
             return post.Id;
@@ -53,7 +63,9 @@ namespace it_department_site.Services
 
         public async Task UpdateAsync(Post post)
         {
-            var existing = await context.Set<Post>().FindAsync(post.Id);
+            var existing = await context.Set<Post>()
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == post.Id);
             if (existing is null)
                 return;
             existing.Slug = post.Slug;
@@ -63,6 +75,16 @@ namespace it_department_site.Services
             existing.Content = post.Content;
             existing.Thumbnail = post.Thumbnail;
             existing.UpdatedAt = DateTime.UtcNow;
+
+            var categoryIds = post.Categories.Select(c => c.Id).ToList();
+            var newCategories = await context.Set<Category>()
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            existing.Categories.Clear();
+            foreach (var c in newCategories)
+                existing.Categories.Add(c);
+
             await context.SaveChangesAsync();
         }
 

@@ -33,6 +33,7 @@ namespace it_department_site.Startup
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGraduateService, GraduateService>();
             builder.Services.AddScoped<IDisciplineService, DisciplineService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
@@ -49,6 +50,7 @@ namespace it_department_site.Startup
             builder.Services.AddScoped<IOrganizationInfoService, OrganizationInfoService>();
             builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+
 
             var app = builder.Build();
 

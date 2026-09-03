@@ -54,6 +54,7 @@ namespace it_department_site.Entities
 
         [Column("views_count")]
         public int ViewsCount { get; set; } = 0;
+        public List<Category> Categories { get; set; } = new();
     }
     
     public enum PostStatus
