@@ -753,3 +753,239 @@ body {
     height: 150px;
   }
 }
+
+body:has(.employee-details-page) {
+  background-color: #ecedff;
+}
+
+.employee-header {
+  padding: 1.25rem 1.75rem 1.25rem 2.25rem;
+}
+
+.employee-header-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.employee-header-photo-wrap {
+  flex: 0 0 88px;
+  width: 88px;
+  height: 88px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 14px rgba(99, 106, 192, 0.12);
+  background: #fff;
+}
+
+.employee-header-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.employee-header-text {
+  min-width: 0;
+}
+
+.employee-header-email {
+  display: inline-block;
+  margin-top: 0.35rem;
+  color: #636ac0;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.employee-header-email:hover {
+  text-decoration: underline;
+}
+
+.employee-header-meta {
+  margin: 0.35rem 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.employee-info-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.employee-info-block .discipline-description {
+  margin: 0.2rem 0 0;
+  line-height: 1.55;
+  white-space: normal;
+}
+
+.employee-info-heading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2c3258;
+}
+
+.employee-tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  border-bottom: 1px solid rgba(99, 106, 192, 0.16);
+}
+
+.employee-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.7rem 1rem 0.75rem;
+  margin-bottom: -1px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.employee-tab:hover,
+.employee-tab:focus-visible {
+  color: #636ac0;
+  background: rgba(99, 106, 192, 0.06);
+  outline: none;
+}
+
+.employee-tab.active {
+  color: #636ac0;
+  border-bottom-color: #636ac0;
+  background: transparent;
+}
+
+.employee-info-list {
+  margin: 0 0 1.25rem;
+}
+
+.employee-info-list:last-child {
+  margin-bottom: 0;
+}
+
+.employee-info-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(99, 106, 192, 0.1);
+}
+
+.employee-info-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.employee-info-row dt {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.employee-info-row dd {
+  margin: 0;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.employee-info-link {
+  color: #636ac0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.employee-info-link:hover {
+  text-decoration: underline;
+}
+
+.employee-details-page .tab-pane.active {
+  display: block;
+  opacity: 1;
+}
+
+.employee-bio {
+  margin-top: 0;
+  color: #374151;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  word-wrap: break-word;
+}
+
+.employee-bio p {
+  margin: 0 0 0.85rem;
+}
+
+.employee-bio p:last-child {
+  margin-bottom: 0;
+}
+
+.employee-bio h1,
+.employee-bio h2,
+.employee-bio h3,
+.employee-bio h4 {
+  color: #2c3258;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 0.5rem;
+}
+
+.employee-bio ul,
+.employee-bio ol {
+  margin: 0 0 0.85rem;
+  padding-left: 1.35rem;
+}
+
+.employee-bio a {
+  color: #636ac0;
+}
+
+.employee-bio img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.employee-disciplines-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.employee-details-page .certificates-section {
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .employee-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .employee-info-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .employee-details-page .certificates-track {
+    animation: none;
+  }
+}

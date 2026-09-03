@@ -38,9 +38,8 @@ namespace it_department_site.Entities
         [Column("specialization", TypeName = "text")]
         public string Specialization { get; set; }
 
-        [Required]
         [Column("bio", TypeName = "text")]
-        public string Bio { get; set; }
+        public string Bio { get; set; } = string.Empty;
 
         [Required]
         [Column("photo_url")]

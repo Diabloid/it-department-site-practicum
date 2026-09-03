@@ -47,7 +47,7 @@ public class EmployeeService : IEmployeeService
         existing.LastName = employee.LastName;
         existing.PatronymicName = employee.PatronymicName;
         existing.Specialization = employee.Specialization;
-        existing.Bio = employee.Bio;
+        existing.Bio = employee.Bio ?? existing.Bio ?? string.Empty;
         existing.Email = employee.Email;
         existing.GoogleDriveFolderUrl = employee.GoogleDriveFolderUrl;
 
@@ -148,6 +148,8 @@ public class EmployeeService : IEmployeeService
 
     public async Task SetSelectedDriveCertificatesAsync(int employeeId, IReadOnlyList<string> selectedFileIds)
     {
+        if (!_driveService.IsConfigured) return;
+
         var employee = await GetByIdAsync(employeeId);
         if (employee == null || string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl)) return;
 

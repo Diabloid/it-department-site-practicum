@@ -255,6 +255,24 @@ namespace it_department_site.Controllers
         }
 
         //===========================================
+        private void ApplyPostedBio(Employee employee)
+        {
+            if (!Request.HasFormContentType)
+                return;
+
+            var posted = Request.Form["Bio"];
+            if (posted.Count == 0)
+                return;
+
+            var best = posted.ToArray()
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .OrderByDescending(v => v.Length)
+                .FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(best))
+                employee.Bio = best;
+        }
+
         public async Task<IActionResult> CreateEmployee()
         {
             ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
@@ -284,7 +302,10 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEmployee(Employee employee, IFormFile? photoFile, int[]? selectedDisciplines)
         {
+            ApplyPostedBio(employee);
             ModelState.Remove("PhotoUrl");
+            if (!string.IsNullOrWhiteSpace(employee.Bio))
+                ModelState.Remove("Bio");
             if (!ModelState.IsValid) return PartialView("_CreateEmployee", employee);
 
             if (photoFile != null)
@@ -323,7 +344,17 @@ namespace it_department_site.Controllers
             string[]? selectedCertificateFileIds,
             int[]? selectedDisciplines)
         {
+            ApplyPostedBio(employee);
             ModelState.Remove("PhotoUrl");
+            if (!string.IsNullOrWhiteSpace(employee.Bio))
+                ModelState.Remove("Bio");
+            if (string.IsNullOrEmpty(employee.Bio))
+            {
+                var current = await _employeeService.GetByIdAsync(employee.Id);
+                if (current != null)
+                    employee.Bio = current.Bio;
+                ModelState.Remove("Bio");
+            }
             if (!ModelState.IsValid)
             {
                 ViewBag.DriveCertificateItems = await _employeeService.GetDriveCertificatePickerItemsAsync(employee.Id);
