@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Services
 {
-    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory) : IPostService
+    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory, ILogger<PostService> logger) : IPostService
     {
         public async Task<IEnumerable<Post>> GetAllAsync()
         {

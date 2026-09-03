@@ -54,17 +54,14 @@ namespace it_department_site.Startup
 
             builder.Services.AddQuartz(q =>
             {
-                q.UseMicrosoftDependencyInjectionJobFactory();
-
                 q.UsePersistentStore(s =>
                 {
                     // Використовуємо JSON для серіалізації параметрів завдання
-                    s.UseJsonSerializer();
+                    s.UseNewtonsoftJsonSerializer();
 
                     s.UseMySqlConnector(mySqlOptions =>
                     {
                         mySqlOptions.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-                        mySqlOptions.TablePrefix = "QRTZ_";
                     });
                 });
             });

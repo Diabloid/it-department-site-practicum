@@ -9,17 +9,9 @@ namespace it_department_site.Jobs
 {
     // Атрибут забороняє Quartz запускати кілька однакових завдань одночасно
     [DisallowConcurrentExecution]
-    public class PublishPostJob : IJob
+    public class PublishPostJob(ILogger<PublishPostJob> logger, ApplicationDbContext dbContext)
+        : IJob
     {
-        private readonly ILogger<PublishPostJob> _logger;
-        private readonly IServiceProvider _serviceProvider;
-
-        public PublishPostJob(ILogger<PublishPostJob> logger, IServiceProvider serviceProvider)
-        {
-            _logger = logger;
-            _serviceProvider = serviceProvider;
-        }
-
         public async Task Execute(IJobExecutionContext context)
         {
             // Витягуємо ID поста з JobDataMap
@@ -27,32 +19,26 @@ namespace it_department_site.Jobs
 
             if (!int.TryParse(postIdString, out int postId))
             {
-                _logger.LogError("PublishPostJob failed: Invalid or missing PostId in JobDataMap.");
+                logger.LogError("PublishPostJob failed: Invalid or missing PostId in JobDataMap.");
                 return;
             }
 
-            _logger.LogInformation("Publishing post with ID {PostId}", postId);
+            logger.LogInformation("Publishing post with ID {PostId}", postId);
+            
+            var post = await dbContext.Set<Post>().FindAsync(postId);
 
-            // Створюємо новий scope, щоб безпечно отримати DbContext у фоновому потоці
-            using (var scope = _serviceProvider.CreateScope())
+            if (post != null && post.Status == PostStatus.Draft)
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                post.Status = PostStatus.Published;
+                // Очищаємо PublishedAt, бо він вже опублікований
+                post.PublishedAt = null;
 
-                var post = await dbContext.Set<Post>().FindAsync(postId);
-
-                if (post != null && post.Status == PostStatus.Draft)
-                {
-                    post.Status = PostStatus.Published;
-                    // Очищаємо PublishedAt, бо він вже опублікований
-                    post.PublishedAt = null;
-
-                    await dbContext.SaveChangesAsync();
-                    _logger.LogInformation("Successfully published post with ID {PostId}", postId);
-                }
-                else
-                {
-                    _logger.LogWarning("Post with ID {PostId} not found or already published.", postId);
-                }
+                await dbContext.SaveChangesAsync();
+                logger.LogInformation("Successfully published post with ID {PostId}", postId);
+            }
+            else
+            {
+                logger.LogWarning("Post with ID {PostId} not found or already published.", postId);
             }
         }
     }
