@@ -44,7 +44,7 @@
                 <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id" class="employee-card-link">
 
                     <div class="employee-photo-wrap">
-                        <img src="@employee.PhotoUrl" alt="@employee.LastName" class="employee-photo" />
+                        <img src="@(string.IsNullOrEmpty(@employee.PhotoUrl) ? "/images/default/avatar.jpg" : @employee.PhotoUrl)" alt="@employee.LastName" class="employee-photo" />
                     </div>
 
                     <div class="employee-body">

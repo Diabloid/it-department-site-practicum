@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 @inject it_department_site.Services.Interfaces.ISiteSettingsService SettingsService
 @inject it_department_site.Services.Interfaces.ICurrentUserService CurrentUserService
+@inject it_department_site.Services.Interfaces.IOrganizationInfoService OrgInfoService
 @using Microsoft.AspNetCore.Html
 @using System.Text.Encodings.Web
 
@@ -23,6 +24,10 @@
     
 }
 
+@{
+    var orgInfo = await OrgInfoService.GetAsync();
+}
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,7 +35,7 @@
     <title>@ViewData["Title"] - @(siteSettings?.SiteTitle ?? "IT Department")</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-
+    <link rel="preload" href="~/fonts/inter/inter.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
@@ -41,8 +46,6 @@
         <link rel="stylesheet" href="~/css/adminStyle.css" asp-append-version="true" />
     }
 
-    <link rel="icon" type="image/x-icon" href="~/logopolytech-1.ico" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -133,13 +136,13 @@
 
                 <div class="f-line"></div>
 
-                <div class="f-col">
-                    <h4>Контакти</h4>
-                    <div class="f-contact-info">
-                        <p>58029, Чернівці, вул. Павла Каспрука, 2</p>
-                        <p>+38 (0372) 56-70-47 | +38 (095) 700-64-51</p>
-                        <p>mail@polytech.cv.ua</p>
-                    </div>
+                    <div class="f-col">
+                        <h4>Контакти</h4>
+                        <div class="f-contact-info">
+                            <p>@orgInfo.Address</p>
+                            <p>@string.Join(" | ", orgInfo.PhoneNumbers)</p>
+                            <p>@orgInfo.Email</p>
+                        </div>
                     <div class="live-map-container">
                         <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2636.568453535!2d25.9221!3d48.2917!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473408b3f4692599%3A0x16afb3b788bb529d!2z0LLRg9C70LjRhtGPINCf0LDQstC70LAg0JrQsNGB0L_RgNGD0LrQsCwgMiwg0KfQtdGA0L3RltCy0YbRliwg0KfQtdGA0L3RltCy0LXRhtGM0LrQsCDQvtCx0LvQsNGB0YLRjCwgNTgwMDA!5e0!3m2!1suk!2sua!4v1712175000000!5m2!1suk!2sua"
@@ -163,15 +166,17 @@
             <div class="f-info-area">
                 <p>© 2026 Чернівецький політехнічний фаховий коледж</p>
             </div>
-
-            <div class="f-social-area">
-                <div class="f-soc-list">
-                    <a href="https://www.instagram.com/ckprogr" target="_blank" class="sm-link"><img src="~/svg/instagram-icon.svg" alt="Instagram" /></a>
-                    <a href="https://www.youtube.com/channel/UC2wIoLJ20hBEZhvrqtOSRBw"  target="_blank" class="sm-link"><img src="~/svg/youtube-icon.svg" alt="YouTube" /></a>
-                    <a href="mailto:ipz@polytech.cv.ua" target="_blank" class="sm-link"><img src="~/svg/email-icon.svg" alt="Email" /></a>
+                <div class="f-social-area">
+                    <div class="f-soc-list">
+                      @foreach (var social in orgInfo.SocialLinks)
+                        {
+                            <a href="@social.Url" target="_blank" class="sm-link">
+                                <img src="~/images/icons/@social.Icon" alt="@social.Title" />
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
     </div>
 </footer>
 

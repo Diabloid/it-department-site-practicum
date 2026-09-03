@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Entities
 {
     [Table("disciplines")]
+    [Index(nameof(Name), IsUnique = true)]
     public class Discipline
     {
         [Key]
@@ -13,20 +15,19 @@ namespace it_department_site.Entities
         [Required]
         [MaxLength(200)]
         [Column("name")]
-        public string Name { get; set; } = string.Empty;
+        public required string Name { get; set; }
 
-        [Column("description")]
+        [Column("description", TypeName = "text")]
         public string? Description { get; set; }
 
         [Required]
-        [MaxLength(200)]
-        [Column("teacher")]
-        public string Teacher { get; set; } = string.Empty;
-
         [Column("sort_order")]
         public int SortOrder { get; set; }
 
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Required]
+        [Column("is_required")]
+        public bool IsRequired { get; set; } = true;
+
+        public ICollection<DisciplineResourceLink> ResourceLinks { get; set; } = new List<DisciplineResourceLink>();
     }
 }

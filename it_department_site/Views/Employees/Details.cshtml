@@ -19,7 +19,7 @@
     <div class="employees-main-wrapper">
         <header class="employees-hero employee-detail-hero">
             <div class="employee-profile-photo-wrap employee-detail-photo-wrap">
-                <img src="@Model.PhotoUrl"
+                <img src="@(string.IsNullOrEmpty(@Model.PhotoUrl) ? "/images/default/avatar.jpg" : @Model.PhotoUrl)"
                      alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
                      class="employee-profile-photo" />
             </div>
@@ -46,6 +46,30 @@
 
         <section>
             @Html.Raw(Model.Bio)
+        </section>
+
+        <div class="employees-divider"></div>
+
+        <section class="employee-disciplines-section my-4">
+            <h3 class="employees-section-title mb-3">Викладає дисципліни</h3>
+            @if (Model.Disciplines != null && Model.Disciplines.Count > 0)
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var discipline in Model.Disciplines.OrderBy(d => d.SortOrder))
+                    {
+                        <a asp-controller="Disciplines"
+                           asp-action="Details"
+                           asp-route-id="@discipline.Id"
+                           class="discipline-link">
+                            @discipline.Name
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted fst-italic">Дисципліни ще не призначені.</p>
+            }
         </section>
 
         @if (Model.Certificates.Count > 0)

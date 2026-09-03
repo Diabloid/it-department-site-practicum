@@ -1,0 +1,59 @@
+@model it_department_site.ViewModels.UserFormViewModel
+
+<h4>Додати користувача</h4>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form method="post" asp-action="CreateUser" onsubmit="return submitForm(this)">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label class="form-label">Ім'я користувача</label>
+        <input asp-for="Username" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Електронна пошта</label>
+        <input asp-for="Email" type="email" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Пароль</label>
+        <input asp-for="Password" type="password" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Співробітник</label>
+        <select asp-for="EmployeeId" class="form-control">
+            <option value="">— не обрано —</option>
+            @foreach (var employee in Model.AvailableEmployees)
+            {
+                <option value="@employee.Id">@employee.LastName @employee.FirstName</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Ролі</label>
+        @foreach (var role in Enum.GetValues<it_department_site.Entities.UserRole>())
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox"
+                       name="SelectedRoles" value="@role"
+                       id="role_@role" />
+                <label class="form-check-label" for="role_@role">@role</label>
+            </div>
+        }
+    </div>
+    <button class="btn btn-success">Зберегти</button>
+    <button type="button" class="btn btn-secondary" onclick="loadContent('Users')">Назад</button>
+</form>

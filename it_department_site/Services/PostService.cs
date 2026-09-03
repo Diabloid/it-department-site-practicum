@@ -19,10 +19,26 @@ namespace it_department_site.Services
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<Post>> GetLatestAsync(int count)
+        public async Task<Post?> GetBySlugAsync(string slug)
         {
             return await context.Set<Post>()
-                .Where(p => p.Status == PostStatus.Published)
+                .AsNoTracking()
+                .Include(p => p.Author)
+                .ThenInclude(a => a!.Employee)
+                .FirstOrDefaultAsync(p => p.Slug == slug);
+        }
+
+        public async Task<IEnumerable<Post>> GetLatestAsync(int count, int? excludeId = null)
+        {
+            var query = context.Set<Post>()
+                .Where(p => p.Status == PostStatus.Published);
+
+            if (excludeId.HasValue)
+            {
+                query = query.Where(p => p.Id != excludeId.Value);
+            }
+
+            return await query
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(count)
                 .ToListAsync();

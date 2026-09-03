@@ -117,8 +117,7 @@ namespace it_department_site.Services
                     {
                         Slot = existing.Slot,
                         ImageUrl = existing.ImageUrl,
-                        AltText = string.IsNullOrWhiteSpace(existing.AltText) ? $"Слайд {slot}" : existing.AltText,
-                        UpdatedAt = existing.UpdatedAt
+                        AltText = string.IsNullOrWhiteSpace(existing.AltText) ? $"Слайд {slot}" : existing.AltText
                     });
                     continue;
                 }
