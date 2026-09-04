@@ -1,0 +1,31 @@
+.site-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.site-breadcrumb a {
+  color: #636ac0;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.site-breadcrumb a:hover {
+  color: #4a52a8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-breadcrumb-sep {
+  color: #9ca3af;
+  user-select: none;
+}
+
+.site-breadcrumb-current {
+  color: #4b5563;
+  font-weight: 500;
+}

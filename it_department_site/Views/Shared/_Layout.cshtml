@@ -20,8 +20,6 @@
     var isAdminPage = controllerName == "Admin";
 
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
-
-    
 }
 
 @{
@@ -35,11 +33,15 @@
     <title>@ViewData["Title"] - @(siteSettings?.SiteTitle ?? "IT Department")</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="preload" href="~/fonts/inter/inter.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/fonts/inter/inter.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/slider.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
+    @if (!isAdminPage)
+    {
+        <link rel="stylesheet" href="~/css/breadcrumbs.css" asp-append-version="true" />
+    }
     @await RenderSectionAsync("Styles", required: false)
 
     @if (isAdminPage)
