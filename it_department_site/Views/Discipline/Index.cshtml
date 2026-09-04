@@ -23,6 +23,15 @@
     }
     else
     {
+        <form class="disciplines-search" role="search" action="#" method="get">
+            <label class="visually-hidden" for="disciplines-search-input">Пошук дисципліни</label>
+            <input id="disciplines-search-input"
+                   class="disciplines-search-input"
+                   type="search"
+                   name="q"
+                   placeholder="Пошук дисципліни…"
+                   autocomplete="off" />
+        </form>
         <div class="disciplines-grid">
             @foreach (var discipline in Model)
             {
@@ -36,6 +45,7 @@
                 </article>
             }
         </div>
+        <p class="disciplines-search-empty" hidden>Нічого не знайдено.</p>
         <nav class="disciplines-pager" hidden aria-label="Сторінки дисциплін"></nav>
     }
 </section>
