@@ -1,7 +1,9 @@
+using Quartz;
 using Microsoft.EntityFrameworkCore;
+
 namespace it_department_site.Services
 {
-    public class PostServiceService(ApplicationDbContext context) : IPostService
+    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory, ILogger<PostService> logger) : IPostService
     {
         public async Task<IEnumerable<Post>> GetAllAsync()
         {
@@ -46,8 +48,12 @@ namespace it_department_site.Services
         {
             post.CreatedAt = DateTime.UtcNow;
             post.UpdatedAt = DateTime.UtcNow;
+
             context.Set<Post>().Add(post);
             await context.SaveChangesAsync();
+
+            await SchedulePostPublishingAsync(post);
+
             return post.Id;
         }
 
@@ -56,14 +62,18 @@ namespace it_department_site.Services
             var existing = await context.Set<Post>().FindAsync(post.Id);
             if (existing is null)
                 return;
+
             existing.Slug = post.Slug;
             existing.Title = post.Title;
             existing.Status = post.Status;
             existing.Excerpt = post.Excerpt;
             existing.Content = post.Content;
             existing.Thumbnail = post.Thumbnail;
+            existing.PublishedAt = post.PublishedAt;
             existing.UpdatedAt = DateTime.UtcNow;
+
             await context.SaveChangesAsync();
+            await SchedulePostPublishingAsync(existing);
         }
 
         public async Task DeleteAsync(int id)
@@ -83,6 +93,35 @@ namespace it_department_site.Services
                 .ExecuteUpdateAsync(s => s.SetProperty(
                     p => p.ViewsCount,
                     p => p.ViewsCount + 1));
+        }
+
+        private async Task SchedulePostPublishingAsync(Post post)
+        {
+            var scheduler = await schedulerFactory.GetScheduler();
+            var jobKey = new JobKey($"publish-post-{post.Id}", "Posts");
+
+            if (await scheduler.CheckExists(jobKey))
+            {
+                await scheduler.DeleteJob(jobKey);
+            }
+
+            if (post.Status == PostStatus.Draft && post.PublishedAt.HasValue && post.PublishedAt.Value > DateTime.UtcNow)
+            {
+                // Створюємо завдання, передаючи туди ID поста
+                var job = JobBuilder.Create<Jobs.PublishPostJob>()
+                    .WithIdentity(jobKey)
+                    .UsingJobData("PostId", post.Id.ToString())
+                    .Build();
+
+                // Створюємо таймер, який спрацює в зазначений час
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity($"trigger-publish-post-{post.Id}", "Posts")
+                    .StartAt(post.PublishedAt.Value)
+                    .Build();
+
+                // Відправляємо завдання у Quartz
+                await scheduler.ScheduleJob(job, trigger);
+            }
         }
     }
 }

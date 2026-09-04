@@ -9,8 +9,8 @@ public class GraduatesController : Controller
 
     public async Task<IActionResult> Timeline()
     {
-        var graduates = await _graduateService.GetAllAsync();
-        return View(graduates);
+        var timeline = GraduateTimelineBuilder.Build(await _graduateService.GetAllAsync());
+        return View(timeline);
     }
 
     public async Task<IActionResult> Details(int id)
