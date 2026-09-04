@@ -1,60 +1,64 @@
 @model IEnumerable<it_department_site.Entities.Discipline>
+@{
+    ViewData["Title"] = "Дисципліни";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Дисципліни")
+    };
+}
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
 }
+<article class="content">
+    @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
-<section class="disciplines-page">
-    <nav class="discipline-breadcrumb" aria-label="Breadcrumb">
-        <a asp-controller="Pages" asp-action="Index">Головна</a>
-        <span aria-hidden="true">/</span>
-        <a href="#">Освітній процес</a>
-        <span aria-hidden="true">/</span>
-        <span class="discipline-breadcrumb-current">@ViewData["Title"]</span>
-    </nav>
+    <section class="disciplines-page">
 
-    <header class="employees-hero" aria-labelledby="employees-page-title">
-        <div class="employees-hero-glow employees-hero-glow--left" aria-hidden="true"></div>
-        <div class="employees-hero-glow employees-hero-glow--right" aria-hidden="true"></div>
+        <header class="employees-hero" aria-labelledby="employees-page-title">
+            <div class="employees-hero-glow employees-hero-glow--left" aria-hidden="true"></div>
+            <div class="employees-hero-glow employees-hero-glow--right" aria-hidden="true"></div>
 
-        <div class="employees-hero-inner">
-            <h1 id="employees-page-title" class="employees-title-main">
-                <span class="employees-title-line">@ViewData["Title"]</span>
-                <span class="employees-title-accent">спеціальності</span>
-            </h1>
+            <div class="employees-hero-inner">
+                <h1 id="employees-page-title" class="employees-title-main">
+                    <span class="employees-title-line">@ViewData["Title"]</span>
+                    <span class="employees-title-accent">спеціальності</span>
+                </h1>
 
-            <p class="employees-subtitle">
-                Перелік навчальних дисциплін спеціальності "Інженерія програмного забезпечення"
-            </p>
+                <p class="employees-subtitle">
+                    Перелік навчальних дисциплін спеціальності "Інженерія програмного забезпечення"
+                </p>
 
-            <div class="employees-hero-divider" aria-hidden="true">
-                <span class="employees-hero-divider-line"></span>
+                <div class="employees-hero-divider" aria-hidden="true">
+                    <span class="employees-hero-divider-line"></span>
 
-                <span class="employees-hero-divider-line"></span>
+                    <span class="employees-hero-divider-line"></span>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    @if (!Model.Any())
-    {
-        <div class="disciplines-empty">
-            Дисципліни ще не додано.
-        </div>
-    }
-    else
-    {
-        <div class="disciplines-grid">
-            @foreach (var discipline in Model)
-            {
-                <article class="discipline-card">
-                    <a asp-controller="Disciplines"
-                       asp-action="Details"
-                       asp-route-id="@discipline.Id"
-                       class="discipline-card-link">
-                        <h2 class="discipline-card-name">@discipline.Name</h2>
-                    </a>
-                </article>
-            }
-        </div>
-    }
-</section>
+        @if (!Model.Any())
+        {
+            <div class="disciplines-empty">
+                Дисципліни ще не додано.
+            </div>
+        }
+        else
+        {
+            <div class="disciplines-grid">
+                @foreach (var discipline in Model)
+                {
+                    <article class="discipline-card">
+                        <a asp-controller="Disciplines"
+                           asp-action="Details"
+                           asp-route-id="@discipline.Id"
+                           class="discipline-card-link">
+                            <h2 class="discipline-card-name">@discipline.Name</h2>
+                        </a>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+</article>

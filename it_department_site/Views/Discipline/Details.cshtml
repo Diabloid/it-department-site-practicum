@@ -1,20 +1,21 @@
 @model it_department_site.Entities.Discipline
+@{
+    ViewData["Title"] = Model.Name;
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Дисципліни", Url.Action("Index", "Disciplines")),
+        new(Model.Name)
+    };
+}
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
     <script src="~/js/disciplines.js"></script>
 }
 
-<section class="discipline-details-page">
-    <nav class="discipline-breadcrumb" aria-label="Breadcrumb">
-        <a asp-controller="Pages" asp-action="Index">Головна</a>
-        <span aria-hidden="true">/</span>
-        <a href="#">Освітній процес</a>
-        <span aria-hidden="true">/</span>
-        <a href="@ViewData["BackUrl"]">@ViewData["ParentTitle"]</a>
-        <span aria-hidden="true">/</span>
-        <span class="discipline-breadcrumb-current">@Model.Name</span>
-    </nav>
-    
+<article class="content">
+    @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
+
     <article class="discipline-article">
 
         <header class="discipline-header">
@@ -67,4 +68,4 @@
             </div>
         </div>
     </article>
-</section>
+</article>
