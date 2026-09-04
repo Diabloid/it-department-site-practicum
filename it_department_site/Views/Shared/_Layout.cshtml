@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="preload" href="~/fonts/inter/inter.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/slider.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/partners.css" asp-append-version="true" />
     @if (!isAdminPage)
@@ -54,29 +55,26 @@
 
 <body>
     <header class="header">
-        <div class="header-content">
-            <div class="logo-and-navigation-buttons">
-                <div class="left-side">
-                    <div class="logo">
-                        <a href="/">
-                            <img src="~/images/dark-logo-with-text.png" alt="Logo"/>
-                        </a>
-                    </div>
-                </div>
+        <div class="left-side">
+            <a class="logo" href="/">
+                <img src="~/images/light-logo-with-text.png" alt="Logo"/>
+            </a>
+        </div>
 
-                <div class="right-side">
-                    <div class="navigation-buttons">
-                        <ul>
-
-                            @Html.Raw(menuHtml)
-
-                            @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
-                                <li><a href='/Admin/Index'>Панель адміністатора</a></li>
-                            }
-                           
-                        </ul>
-                    </div>
-                </div>
+        <div class="right-side">
+            <ul class="main-nav">
+                @Html.Raw(menuHtml)
+                @if (CurrentUserService.IsAuthenticated && CurrentUserService.IsAdmin) {
+                    <li class="divider"></li>
+                    <li class="main-nav-item admin-panel">
+                        <a asp-controller="Admin" asp-action="Index">Панель адміністатора</a>
+                    </li>
+                }
+            </ul>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </header>
@@ -146,13 +144,13 @@
 
                 <div class="f-line"></div>
 
-                    <div class="f-col">
-                        <h4>Контакти</h4>
-                        <div class="f-contact-info">
-                            <p>@orgInfo.Address</p>
-                            <p>@string.Join(" | ", orgInfo.PhoneNumbers)</p>
-                            <p>@orgInfo.Email</p>
-                        </div>
+                <div class="f-col">
+                    <h4 class="f-contacts-title">Контакти</h4>
+                    <div class="f-contact-info">
+       			 <p>@orgInfo.Address</p>
+                          <p>@string.Join(" | ", orgInfo.PhoneNumbers)</p>
+                          <p>@orgInfo.Email</p>
+                    </div>
                     <div class="live-map-container">
                         <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2636.568453535!2d25.9221!3d48.2917!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x473408b3f4692599%3A0x16afb3b788bb529d!2z0LLRg9C70LjRhtGPINCf0LDQstC70LAg0JrQsNGB0L_RgNGD0LrQsCwgMiwg0KfQtdGA0L3RltCy0YbRliwg0KfQtdGA0L3RltCy0LXRhtGM0LrQsCDQvtCx0LvQsNGB0YLRjCwgNTgwMDA!5e0!3m2!1suk!2sua!4v1712175000000!5m2!1suk!2sua"
@@ -168,25 +166,26 @@
         </div>
     }
     <div class="footer-bottom">
-        <div class="f-bottom-content">
-            <div class="f-logo-area">
-                <img src="~/images/light-logo-with-text.png" alt="Logo" class="f-logo-img" />
+        <div class="f-logo-area">
+            <a class="logo" href="/">
+                <img src="~/images/light-logo-with-text.png" alt="Logo"/>
+            </a>
+        </div>
+
+        <div class="f-info-area">
+            <span>© 2026 Чернівецький політехнічний фаховий коледж</span>
+        </div>
+
+        <div class="f-social-area">
+            <div class="f-soc-list">
+              @foreach (var social in orgInfo.SocialLinks)
+                {
+                    <a href="@social.Url" target="_blank" class="sm-link">
+                        <img src="~/images/icons/@social.Icon" alt="@social.Title" />
+                    </a>
+                }
             </div>
-            
-            <div class="f-info-area">
-                <p>© 2026 Чернівецький політехнічний фаховий коледж</p>
-            </div>
-                <div class="f-social-area">
-                    <div class="f-soc-list">
-                      @foreach (var social in orgInfo.SocialLinks)
-                        {
-                            <a href="@social.Url" target="_blank" class="sm-link">
-                                <img src="~/images/icons/@social.Icon" alt="@social.Title" />
-                            </a>
-                        }
-                    </div>
-                </div>
-            </div>
+        </div>
     </div>
 </footer>
 
