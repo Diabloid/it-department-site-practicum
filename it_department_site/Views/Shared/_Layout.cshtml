@@ -20,8 +20,6 @@
     var isAdminPage = controllerName == "Admin";
 
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
-
-    
 }
 
 @{
@@ -35,7 +33,7 @@
     <title>@ViewData["Title"] - @(siteSettings?.SiteTitle ?? "IT Department")</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="preload" href="~/fonts/inter/inter.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/fonts/inter/inter.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/slider.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
@@ -80,12 +78,6 @@
     </header>
 
     <main>
-        @if (!isAdminPage && ViewData["Breadcrumbs"] is IReadOnlyList<BreadcrumbItem> crumbs && crumbs.Count > 0)
-        {
-            <div class="site-breadcrumb-wrap">
-                @await Html.PartialAsync("Partials/_Breadcrumb", crumbs)
-            </div>
-        }
         @RenderBody()
     </main>
 
