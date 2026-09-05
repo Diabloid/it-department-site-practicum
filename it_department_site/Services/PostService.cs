@@ -16,7 +16,7 @@ namespace it_department_site.Services
         {
             return await context.Set<Post>()
                 .AsNoTracking()
- 		.Include(p => p.Categories)
+ 		        .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
