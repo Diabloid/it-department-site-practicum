@@ -119,9 +119,9 @@ INSERT INTO disciplines (name, description, sort_order, is_required) VALUES
 ('Управління ІТ проєктами','', 0, true),
 ('Якість та тестування програмного забезпечення','', 0, true);
 
-INSERT INTO categories (name) VALUES
-('our-life'),
-('events');
+INSERT INTO categories (name, title) VALUES
+('our-life', 'Наше житття'),
+('events', 'Події');
 
 INSERT INTO employees (id, lastname, firstname, patronymic_name, email, google_drive_folder_url, specialization, bio, photo_url) VALUES
 (1, 'Атвіновський','Олексій','Ігорович','oleksii.atvinovskyi@polytech.cv.ua', 'https://drive.google.com/drive/folders/1H-2NKUMYjiqDmLExP6UC39M55WEgftv7','','',''),
