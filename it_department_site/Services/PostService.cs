@@ -24,6 +24,7 @@ namespace it_department_site.Services
                 .AsNoTracking()
                 .Include(p => p.Author)
                 .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }
 
