@@ -14,8 +14,7 @@
 <div class="main-content">
             <div class="ourlife-and-news">
 
-
-                <div class="ourlife-area">
+                <a class="ourlife-area" asp-controller="Post" asp-action="Index" asp-route-category="our-life">
                     <div class="ourlife-square">
                         <div class="text-field">
                             <h2>НАШЕ ЖИТТЯ</h2>
@@ -24,8 +23,7 @@
                         <div class="image-field">
                         </div>
                     </div>
-                </div>
-
+                </a>
 
                 <div class="news-area">
                     <div class="news-content-and-title">
@@ -49,7 +47,6 @@
                                         <div class="news-excerpt">@Html.Raw(mainPost.Excerpt)</div>
                                     </a>
                                 </div>
-
 
                                 <div class="side-news-list">
                                     @foreach (var item in sidePosts)

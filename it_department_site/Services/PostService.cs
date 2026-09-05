@@ -30,6 +30,17 @@ namespace it_department_site.Services
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }
 
+        public async Task<IEnumerable<Post>> GetByCategoryName(string categoryName)
+        {
+            return await context.Set<Post>()
+                .AsNoTracking()
+                .Include(p => p.Author)
+                .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
+                .Where(p => p.Categories.Any(c => c.Name == categoryName))
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Post>> GetLatestAsync(int count, int? excludeId = null)
         {
             var query = context.Set<Post>()
