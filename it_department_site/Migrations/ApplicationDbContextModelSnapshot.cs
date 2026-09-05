@@ -49,6 +49,9 @@ namespace it_department_site.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("categories");
                 });
 
