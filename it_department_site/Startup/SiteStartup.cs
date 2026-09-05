@@ -1,5 +1,6 @@
 using it_department_site.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Quartz;
 
 namespace it_department_site.Startup
 {
@@ -45,12 +46,32 @@ namespace it_department_site.Startup
             builder.Services.AddScoped<IPartnerService, PartnerService>();
             builder.Services.AddScoped<IMainSliderService, MainSliderService>();
 
-            builder.Services.AddScoped<IPostService, PostServiceService>();
+            builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IOrganizationInfoService, OrganizationInfoService>();
             builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
+
+            builder.Services.AddQuartz(q =>
+            {
+                q.UsePersistentStore(s =>
+                {
+                    // Використовуємо JSON для серіалізації параметрів завдання
+                    s.UseNewtonsoftJsonSerializer();
+
+                    s.UseMySqlConnector(mySqlOptions =>
+                    {
+                        mySqlOptions.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                    });
+                });
+            });
+
+            // Додаємо Quartz як фоновий сервіс, який чекатиме завершення задач при вимкненні програми
+            builder.Services.AddQuartzHostedService(options =>
+            {
+                options.WaitForJobsToComplete = true;
+            });
 
             var app = builder.Build();
 
@@ -78,7 +99,7 @@ namespace it_department_site.Startup
 
             app.UseSession();
 
-// Маршрути
+            // Маршрути
             app.MapControllerRoute(
                 name: "admin",
                 pattern: "Admin",

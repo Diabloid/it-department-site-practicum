@@ -24,11 +24,22 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Дата публікації</label>
+        <label class="form-label">Дата створення</label>
         <input type="datetime-local"
                name="CreatedAt"
                class="form-control"
                value="@Model.CreatedAt.ToString("yyyy-MM-ddTHH:mm")" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Запланована дата публікації</label>
+        <input type="datetime-local"
+               name="PublishedAt"
+               class="form-control"
+               value="@(Model.PublishedAt?.ToString("yyyy-MM-ddTHH:mm"))" />
+        <div class="form-text">
+            Залиште порожнім для миттєвої публікації. Якщо вибрати дату в майбутньому і натиснути <b>«Зберегти чернетку»</b>, публікація відбудеться автоматично.
+        </div>
     </div>
 
     <div class="mb-3">

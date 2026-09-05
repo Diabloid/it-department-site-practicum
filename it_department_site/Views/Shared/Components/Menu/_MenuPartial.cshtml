@@ -21,19 +21,21 @@
 {
     if (item.Children.Any())
     {
-        <li class="dropdown">
-            <a href="@ResolveMenuUrl(item)">@item.Name</a>
-
+        <li class="main-nav-item group">
+            <div class="main-nav-item-group">
+                <a href="@ResolveMenuUrl(item)">@item.Name</a>
+                <span class="caret">▼</span>
+            </div>
             <div class="dropdown-content">
                 @foreach (var child in item.Children)
                 {
-                    <a href="@ResolveMenuUrl(child)">@child.Name</a>
+                    <a class="@(child.Type == MenuItemType.Separator ? "divider" : "")" href="@ResolveMenuUrl(child)">@child.Name</a>
                 }
             </div>
         </li>
     }
     else
     {
-        <li><a href="@ResolveMenuUrl(item)">@item.Name</a></li>
+        <li class="main-nav-item"><a href="@ResolveMenuUrl(item)">@item.Name</a></li>
     }
 }

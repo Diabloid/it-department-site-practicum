@@ -44,7 +44,10 @@ namespace it_department_site.Entities
         [Required]
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        
+
+        [Column("published_at")]
+        public DateTime? PublishedAt { get; set; }
+
         [Required]
         [Column("author_id")]
         public int AuthorId { get; set; }
