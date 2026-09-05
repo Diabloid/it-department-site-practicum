@@ -56,7 +56,9 @@ namespace it_department_site.Entities
         public User? Author { get; set; }
 
         [Column("views_count")]
-        public int ViewsCount { get; set; } = 0;
+        public int ViewsCount { get; set; }
+
+        public List<Category> Categories { get; set; } = new();
     }
     
     public enum PostStatus

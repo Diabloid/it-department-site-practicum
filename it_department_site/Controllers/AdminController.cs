@@ -23,6 +23,7 @@ namespace it_department_site.Controllers
         private readonly IUserService _userService;
         private readonly IFileStorageService _fileStorageService;
         private readonly IOrganizationInfoService _organizationInfoService;
+        private readonly ICategoryService _categoryService;
 
         public AdminController(
             IPageService pageService,
@@ -39,7 +40,8 @@ namespace it_department_site.Controllers
             IDisciplineService disciplineService,
             IUserService userService,
             IFileStorageService fileStorageService,
-            IOrganizationInfoService organizationInfoService)
+            IOrganizationInfoService organizationInfoService,
+            ICategoryService categoryService)
         {
             _pageService = pageService;
             _menuService = menuService;
@@ -55,7 +57,8 @@ namespace it_department_site.Controllers
             _disciplineService = disciplineService;
             _userService = userService;
             _fileStorageService = fileStorageService;
-           _organizationInfoService = organizationInfoService; 
+           _organizationInfoService = organizationInfoService;
+            _categoryService = categoryService; 
        }
 
         public async Task<IActionResult> LayoutSettings()
@@ -729,8 +732,9 @@ namespace it_department_site.Controllers
             return PartialView("_PostsTable", posts);
         }
 
-        public IActionResult CreatePost()
+        public async Task<IActionResult> CreatePost()
         {
+            ViewBag.AllCategories = await _categoryService.GetAllAsync();
             return PartialView("_CreatePost", new Post
             {
                 Id = 0,
@@ -747,12 +751,13 @@ namespace it_department_site.Controllers
             var post = await _postService.GetByIdAsync(id);
             if (post == null) return NotFound();
 
+            ViewBag.AllCategories = await _categoryService.GetAllAsync();
             return PartialView("_EditPost", post);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SavePostDraft(Post post)
+        public async Task<IActionResult> SavePostDraft(Post post, int[]? selectedCategories)
         {
             ClearPostSoftValidationState();
 
@@ -763,6 +768,15 @@ namespace it_department_site.Controllers
                 if (post.CreatedAt == default)
                     post.CreatedAt = DateTime.Now;
                 post.UpdatedAt = DateTime.Now;
+                if (selectedCategories != null && selectedCategories.Length > 0)
+                {
+                    var allCategories = await _categoryService.GetAllAsync();
+                    post.Categories = allCategories.Where(c => selectedCategories.Contains(c.Id)).ToList();
+                }
+                else
+                {
+                    post.Categories = new List<Category>();
+                }
 
                 if (post.Id == 0)
                 {
@@ -788,7 +802,7 @@ namespace it_department_site.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PublishPost(Post post, IFormFile? thumbnailFile)
+        public async Task<IActionResult> PublishPost(Post post, IFormFile? thumbnailFile, int[]? selectedCategories)
         {
             ClearPostSoftValidationState();
 
@@ -808,6 +822,15 @@ namespace it_department_site.Controllers
                     post.CreatedAt = DateTime.Now;
                 post.UpdatedAt = DateTime.Now;
                 post.Excerpt ??= string.Empty;
+                if (selectedCategories != null && selectedCategories.Length > 0)
+                {
+                    var allCategories = await _categoryService.GetAllAsync();
+                    post.Categories = allCategories.Where(c => selectedCategories.Contains(c.Id)).ToList();
+                }
+                else
+                {
+                    post.Categories = new List<Category>();
+                }
 
                 if (thumbnailFile != null)
                     post.Thumbnail = await _fileStorageService.SaveImage(thumbnailFile, "posts");
