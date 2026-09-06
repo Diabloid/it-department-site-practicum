@@ -88,7 +88,7 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-        [HttpPost]
+        [HttpGet]
         public IActionResult CreateGraduate()
         {
             return PartialView("_CreateGraduate", new Graduate());
