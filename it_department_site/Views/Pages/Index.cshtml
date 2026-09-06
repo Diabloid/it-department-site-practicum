@@ -3,6 +3,9 @@
    var newsList = (ViewBag.News as IEnumerable<Post>)?.ToList() ?? new List<Post>();
    var mainSliderSlides = (ViewBag.MainSliderSlides as IEnumerable<MainSliderSlide>)?.ToList()
        ?? new List<MainSliderSlide>();
+
+   var reviewsList = (ViewBag.Reviews as IEnumerable<it_department_site.Entities.Graduate>)?.ToList()
+       ?? new List<it_department_site.Entities.Graduate>();
 }
 
 @if (mainSliderSlides.Any())
@@ -74,5 +77,5 @@
                 </div>
             </div>
 </div>
-@await Html.PartialAsync("Partials/_Reviews")
+@await Html.PartialAsync("Partials/_Reviews", reviewsList)
 @await Html.PartialAsync("Partials/_PartnerSlider", (List<Partner>)(ViewBag.Partners ?? new List<Partner>()))
