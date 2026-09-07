@@ -23,7 +23,19 @@ namespace it_department_site.Services
         public async Task<List<MainSliderSlide>> GetDisplaySlidesAsync()
         {
             var slides = await BuildSlidesAsync();
-            return slides.Where(s => !s.IsEmpty).ToList();
+            var withImages = slides.Where(s => !s.IsEmpty).ToList();
+            if (withImages.Count > 0)
+                return withImages;
+
+            return
+            [
+                new MainSliderSlide
+                {
+                    Slot = 1,
+                    ImageUrl = DefaultImages.Slider,
+                    AltText = "Слайд 1"
+                }
+            ];
         }
 
         public async Task UpdateSlideAsync(byte slot, IFormFile imageFile, string? altText)
