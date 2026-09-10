@@ -51,17 +51,17 @@
                 <article class="employee-card">
                     <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id" class="employee-card-link">
 
-                        <div class="employee-photo-wrap">
-                            <img src="@(string.IsNullOrEmpty(@employee.PhotoUrl) ? "/images/default/avatar.jpg" : @employee.PhotoUrl)" alt="@employee.LastName" class="employee-photo" />
-                        </div>
+                    <div class="employee-photo-wrap">
+                        <img src="@(string.IsNullOrEmpty(@employee.PhotoUrl) ? DefaultImages.Avatar : @employee.PhotoUrl)" alt="@employee.LastName" class="employee-photo" />
+                    </div>
 
-                        <div class="employee-body">
-                            <h2 class="employee-name">
-                                <span class="last-name">@employee.LastName</span>
-                                <span class="first-patronymic">@employee.FirstName @employee.PatronymicName</span>
-                            </h2>
-                            <p class="employee-meta">@employee.Specialization</p>
-                        </div>
+                    <div class="employee-body">
+                        <h2 class="employee-name">
+                            <span class="last-name">@employee.LastName</span>
+                            <span class="first-patronymic">@employee.FirstName @employee.PatronymicName</span>
+                        </h2>
+                        <p class="employee-meta">@employee.Specialization</p>
+                    </div>
                     </a>
                 </article>
             }

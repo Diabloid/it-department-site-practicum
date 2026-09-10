@@ -85,9 +85,9 @@ VALUES
 (6, 'Datawiz.io', '/uploads/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
 
 INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
-(1, '/images/default/slide.jpg', 'Слайд 1'),
-(2, '/images/default/slide.jpg', 'Слайд 2'),
-(3, '/images/default/slide.jpg', 'Слайд 3');
+(1, '/images/default/slider-image.jpg', 'Слайд 1'),
+(2, '/images/default/slider-image.jpg', 'Слайд 2'),
+(3, '/images/default/slider-image.jpg', 'Слайд 3');
 
 INSERT INTO disciplines (name, description, sort_order, is_required) VALUES
 ('Soft Skills для інженерів програмного забезпечення','', 0, true),

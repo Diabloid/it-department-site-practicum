@@ -26,17 +26,16 @@
 
             @* TODO: Mabe remove showing thumbnail in details page ? *@
             <div class="post-image-wrap">
-                <img src="@(string.IsNullOrWhiteSpace(@Model.Thumbnail) ? "/images/default/news-thumbnail.jpg" : @Model.Thumbnail)" alt="@Model.Title" class="post-image" />
-            </div>
+          	<img src="@(string.IsNullOrWhiteSpace(@Model.Thumbnail) ? DefaultImages.News : @Model.Thumbnail)" alt="@Model.Title" class="post-image" />
+             </div>
 
             <div class="post-body">
                 <div class="page-meta-row page-meta-row--article">
                     @if (Model.Author?.Employee != null)
                     {
                         <div class="post-author">
-                            @* TODO: Define fallback picture for the avatar https://github.com/polytech-st/it-department-site/issues/126 *@
-                            <img src="@(string.IsNullOrWhiteSpace(@Model.Author.Employee.PhotoUrl) ? "/images/default/avatar.jpg" : @Model.Author.Employee.PhotoUrl)"
-                                 alt="@Model.Author.Employee.FirstName @Model.Author.Employee.LastName" class="post-author-photo"/>
+                        <img src="@(string.IsNullOrWhiteSpace(@Model.Author.Employee.PhotoUrl) ? DefaultImages.Avatar : @Model.Author.Employee.PhotoUrl)"
+                             alt="@Model.Author.Employee.FirstName @Model.Author.Employee.LastName" class="post-author-photo"/>
                             <a asp-controller="Employees" asp-action="Details" asp-route-id="@Model.Author.Employee.Id" class="post-author-name">@Model.Author.Employee.FirstName @Model.Author.Employee.LastName</a>
                         </div>
                     }

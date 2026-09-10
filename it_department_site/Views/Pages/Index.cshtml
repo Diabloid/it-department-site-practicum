@@ -38,7 +38,7 @@
 
                                 <div class="main-news-block">
                                     <a href="/posts/@(mainPost.Slug)">
-                                        <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default/news-thumbnail.jpg" : mainPost.Thumbnail)');"></div>
+                                       <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? DefaultImages.News : mainPost.Thumbnail)');"></div>
                                         <span class="news-date">
                                             <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
                                             @mainPost.CreatedAt.ToString("dd.MM.yyyy")
@@ -52,7 +52,7 @@
                                     @foreach (var item in sidePosts)
                                     {
                                         <a href="/posts/@(item.Slug)">
-                                            <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default/news-thumbnail.jpg" : item.Thumbnail)');"></div>
+                                            <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? DefaultImages.News : item.Thumbnail)');"></div>
                                             <div class="news-info-container">
                                                 <small>
                                                     <div class="news-meta" >

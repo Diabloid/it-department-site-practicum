@@ -34,16 +34,9 @@ else
                                asp-action="Details"
                                asp-route-id="@graduate.Id"
                                class="graduate-timeline__card-link">
-                                @if (!string.IsNullOrEmpty(graduate.PhotoUrl))
-                                {
-                                    <img src="@graduate.PhotoUrl"
-                                         alt="@graduate.LastName @graduate.FirstName"
-                                         class="graduate-timeline__photo" />
-                                }
-                                else
-                                {
-                                    <div class="graduate-timeline__photo-placeholder" aria-hidden="true">👤</div>
-                                }
+                                <img src="@(string.IsNullOrEmpty(graduate.PhotoUrl) ? DefaultImages.Avatar : graduate.PhotoUrl)"
+                                     alt="@graduate.LastName @graduate.FirstName"
+                                     class="graduate-timeline__photo" />
                                 <div class="graduate-timeline__body">
                                     <h2 class="graduate-timeline__name">
                                         <span class="last-name">@graduate.LastName</span>
