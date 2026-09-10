@@ -14,7 +14,7 @@
             @foreach (var graduate in Model)
             {
                 var activeClass = slideIndex == 1 ? "active fade" : "fade";
-                var photoPath = string.IsNullOrEmpty(graduate.PhotoUrl) ? "/images/default/avatar.jpg" : graduate.PhotoUrl;
+                var photoPath = string.IsNullOrEmpty(graduate.PhotoUrl) ? "@DefaultImages.Avatar" : graduate.PhotoUrl;
 
                 <div class="reviews-field @activeClass">
                     <div class="pfp-name-status">
