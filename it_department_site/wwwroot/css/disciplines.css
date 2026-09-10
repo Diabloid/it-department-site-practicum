@@ -6,7 +6,7 @@
 
 .disciplines-empty {
     text-align: center;
-    color: #6b7280;
+    color: var(--color-subtle);
     padding: 3rem 1rem;
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.6);
@@ -25,8 +25,8 @@
         flex-wrap: wrap;
         gap: 2px;
         padding: 0 20px;
-        background: #ffffff;
-        border-bottom: 1px solid #e8e9f4;
+        background: var(--color-surface);
+        border-bottom: 1px solid var(--color-border);
 
         .tab-btn {
             display: flex;
@@ -38,19 +38,19 @@
             font-family: inherit;
             font-size: 14px;
             font-weight: 700;
-            color: #575979;
+            color: var(--color-muted);
             white-space: nowrap;
             cursor: pointer;
             box-shadow: inset 0 -2px 0 transparent;
             transition: color 0.15s ease, box-shadow 0.15s ease;
 
             &:hover {
-                color: #636ac0;
+                color: var(--color-brand);
             }
 
             &.active,
             &[aria-selected="true"] {
-                color: #636ac0;
+                color: var(--color-brand);
                 box-shadow: inset 0 -2px 0 #5b5fc7
             }
 
@@ -95,9 +95,9 @@
             align-items: center;
             gap: 15px;
             padding: 16px 18px;
-            border: 1px solid #e8e9f4;
+            border: 1px solid var(--color-border);
             border-radius: 13px;
-            background: #fff;
+            background: var(--color-surface);
             color: inherit;
             text-decoration: none;
             cursor: pointer;
@@ -120,7 +120,7 @@
         height: 56px;
         border-radius: 50%;
         background: #5b5fc7;
-        color: #fff;
+        color: var(--color-surface);
         font-size: 17px;
         font-weight: 800;
         overflow: hidden;
@@ -163,8 +163,8 @@
     );
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 2px 4px rgba(99, 106, 192, 0.06),
-    0 12px 32px rgba(99, 106, 192, 0.11);
+    box-shadow: 0 2px 4px rgba(var(--color-brand-rgb), 0.06),
+    0 12px 32px rgba(var(--color-brand-rgb), 0.11);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
@@ -175,7 +175,7 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(180deg, #636ac0 0%, #949dff 50%, #636ac0 100%);
+    background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-light) 50%, var(--color-brand) 100%);
     border-radius: 18px 0 0 18px;
 }
 
@@ -191,7 +191,7 @@
     margin: 0;
     font-size: 1.125rem;
     font-weight: 700;
-    color: #2c3258;
+    color: var(--color-heading);
     line-height: 1.35;
 }
 
@@ -199,12 +199,12 @@
     .discipline-card:hover {
         transform: translateY(-3px);
         border-color: rgba(148, 157, 255, 0.45);
-        box-shadow: 0 4px 8px rgba(99, 106, 192, 0.08),
-        0 16px 40px rgba(99, 106, 192, 0.15);
+        box-shadow: 0 4px 8px rgba(var(--color-brand-rgb), 0.08),
+        0 16px 40px rgba(var(--color-brand-rgb), 0.15);
     }
 
     .discipline-card:hover .discipline-card-name {
-        color: #636ac0;
+        color: var(--color-brand);
     }
 }
 
@@ -232,12 +232,12 @@
     width: 5px;
     background: linear-gradient(
             180deg,
-            #636ac0 0%,
-            #949dff 20%,
-            #767dcf 40%,
-            #b8bfff 60%,
-            #767dcf 80%,
-            #636ac0 100%
+            var(--color-brand) 0%,
+            var(--color-brand-light) 20%,
+            var(--color-brand-mid) 40%,
+            var(--color-brand-pale) 60%,
+            var(--color-brand-mid) 80%,
+            var(--color-brand) 100%
     );
     background-size: 100% 200%;
     animation: disciplineAccentShimmer 3.5s ease-in-out infinite;
@@ -257,7 +257,7 @@
     margin: 0;
     font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 700;
-    color: #2c3258;
+    color: var(--color-heading);
     letter-spacing: -0.02em;
 }
 
@@ -271,8 +271,8 @@
     );
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 2px 4px rgba(99, 106, 192, 0.06),
-    0 12px 32px rgba(99, 106, 192, 0.11);
+    box-shadow: 0 2px 4px rgba(var(--color-brand-rgb), 0.06),
+    0 12px 32px rgba(var(--color-brand-rgb), 0.11);
 }
 
 .discipline-description {
@@ -285,7 +285,7 @@
 @media (prefers-reduced-motion: reduce) {
     .discipline-header::before {
         animation: none;
-        background: linear-gradient(180deg, #636ac0 0%, #767dcf 50%, #949dff 100%);
+        background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-mid) 50%, var(--color-brand-light) 100%);
         background-size: auto;
     }
 
