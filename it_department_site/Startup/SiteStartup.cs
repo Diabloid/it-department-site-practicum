@@ -34,6 +34,7 @@ namespace it_department_site.Startup
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGraduateService, GraduateService>();
             builder.Services.AddScoped<IDisciplineService, DisciplineService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();

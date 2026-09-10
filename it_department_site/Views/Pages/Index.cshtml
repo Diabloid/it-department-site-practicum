@@ -3,6 +3,9 @@
    var newsList = (ViewBag.News as IEnumerable<Post>)?.ToList() ?? new List<Post>();
    var mainSliderSlides = (ViewBag.MainSliderSlides as IEnumerable<MainSliderSlide>)?.ToList()
        ?? new List<MainSliderSlide>();
+
+   var reviewsList = (ViewBag.Reviews as IEnumerable<it_department_site.Entities.Graduate>)?.ToList()
+       ?? new List<it_department_site.Entities.Graduate>();
 }
 
 @if (mainSliderSlides.Any())
@@ -14,8 +17,7 @@
 <div class="main-content">
             <div class="ourlife-and-news">
 
-
-                <div class="ourlife-area">
+                <a class="ourlife-area" asp-controller="Post" asp-action="Index" asp-route-category="our-life">
                     <div class="ourlife-square">
                         <div class="text-field">
                             <h2>НАШЕ ЖИТТЯ</h2>
@@ -24,8 +26,7 @@
                         <div class="image-field">
                         </div>
                     </div>
-                </div>
-
+                </a>
 
                 <div class="news-area">
                     <div class="news-content-and-title">
@@ -40,7 +41,7 @@
 
                                 <div class="main-news-block">
                                     <a href="/posts/@(mainPost.Slug)">
-                                        <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? "/images/default/news-thumbnail.jpg" : mainPost.Thumbnail)');"></div>
+                                       <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? DefaultImages.News : mainPost.Thumbnail)');"></div>
                                         <span class="news-date">
                                             <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
                                             @mainPost.CreatedAt.ToString("dd.MM.yyyy")
@@ -50,12 +51,11 @@
                                     </a>
                                 </div>
 
-
                                 <div class="side-news-list">
                                     @foreach (var item in sidePosts)
                                     {
                                         <a href="/posts/@(item.Slug)">
-                                            <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? "/images/default/news-thumbnail.jpg" : item.Thumbnail)');"></div>
+                                            <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? DefaultImages.News : item.Thumbnail)');"></div>
                                             <div class="news-info-container">
                                                 <small>
                                                     <div class="news-meta" >
@@ -77,5 +77,5 @@
                 </div>
             </div>
 </div>
-@await Html.PartialAsync("Partials/_Reviews")
+@await Html.PartialAsync("Partials/_Reviews", reviewsList)
 @await Html.PartialAsync("Partials/_PartnerSlider", (List<Partner>)(ViewBag.Partners ?? new List<Partner>()))

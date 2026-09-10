@@ -85,9 +85,9 @@ VALUES
 (6, 'Datawiz.io', '/uploads/partners/4d7223f6-56bd-42f9-940b-ba1dbc96a4bf.png', 6, 'https://datawiz.io/uk/');
 
 INSERT INTO main_slider_slides (slot, image_url, alt_text) VALUES
-(1, '/images/default/slide.jpg', 'Слайд 1'),
-(2, '/images/default/slide.jpg', 'Слайд 2'),
-(3, '/images/default/slide.jpg', 'Слайд 3');
+(1, '/images/default/slider-image.jpg', 'Слайд 1'),
+(2, '/images/default/slider-image.jpg', 'Слайд 2'),
+(3, '/images/default/slider-image.jpg', 'Слайд 3');
 
 INSERT INTO disciplines (name, description, sort_order, is_required) VALUES
 ('Soft Skills для інженерів програмного забезпечення','', 0, true),
@@ -118,6 +118,10 @@ INSERT INTO disciplines (name, description, sort_order, is_required) VALUES
 ('Технології створення додатків для платформи .NET','', 0, true),
 ('Управління ІТ проєктами','', 0, true),
 ('Якість та тестування програмного забезпечення','', 0, true);
+
+INSERT INTO categories (name, title) VALUES
+('our-life', 'Наше житття'),
+('events', 'Події');
 
 INSERT INTO employees (id, lastname, firstname, patronymic_name, email, google_drive_folder_url, specialization, bio, photo_url) VALUES
 (1, 'Атвіновський','Олексій','Ігорович','oleksii.atvinovskyi@polytech.cv.ua', 'https://drive.google.com/drive/folders/1H-2NKUMYjiqDmLExP6UC39M55WEgftv7','','',''),

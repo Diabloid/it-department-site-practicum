@@ -41,23 +41,25 @@
 
     <div class="mb-3">
         <label class="form-label">Спеціалізація</label>
-        <input asp-for="Specialization" class="form-control" />
+        <input asp-for="Specialization" class="form-control" required />
         <span asp-validation-for="Specialization" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Фото</label>
-        <input type="file" name="photoFile" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+        <input type="file" name="photoFile" class="form-control" accept=".jpg,.jpeg,.png,.webp" required />
     </div>
 
     <div class="mb-3">
         <label class="form-label">Місце роботи</label>
-        <input asp-for="JobDescription" class="form-control" />
+        <input asp-for="JobDescription" class="form-control" required />
+        <span asp-validation-for="JobDescription" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Відгук</label>
-        <textarea asp-for="Testimonial" rows="4" class="form-control"></textarea>
+        <textarea asp-for="Testimonial" rows="4" class="form-control" required></textarea>
+        <span asp-validation-for="Testimonial" class="text-danger"></span>
     </div>
 
     <button class="btn btn-success">Зберегти</button>
