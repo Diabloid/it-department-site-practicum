@@ -48,9 +48,6 @@ main {
 
 .ourlife-area,
 .news-area {
-  height: 100%;
-  display: flex;
-  justify-content: center;
   flex: 1;
 }
 
