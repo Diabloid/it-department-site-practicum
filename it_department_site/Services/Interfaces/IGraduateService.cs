@@ -7,6 +7,6 @@ namespace it_department_site.Services.Interfaces
         Task CreateAsync(Graduate graduate);
         Task UpdateAsync(int id, Graduate graduate);
         Task DeleteAsync(int id);
-        Task<IEnumerable<Graduate>> GetRandomReviewsAsync(int count = 5);
+        Task<IEnumerable<Graduate>> GetRandomReviewsAsync(int count);
     }
 }
