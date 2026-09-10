@@ -91,8 +91,17 @@ namespace it_department_site.Controllers
         [HttpGet]
         public IActionResult CreateGraduate()
         {
-            return PartialView("_CreateGraduate", new Graduate());
+            return PartialView("_CreateGraduate", new Graduate
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                JobDescription = string.Empty,
+                Specialization = string.Empty,
+                PhotoUrl = string.Empty,
+                Testimonial = string.Empty
+            });
         }
+
         public async Task<IActionResult> CreateUser()
         {
             var employees = await _userService.GetAvailableEmployeesAsync();
