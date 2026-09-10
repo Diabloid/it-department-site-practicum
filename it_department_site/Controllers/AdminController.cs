@@ -293,7 +293,7 @@ namespace it_department_site.Controllers
             if (photoFile != null)
                 employee.PhotoUrl = await _fileStorageService.SaveImage(photoFile, "employees");
             else
-                employee.PhotoUrl = "/images/banner_photo_2.jpg";
+                employee.PhotoUrl = DefaultImages.Avatar;
 
             employee.PatronymicName ??= string.Empty;
             employee.Email ??= string.Empty;

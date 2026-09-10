@@ -19,7 +19,7 @@
     <div class="employees-main-wrapper">
         <header class="employees-hero employee-detail-hero">
             <div class="employee-profile-photo-wrap employee-detail-photo-wrap">
-                <img src="@(string.IsNullOrEmpty(@Model.PhotoUrl) ? "/images/default/avatar.jpg" : @Model.PhotoUrl)"
+                <img src="@(string.IsNullOrEmpty(@Model.PhotoUrl) ? DefaultImages.Avatar : @Model.PhotoUrl)"
                      alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
                      class="employee-profile-photo" />
             </div>
