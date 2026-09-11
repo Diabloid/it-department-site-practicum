@@ -70,7 +70,7 @@
 
 .banner-dot.is-active {
     transform: scale(1.2);
-    background: #ffffff;
+    background: var(--color-surface);
 }
 
 .banner-arrow {
@@ -82,7 +82,7 @@
     border: 0;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.35);
-    color: #fff;
+    color: var(--color-surface);
     font-size: 22px;
     line-height: 1;
     cursor: pointer;

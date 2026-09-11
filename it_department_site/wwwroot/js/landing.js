@@ -178,7 +178,7 @@ ourLifeAndNews.forEach(el => {
 });
 
 // reviews-general-title (з'являється нізвідки)
-const reviewsTitle = document.querySelector('.reviews-general-title');
+const reviewsTitle = document.querySelector('.reviews-area');
 if (reviewsTitle) {
     observer.observe(reviewsTitle);
 }

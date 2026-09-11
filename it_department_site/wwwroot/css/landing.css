@@ -5,8 +5,9 @@
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  color: #333;
-  background-color: #ecedff;
+  -webkit-font-smoothing: antialiased; /* TODO: Check if need this property */
+  color: var(--color-text);
+  background-color: var(--color-page-bg);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -93,7 +94,7 @@ main {
 
 .news-general-title h2,
 .reviews-general-title h2 {
-  color: #575979;
+  color: var(--color-muted);
   margin-bottom: 20px;
   padding: 0;
   font-size: 40px;
@@ -123,7 +124,7 @@ main {
 .side-news-list a {
   display: flex !important;
   text-decoration: none;
-  color: #333;
+  color: var(--color-text);
   background: rgba(255, 255, 255, 0.05);
   border-radius: 15px;
   padding: 20px;
@@ -188,7 +189,7 @@ main {
   align-items: center;
   font-size: 10px;
   font-weight: 700;
-  color: #575979;
+  color: var(--color-muted);
   text-transform: uppercase;
   margin-bottom: 10px !important;
 }
@@ -225,7 +226,7 @@ h3 {
   align-items: center;
   font-size: 10px;
   font-weight: 700;
-  color: #575979;
+  color: var(--color-muted);
   text-transform: uppercase;
   margin-bottom: 8px;
   flex-shrink: 0; /* Не дає даті стискатися */
@@ -262,7 +263,7 @@ h3 {
 
 .reviews-general-title h2 {
   font-size: 32px !important;
-  color: #2d2f45 !important;
+  color: var(--color-title) !important;
   font-weight: 700 !important;
 }
 
@@ -390,13 +391,13 @@ h3 {
 
 .name-and-status h3 {
   margin: 0 !important;
-  color: #2d2f45 !important;
+  color: var(--color-title) !important;
   white-space: nowrap !important;
 }
 
 .name-and-status p {
   margin: 2px 0 0 0 !important;
-  color: #575979 !important;
+  color: var(--color-muted) !important;
   font-size: 16px !important;
 }
 
@@ -413,7 +414,7 @@ h3 {
 .comments p {
   font-size: 18px !important;
   line-height: 1.7 !important;
-  color: #2d2f45 !important;
+  color: var(--color-title) !important;
   text-align: left !important;
   margin: 0 !important;
 }
@@ -436,7 +437,7 @@ h3 {
 }
 
 .dot.active {
-  background-color: #575979;
+  background-color: var(--color-muted);
   transform: scale(1.4);
 }
 
@@ -447,7 +448,7 @@ h3 {
 /* Загальні налаштування для плавного переходу */
 .ourlife-area,
 .news-area,
-.reviews-general-title,
+.reviews-area,
 .pfp-name-status,
 .rating-stars,
 .partners-area {
@@ -458,36 +459,20 @@ h3 {
 }
 
 /* --- 7.2. Scroll Reveal: Our Life (Знизу) та News (Справа) --- */
-.ourlife-area {
+.ourlife-area,
+.news-area,
+.reviews-area,
+.partners-area {
   opacity: 0;
   transform: translateY(50px);
 }
 
-.ourlife-area.show {
+.ourlife-area.show,
+.news-area.show,
+.reviews-area.show,
+.partners-area.show {
   opacity: 1;
   transform: translateY(0);
-}
-
-.news-area {
-  opacity: 0;
-  transform: translateX(50px);
-}
-
-.news-area.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* --- 7.3. Scroll Reveal: Title та Partners (Нізвідки) --- */
-.reviews-general-title,
-.partners-area {
-  opacity: 0;
-}
-
-.reviews-general-title.show,
-.partners-area.show {
-  width: 80%;
-  opacity: 1;
 }
 
 /* --- 7.4. Scroll Reveal: Елементи відгуків (Зліва, послідовно) --- */
@@ -508,7 +493,7 @@ h3 {
 /* Стилі для основної секції хедера */
 .header,
 .footer-bottom {
-  background: #3d4176;
+  background: var(--color-header);
   height: 80px;
   width: 100%;
   padding: 0 3%; /* the 3% is questionable value */
@@ -525,7 +510,7 @@ h3 {
   left: 0;
   z-index: 1000;
   transition: transform 1.5s;
-  box-shadow: 0 2px 12px rgba(44, 50, 88, 0.1);
+  box-shadow: 0 2px 12px rgba(var(--color-heading-rgb), 0.1);
   display: flex;
   align-items: center;
   will-change: transform;
@@ -569,7 +554,7 @@ h3 {
 
       &:hover {
         background: rgba(255, 255, 255, 0.15);
-        color: #ffffff;
+        color: var(--color-surface);
       }
 
       &.group {
@@ -635,7 +620,7 @@ h3 {
       padding: 8px;
       margin: 0;
       border-radius: 12px;
-      background: #ffffff;
+      background: var(--color-surface);
       box-shadow: 0 26px 46px -20px rgba(20, 22, 50, 0.7);
       list-style: none;
 
@@ -647,7 +632,7 @@ h3 {
       > a:not(.divider) {
         padding: 11px 14px;
         border-radius: 12px;
-        color: #575979;
+        color: var(--color-muted);
         font-size: 14px;
         font-weight: 600;
         white-space: nowrap;
@@ -655,13 +640,13 @@ h3 {
         transition: background-color 0.15s ease;
 
         &:hover {
-          background: #ecedff;
-          color: #333;
+          background: var(--color-page-bg);
+          color: var(--color-text);
         }
       }
 
       > a.divider {
-        background: #e8e9f4;
+        background: var(--color-border);
         margin: 11px 14px;
         height: 1px;
       }
@@ -699,7 +684,7 @@ h3 {
       display: block;
       height: 2px;
       border-radius: 2px;
-      background: #fff;
+      background: var(--color-surface);
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
   }
@@ -712,7 +697,7 @@ h3 {
 }
 
 .footer-top {
-  background: linear-gradient(0deg, #3d4176 19%, #8b92c4 60%, #ecedff 100%);
+  background: linear-gradient(0deg, var(--color-header) 19%, #8b92c4 60%, var(--color-page-bg) 100%);
   padding: 60px 3%; /* the 3% is questionable value */
   width: 100%;
 }
@@ -744,7 +729,7 @@ h3 {
 
 
 .f-col h4 {
-  color: #575979;
+  color: var(--color-muted);
   font-weight: 800;
   text-transform: uppercase;
   font-size: 16px;
@@ -936,7 +921,7 @@ h3 {
       gap: 2px;
       height: auto;
       padding: 6px 12px 20px;
-      background: #3d4176;
+      background: var(--color-header);
       box-shadow: 0 24px 40px -24px rgba(20, 22, 50, 0.8);
       display: none;
 
