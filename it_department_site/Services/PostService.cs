@@ -12,6 +12,13 @@ namespace it_department_site.Services
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Post>> GetAllPublishedAsync()
+        {
+            return await context.Set<Post>().Where(p => p.Status == PostStatus.Published)
+                .OrderByDescending(p => p.PublishedAt)
+                .ToListAsync();
+        }
+
         public async Task<Post?> GetByIdAsync(int id)
         {
             return await context.Set<Post>()

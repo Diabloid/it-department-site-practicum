@@ -4,10 +4,7 @@ namespace it_department_site.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            var posts = (await postService.GetAllAsync())
-                .Where(p => p.Status == PostStatus.Published)
-                .OrderByDescending(p => p.PublishedAt ?? p.CreatedAt)
-                .ToList();
+            var posts = await postService.GetAllPublishedAsync();
             return View(posts);
         }
 

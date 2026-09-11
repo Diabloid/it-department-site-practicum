@@ -3,6 +3,7 @@ namespace it_department_site.Services.Interfaces
     public interface IPostService
     {
         Task<IEnumerable<Post>> GetAllAsync();
+        Task<IEnumerable<Post>> GetAllPublishedAsync();
         Task<Post?> GetByIdAsync(int id);
         Task<Post?> GetBySlugAsync(string slug);
         Task<IEnumerable<Post>> GetLatestAsync(int count, int? excludeId = null);
