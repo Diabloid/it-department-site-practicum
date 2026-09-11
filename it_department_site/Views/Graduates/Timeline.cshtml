@@ -1,47 +1,31 @@
-@model IEnumerable<it_department_site.Entities.Graduate>
+@model it_department_site.ViewModels.GraduateTimelinePageViewModel
 @{
     ViewData["Title"] = "Випускники";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Випускники")
+    };
 }
 @section Styles {
-    <link rel="stylesheet" href="~/css/graduates.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/graduates/graduate-timeline.css" asp-append-version="true" />
 }
-<section class="graduates-page container py-5">
-    <div class="graduates-hero mb-5">
-        <p class="graduates-kicker mb-2">Спеціальність інженерії програмного забезпечення</p>
-        <h1 class="graduates-title mb-2">Випускники спеціальності</h1>
-        <p class="graduates-subtitle mb-0">
-            Наші випускники працюють у провідних ІТ-компаніях України та світу.
-        </p>
-    </div>
 
-    <div class="graduates-timeline">
-        @foreach (var graduate in Model.OrderByDescending(g => g.GraduationYear))
-        {
-            <div class="timeline-year-group">
-                <div class="timeline-year">@graduate.GraduationYear</div>
-                <article class="graduate-card">
-                    <a asp-controller="Graduates" asp-action="Details" asp-route-id="@graduate.Id" class="graduate-card-link">
-                        <div class="graduate-photo-wrap">
-                            @if (!string.IsNullOrEmpty(graduate.PhotoUrl))
-                            {
-                                <img src="@graduate.PhotoUrl" alt="@graduate.LastName" class="graduate-photo" />
-                            }
-                            else
-                            {
-                                <div class="graduate-photo-placeholder">👤</div>
-                            }
-                        </div>
-                        <div class="graduate-body">
-                            <h2 class="graduate-name">
-                                <span class="last-name">@graduate.LastName</span>
-                                <span class="first-name">@graduate.FirstName</span>
-                            </h2>
-                            <p class="graduate-meta">@graduate.Specialization</p>
-                            <p class="graduate-job">@graduate.JobDescription</p>
-                        </div>
-                    </a>
-                </article>
-            </div>
-        }
-    </div>
-</section>
+<article class="content">
+    @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
+
+	<section class="graduates-timeline-page">
+	    <header class="graduates-hero">
+		<div class="graduates-hero-bg" aria-hidden="true"></div>
+		<div class="graduates-hero-content">
+		    <p class="graduates-kicker">Спеціальність інженерії програмного забезпечення</p>
+		    <h1 class="graduates-title">Випускники спеціальності</h1>
+		    <p class="graduates-subtitle">
+		        Наші випускники працюють у провідних ІТ-компаніях України та світу.
+		    </p>
+		</div>
+	    </header>
+
+	    @await Html.PartialAsync("_GraduateTimelineTree", Model)
+	</section>
+</article>

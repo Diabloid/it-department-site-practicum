@@ -34,6 +34,36 @@ namespace it_department_site.Migrations
                     b.ToTable("employee_disciplines");
                 });
 
+            modelBuilder.Entity("it_department_site.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Title")
+                        .IsUnique();
+
+                    b.ToTable("categories");
+                });
+
             modelBuilder.Entity("it_department_site.Entities.Discipline", b =>
                 {
                     b.Property<int>("Id")
@@ -506,6 +536,10 @@ namespace it_department_site.Migrations
                         .HasColumnType("varchar(300)")
                         .HasColumnName("excerpt");
 
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("published_at");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -643,6 +677,21 @@ namespace it_department_site.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("post_categories", b =>
+                {
+                    b.Property<int>("category_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("post_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("category_id", "post_id");
+
+                    b.HasIndex("post_id");
+
+                    b.ToTable("post_categories");
+                });
+
             modelBuilder.Entity("employee_disciplines", b =>
                 {
                     b.HasOne("it_department_site.Entities.Discipline", null)
@@ -733,6 +782,21 @@ namespace it_department_site.Migrations
                         .HasForeignKey("EmployeeId");
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("post_categories", b =>
+                {
+                    b.HasOne("it_department_site.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("category_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("it_department_site.Entities.Post", null)
+                        .WithMany()
+                        .HasForeignKey("post_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("it_department_site.Entities.Discipline", b =>

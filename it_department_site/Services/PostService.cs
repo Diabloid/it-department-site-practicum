@@ -1,7 +1,9 @@
+using Quartz;
 using Microsoft.EntityFrameworkCore;
+
 namespace it_department_site.Services
 {
-    public class PostServiceService(ApplicationDbContext context) : IPostService
+    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory) : IPostService
     {
         public async Task<IEnumerable<Post>> GetAllAsync()
         {
@@ -10,10 +12,19 @@ namespace it_department_site.Services
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Post>> GetAllPublishedAsync()
+        {
+            return await context.Set<Post>()
+                .Where(p => p.Status == PostStatus.Published)
+                .OrderByDescending(p => p.PublishedAt)
+                .ToListAsync();
+        }
+
         public async Task<Post?> GetByIdAsync(int id)
         {
             return await context.Set<Post>()
                 .AsNoTracking()
+ 		        .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -23,7 +34,19 @@ namespace it_department_site.Services
                 .AsNoTracking()
                 .Include(p => p.Author)
                 .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
+        }
+
+        public async Task<IEnumerable<Post>> GetByCategoryName(string categoryName)
+        {
+            return await context.Set<Post>()
+                .AsNoTracking()
+                .Include(p => p.Author)
+                .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
+                .Where(p => p.Categories.Any(c => c.Name == categoryName))
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Post>> GetLatestAsync(int count, int? excludeId = null)
@@ -46,8 +69,20 @@ namespace it_department_site.Services
         {
             post.CreatedAt = DateTime.UtcNow;
             post.UpdatedAt = DateTime.UtcNow;
+
+            if (post.Categories.Count > 0)
+            {
+                var categoryIds = post.Categories.Select(c => c.Id).ToList();
+                post.Categories = await context.Set<Category>()
+                    .Where(c => categoryIds.Contains(c.Id))
+                    .ToListAsync();
+            }
+
             context.Set<Post>().Add(post);
             await context.SaveChangesAsync();
+
+            await SchedulePostPublishingAsync(post);
+
             return post.Id;
         }
 
@@ -56,14 +91,27 @@ namespace it_department_site.Services
             var existing = await context.Set<Post>().FindAsync(post.Id);
             if (existing is null)
                 return;
+
             existing.Slug = post.Slug;
             existing.Title = post.Title;
             existing.Status = post.Status;
             existing.Excerpt = post.Excerpt;
             existing.Content = post.Content;
             existing.Thumbnail = post.Thumbnail;
+            existing.PublishedAt = post.PublishedAt;
             existing.UpdatedAt = DateTime.UtcNow;
+
+            var categoryIds = post.Categories.Select(c => c.Id).ToList();
+            var newCategories = await context.Set<Category>()
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            existing.Categories.Clear();
+            foreach (var c in newCategories)
+                existing.Categories.Add(c);
+
             await context.SaveChangesAsync();
+            await SchedulePostPublishingAsync(existing);
         }
 
         public async Task DeleteAsync(int id)
@@ -83,6 +131,35 @@ namespace it_department_site.Services
                 .ExecuteUpdateAsync(s => s.SetProperty(
                     p => p.ViewsCount,
                     p => p.ViewsCount + 1));
+        }
+
+        private async Task SchedulePostPublishingAsync(Post post)
+        {
+            var scheduler = await schedulerFactory.GetScheduler();
+            var jobKey = new JobKey($"publish-post-{post.Id}", "Posts");
+
+            if (await scheduler.CheckExists(jobKey))
+            {
+                await scheduler.DeleteJob(jobKey);
+            }
+
+            if (post.Status == PostStatus.Draft && post.PublishedAt.HasValue && post.PublishedAt.Value > DateTime.UtcNow)
+            {
+                // Створюємо завдання, передаючи туди ID поста
+                var job = JobBuilder.Create<Jobs.PublishPostJob>()
+                    .WithIdentity(jobKey)
+                    .UsingJobData("PostId", post.Id.ToString())
+                    .Build();
+
+                // Створюємо таймер, який спрацює в зазначений час
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity($"trigger-publish-post-{post.Id}", "Posts")
+                    .StartAt(post.PublishedAt.Value)
+                    .Build();
+
+                // Відправляємо завдання у Quartz
+                await scheduler.ScheduleJob(job, trigger);
+            }
         }
     }
 }

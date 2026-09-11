@@ -37,32 +37,21 @@ if (header) { // Додана перевірка для уникнення по�
 }
 // -------------------------------------------------------------
 
-// Випадаюче меню: клік відкриває список, клік по пункту — перехід
-document.querySelectorAll('header .dropdown').forEach((dropdown) => {
-    const trigger = dropdown.querySelector('.dropdown-trigger');
-    const content = dropdown.querySelector('.dropdown-content');
-    if (!trigger || !content) return;
+document.querySelectorAll('.nav-toggle').forEach(burgerBtn => {
+    burgerBtn.addEventListener('click', () => {
+        burgerBtn.classList.toggle('is-open');
+    })
+})
 
-    trigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        const willOpen = !dropdown.classList.contains('is-open');
-        document.querySelectorAll('header .dropdown.is-open').forEach((d) => {
+document.querySelectorAll('.main-nav-item.group').forEach(menuItem => {
+    menuItem.addEventListener('click', () => {
+        const isNotOpen = !menuItem.classList.contains('is-open');
+        document.querySelectorAll('.main-nav-item.group.is-open').forEach((d) => {
             d.classList.remove('is-open');
-            d.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
-        });
-        dropdown.classList.toggle('is-open', willOpen);
-        trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-    });
-});
-
-document.addEventListener('click', (e) => {
-    if (e.target.closest('header .dropdown')) return;
-    document.querySelectorAll('header .dropdown.is-open').forEach((dropdown) => {
-        dropdown.classList.remove('is-open');
-        dropdown.querySelector('.dropdown-trigger')?.setAttribute('aria-expanded', 'false');
-    });
-});
-// -------------------------------------------------------------
+         });
+        menuItem.classList.toggle('is-open', isNotOpen);
+    })
+})
 
 // Функція для визначення, чи є елемент у видимій області
 const observer = new IntersectionObserver((entries) => {
@@ -189,7 +178,7 @@ ourLifeAndNews.forEach(el => {
 });
 
 // reviews-general-title (з'являється нізвідки)
-const reviewsTitle = document.querySelector('.reviews-general-title');
+const reviewsTitle = document.querySelector('.reviews-area');
 if (reviewsTitle) {
     observer.observe(reviewsTitle);
 }

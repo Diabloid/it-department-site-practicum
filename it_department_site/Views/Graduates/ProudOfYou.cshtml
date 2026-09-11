@@ -1,86 +1,87 @@
 @model IEnumerable<Graduate>
 @{
     ViewData["Title"] = "Випускники";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Випускники", "/timeline"),
+        new("Ми вами пишаємось")
+    };
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/graduates/proudofyou.css" asp-append-version="true" />
 }
 
-<section class="proud-page container-fluid">
-    <header class="proud-hero">
-        <div class="proud-hero-bg" aria-hidden="true"></div>
-        <div class="proud-hero-content">
-            <p class="proud-kicker">Випускники спеціальності ІПЗ</p>
-            <h1 class="proud-title">Ми вами пишаємось</h1>
-            <p class="proud-subtitle">
-                Кожен наш випускник — це історія наполегливої праці, зростання та професійних перемог.
-                Нижче — історії тих, хто сьогодні надихає нове покоління студентів.
-            </p>
-        </div>
-    </header>
+<article class="content">
+    @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
-    @if (!Model.Any())
-    {
-        <p class="proud-empty">Випускників ще немає. Скоро тут з’являться перші історії.</p>
-    }
-    else
-    {
-        <div class="proud-list-header">
-            <h2 class="proud-list-title">Наші випускники</h2>
-            <p class="proud-list-count">@Model.Count() @((Model.Count() == 1) ? "історія" : (Model.Count() < 5 ? "історії" : "історій"))</p>
-        </div>
+    <section class="proud-page container-fluid">
+        <header class="proud-hero">
+            <div class="proud-hero-bg" aria-hidden="true"></div>
+            <div class="proud-hero-content">
+                <p class="proud-kicker">Випускники спеціальності ІПЗ</p>
+                <h1 class="proud-title">Ми вами пишаємось</h1>
+                <p class="proud-subtitle">
+                    Кожен наш випускник — це історія наполегливої праці, зростання та професійних перемог.
+                    Нижче — історії тих, хто сьогодні надихає нове покоління студентів.
+                </p>
+            </div>
+        </header>
 
-        <div class="proud-list">
-            @foreach (var g in Model)
-            {
-                var initials = "";
-                if (!string.IsNullOrEmpty(g.FirstName)) initials += char.ToUpper(g.FirstName[0]);
-                if (!string.IsNullOrEmpty(g.LastName)) initials += char.ToUpper(g.LastName[0]);
-                if (string.IsNullOrEmpty(initials)) initials = "?";
-                <article class="proud-card">
-                    <div class="proud-card-photo">
-                        @if (!string.IsNullOrEmpty(g.PhotoUrl))
-                        {
-                            <img src="@g.PhotoUrl" alt="@g.LastName @g.FirstName" loading="lazy" />
-                        }
-                        else
-                        {
-                            <div class="proud-photo-placeholder" aria-hidden="true">@initials</div>
-                        }
-                        @if (g.GraduationYear > 0)
-                        {
-                            <span class="proud-year-badge">@g.GraduationYear</span>
-                        }
-                    </div>
-                    <div class="proud-card-body">
-                        <div class="proud-card-header">
-                            <h2 class="proud-name">
-                                <span class="proud-last-name">@g.LastName</span>
-                                <span class="proud-first-name">@g.FirstName</span>
-                            </h2>
-                            @if (!string.IsNullOrWhiteSpace(g.Specialization))
+        @if (!Model.Any())
+        {
+            <p class="proud-empty">Випускників ще немає. Скоро тут з’являться перші історії.</p>
+        }
+        else
+        {
+            <div class="proud-list-header">
+                <h2 class="proud-list-title">Наші випускники</h2>
+                <p class="proud-list-count">@Model.Count() @((Model.Count() == 1) ? "історія" : (Model.Count() < 5 ? "історії" : "історій"))</p>
+            </div>
+
+            <div class="proud-list">
+                @foreach (var g in Model)
+                {
+                       <article class="proud-card">
+                        <div class="proud-card-photo">
+                           <img src="@(string.IsNullOrEmpty(g.PhotoUrl) ? DefaultImages.Avatar : g.PhotoUrl)"
+                             alt="@g.LastName @g.FirstName"
+                             loading="lazy" />
+                            @if (g.GraduationYear > 0)
                             {
-                                <p class="proud-meta">@g.Specialization</p>
-                            }
-                            @if (!string.IsNullOrWhiteSpace(g.JobDescription))
-                            {
-                                <p class="proud-job">
-                                    <span class="proud-job-label">Сьогодні</span>
-                                    @g.JobDescription
-                                </p>
+                                <span class="proud-year-badge">@g.GraduationYear</span>
                             }
                         </div>
-                        @if (!string.IsNullOrWhiteSpace(g.Testimonial))
-                        {
-                            <blockquote class="proud-testimonial">
-                                <span class="proud-quote-mark" aria-hidden="true">"</span>
-                                <p class="proud-testimonial-text">@g.Testimonial</p>
-                            </blockquote>
-                        }
-                    </div>
-                </article>
-            }
-        </div>
-    }
-</section>
+                        <div class="proud-card-body">
+                            <div class="proud-card-header">
+                                <h2 class="proud-name">
+                                    <span class="proud-last-name">@g.LastName</span>
+                                    <span class="proud-first-name">@g.FirstName</span>
+                                </h2>
+                                @if (!string.IsNullOrWhiteSpace(g.Specialization))
+                                {
+                                    <p class="proud-meta">@g.Specialization</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(g.JobDescription))
+                                {
+                                    <p class="proud-job">
+                                        <span class="proud-job-label">Сьогодні</span>
+                                        @g.JobDescription
+                                    </p>
+                                }
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(g.Testimonial))
+                            {
+                                <blockquote class="proud-testimonial">
+                                    <span class="proud-quote-mark" aria-hidden="true">"</span>
+                                    <p class="proud-testimonial-text">@g.Testimonial</p>
+                                </blockquote>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+</article>

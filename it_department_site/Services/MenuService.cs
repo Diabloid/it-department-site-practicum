@@ -13,13 +13,16 @@ namespace it_department_site.Services
 
         public async Task<List<MenuItem>> GetMenuItemsTreeAsync()
         {
-            var items = await dbContext.Set<MenuItem>()
+            return await dbContext.Set<MenuItem>()
                 .Include(m => m.Page)
-                .Include(m => m.Children.Where(c => !c.Disabled).OrderBy(c => c.SortOrder))
+                .Include(m => m.Children
+                    .Where(c => !c.Disabled)
+                    .OrderBy(c => c.SortOrder)
+                )
+                .ThenInclude(c => c.Page) // include page of the sub menu item
                 .Where(m => m.ParentId == null && !m.Disabled)
                 .OrderBy(m => m.SortOrder)
                 .ToListAsync();
-            return items;
         }
 
         public async Task LinkPageToMenuAsync(int pageId, int? parentId, string title)

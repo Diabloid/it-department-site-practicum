@@ -44,7 +44,10 @@ namespace it_department_site.Entities
         [Required]
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        
+
+        [Column("published_at")]
+        public DateTime? PublishedAt { get; set; }
+
         [Required]
         [Column("author_id")]
         public int AuthorId { get; set; }
@@ -53,7 +56,9 @@ namespace it_department_site.Entities
         public User? Author { get; set; }
 
         [Column("views_count")]
-        public int ViewsCount { get; set; } = 0;
+        public int ViewsCount { get; set; }
+
+        public List<Category> Categories { get; set; } = new();
     }
     
     public enum PostStatus

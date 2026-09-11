@@ -1,33 +1,32 @@
 @model it_department_site.ViewModels.EmployeeInfoViewModel
 @{
-    var fullName = $"{Model.LastName} {Model.FirstName} {Model.PatronymicName}".Trim();
-    ViewData["Title"] = fullName;
-    var photoUrl = string.IsNullOrEmpty(Model.PhotoUrl) ? "/images/default/avatar.jpg" : Model.PhotoUrl;
+    var employeeName = $"{Model.LastName} {Model.FirstName} {Model.PatronymicName}".Trim();
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Співробітники", "/Employees"),
+        new(employeeName)
+    };
+    ViewData["Title"] = employeeName;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
 }
+<article class="content">
+    @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
 <section class="discipline-details-page employee-details-page">
-    <nav class="discipline-breadcrumb" aria-label="Breadcrumb">
-        <a asp-controller="Pages" asp-action="Index">Головна</a>
-        <span aria-hidden="true">/</span>
-        <a asp-controller="Employees" asp-action="Index">Співробітники</a>
-        <span aria-hidden="true">/</span>
-        <span class="discipline-breadcrumb-current">@fullName</span>
-    </nav>
-
     <header class="discipline-header employee-header">
         <div class="employee-header-inner">
             <div class="employee-header-photo-wrap">
-                <img src="@photoUrl"
-                     alt="@fullName"
-                     class="employee-header-photo" />
+		        <img src="@(string.IsNullOrEmpty(@Model.PhotoUrl) ? DefaultImages.Avatar : @Model.PhotoUrl)"
+		             alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
+		             class="employee-profile-photo" />
             </div>
             <div class="employee-header-text">
-                <h1 class="discipline-header-title">@fullName</h1>
+                <h1 class="discipline-header-title">@employeeName</h1>
                 @if (!string.IsNullOrWhiteSpace(Model.Email))
                 {
                     <a href="mailto:@Model.Email" class="employee-header-email">@Model.Email</a>
@@ -162,3 +161,4 @@
         </div>
     </article>
 </section>
+</article>

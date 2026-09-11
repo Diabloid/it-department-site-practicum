@@ -2,9 +2,12 @@ namespace it_department_site.Controllers
 {
     public class PostController(IPostService postService) : Controller
     {
-        public async Task<IActionResult> Index()
+        [HttpGet("/posts")]
+        public async Task<IActionResult> Index([FromQuery] string? category)
         {
-            var posts = await postService.GetAllAsync();
+            var posts = category == null 
+                ? await postService.GetAllPublishedAsync()
+                : await postService.GetByCategoryName(category);
             return View(posts);
         }
 

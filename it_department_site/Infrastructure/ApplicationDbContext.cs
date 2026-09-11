@@ -17,6 +17,7 @@ namespace it_department_site.Infrastructure
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<OrganizationInfo> OrganizationInfos { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +45,23 @@ namespace it_department_site.Infrastructure
                         .HasOne<Employee>()
                         .WithMany()
                         .HasForeignKey("employee_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                );
+
+            modelBuilder.Entity<Discipline>()
+                .HasMany(e => e.Employees)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                    "employee_disciplines",
+                    join => join
+                        .HasOne<Employee>()
+                        .WithMany()
+                        .HasForeignKey("employee_id")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    join => join
+                        .HasOne<Discipline>()
+                        .WithMany()
+                        .HasForeignKey("discipline_id")
                         .OnDelete(DeleteBehavior.Cascade)
                 );
 
@@ -82,6 +100,23 @@ namespace it_department_site.Infrastructure
             modelBuilder.Entity<MenuItem>()
                 .Property(m => m.Disabled)
                 .HasDefaultValue(false);
+
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Categories)
+                .WithMany()
+                .UsingEntity<Dictionary<string, object>>(
+                "post_categories",
+            join => join
+                .HasOne<Category>()
+                .WithMany()
+                .HasForeignKey("category_id")
+                .OnDelete(DeleteBehavior.Cascade),
+            join => join
+                .HasOne<Post>()
+                .WithMany()
+                .HasForeignKey("post_id")
+                .OnDelete(DeleteBehavior.Cascade)
+);
         }
     }
 }
