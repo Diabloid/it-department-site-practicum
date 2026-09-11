@@ -1,27 +1,7 @@
 :root {
-  --text-main: var(--color-slate);
-  --text-muted: var(--color-slate-muted);
-  --accent-color: var(--color-indigo);
   --tag-bg: #f8fafc;
-  --page-bg: #f1f5f9;
-
-  --wrapper-bg: var(--color-surface);
   --wrapper-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.08);
   --wrapper-border: 1px solid rgba(15, 23, 42, 0.05);
-}
-
-body {
-  background-color: var(--page-bg);
-  -webkit-font-smoothing: antialiased;
-}
-
-.employees-page {
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    sans-serif;
-  color: var(--text-main);
 }
 
 .employees-hero {
@@ -286,7 +266,7 @@ body {
   display: block;
   font-size: 1.8rem;
   font-weight: 850;
-  color: var(--color-slate);
+  color: var(--color-heading);
   margin-bottom: 4px;
 }
 
@@ -294,7 +274,7 @@ body {
   display: block;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--color-slate-muted);
 }
 
 .employee-card .employee-meta {
@@ -309,87 +289,13 @@ body {
 }
 
 .employees-main-wrapper {
-  background: var(--wrapper-bg);
+  background: var(--color-surface);
   border-radius: 40px;
   padding: 50px;
   box-shadow: var(--wrapper-shadow);
   border: var(--wrapper-border);
   display: block;
   height: auto;
-}
-
-.employees-details-layout {
-  display: flex;
-  gap: 50px;
-  align-items: flex-start;
-}
-
-.sticky-sidebar-wrapper {
-  flex: 0 0 540px;
-}
-
-.employees-left-sticky-panel {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 40px;
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 25px;
-  background: var(--tag-bg);
-  padding: 24px;
-  border-radius: 32px;
-  border: 1px solid rgba(15, 23, 42, 0.02);
-  align-items: flex-start;
-}
-
-.employees-details-photo-wrap {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
-  background: var(--color-surface);
-}
-
-.employees-details-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.employees-details-intro-box {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 5px;
-}
-
-.employees-details-intro-box .last-name {
-  display: block;
-  font-size: 2.2rem;
-  font-weight: 850;
-  color: var(--text-main);
-  letter-spacing: -0.02em;
-}
-
-.employees-details-intro-box .first-patronymic {
-  display: block;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-.employees-details-intro-box .employee-meta {
-  display: inline-flex;
-  align-self: start;
-  background: var(--color-surface);
-  color: var(--accent-color);
-  padding: 6px 14px;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  border: 1px solid rgba(var(--color-indigo-rgb), 0.15);
 }
 
 .employee-card-contact-box {
@@ -402,7 +308,7 @@ body {
   display: block;
   font-size: 0.7rem;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--color-slate-muted);
   font-weight: 700;
   letter-spacing: 0.03em;
   margin-bottom: 2px;
@@ -410,7 +316,7 @@ body {
 
 .employee-contact-link {
   font-size: 1rem;
-  color: var(--accent-color);
+  color: var(--color-indigo);
   text-decoration: none;
   font-weight: 600;
 }
@@ -426,14 +332,10 @@ body {
   font-size: 1.4rem;
   font-weight: 800;
   margin: 0 0 16px 0;
-  color: var(--text-main);
+  color: var(--color-text);
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.title-icon {
-  font-size: 1.3rem;
 }
 
 .info-text-block,
@@ -615,7 +517,7 @@ body {
 
 .certificate-card-pdf-label {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--color-slate-muted);
   text-align: center;
   max-width: 100%;
   overflow: hidden;

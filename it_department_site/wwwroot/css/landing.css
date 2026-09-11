@@ -5,6 +5,7 @@
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased; /* TODO: Check if need this property */
   color: var(--color-text);
   background-color: var(--color-page-bg);
   display: flex;
@@ -447,7 +448,7 @@ h3 {
 /* Загальні налаштування для плавного переходу */
 .ourlife-area,
 .news-area,
-.reviews-general-title,
+.reviews-area,
 .pfp-name-status,
 .rating-stars,
 .partners-area {
@@ -458,36 +459,20 @@ h3 {
 }
 
 /* --- 7.2. Scroll Reveal: Our Life (Знизу) та News (Справа) --- */
-.ourlife-area {
+.ourlife-area,
+.news-area,
+.reviews-area,
+.partners-area {
   opacity: 0;
   transform: translateY(50px);
 }
 
-.ourlife-area.show {
+.ourlife-area.show,
+.news-area.show,
+.reviews-area.show,
+.partners-area.show {
   opacity: 1;
   transform: translateY(0);
-}
-
-.news-area {
-  opacity: 0;
-  transform: translateX(50px);
-}
-
-.news-area.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* --- 7.3. Scroll Reveal: Title та Partners (Нізвідки) --- */
-.reviews-general-title,
-.partners-area {
-  opacity: 0;
-}
-
-.reviews-general-title.show,
-.partners-area.show {
-  width: 80%;
-  opacity: 1;
 }
 
 /* --- 7.4. Scroll Reveal: Елементи відгуків (Зліва, послідовно) --- */
