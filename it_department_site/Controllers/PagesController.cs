@@ -7,16 +7,18 @@
         private readonly IPartnerService _partnerService;
         private readonly IPostService _postService;
         private readonly IMainSliderService _mainSliderService;
+        private readonly IGraduateService _graduateService;
 
         public PagesController(IPageService pageService, 
             ICurrentUserService currentUser, IPartnerService partnerService, IPostService postService,
-            IMainSliderService mainSliderService)
+            IMainSliderService mainSliderService, IGraduateService graduateService)
         {
             _pageService = pageService;
             _currentUser = currentUser;
             _partnerService = partnerService;
             _postService = postService;
             _mainSliderService = mainSliderService;
+            _graduateService = graduateService;
         }
 
         public async Task<IActionResult> Index()
@@ -27,6 +29,9 @@
 
             // 2. --- ЛОГІКА НОВИН ---
             ViewBag.News = await _postService.GetLatestAsync(4);
+
+            // --- НОВА ЛОГІКА ВІДГУКІВ ---
+            ViewBag.Reviews = await _graduateService.GetRandomReviewsAsync(5);
 
             // 3. --- ЛОГІКА СТОРІНОК ---
             var pages = await _pageService.GetAllPagesAsync();

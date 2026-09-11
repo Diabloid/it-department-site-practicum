@@ -44,13 +44,11 @@ main {
 .ourlife-area {
   align-items: center;
   padding: 0 20px;
+  text-decoration: none;
 }
 
 .ourlife-area,
 .news-area {
-  height: 100%;
-  display: flex;
-  justify-content: center;
   flex: 1;
 }
 

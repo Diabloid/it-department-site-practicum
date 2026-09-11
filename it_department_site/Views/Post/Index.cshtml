@@ -53,7 +53,7 @@
                 @foreach (var post in Model)
                 {
                     var thumb = string.IsNullOrWhiteSpace(post.Thumbnail)
-                        ? "/images/default/news-thumbnail.jpg"
+                        ? DefaultImages.News
                         : post.Thumbnail;
                     var postedAt = post.PublishedAt ?? post.CreatedAt;
                     <article class="posts-card">

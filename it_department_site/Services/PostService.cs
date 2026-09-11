@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Services
 {
-    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory, ILogger<PostService> logger) : IPostService
+    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory) : IPostService
     {
         public async Task<IEnumerable<Post>> GetAllAsync()
         {
@@ -23,6 +23,7 @@ namespace it_department_site.Services
         {
             return await context.Set<Post>()
                 .AsNoTracking()
+ 		        .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -32,7 +33,19 @@ namespace it_department_site.Services
                 .AsNoTracking()
                 .Include(p => p.Author)
                 .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
+        }
+
+        public async Task<IEnumerable<Post>> GetByCategoryName(string categoryName)
+        {
+            return await context.Set<Post>()
+                .AsNoTracking()
+                .Include(p => p.Author)
+                .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
+                .Where(p => p.Categories.Any(c => c.Name == categoryName))
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Post>> GetLatestAsync(int count, int? excludeId = null)
@@ -56,6 +69,14 @@ namespace it_department_site.Services
             post.CreatedAt = DateTime.UtcNow;
             post.UpdatedAt = DateTime.UtcNow;
 
+            if (post.Categories.Count > 0)
+            {
+                var categoryIds = post.Categories.Select(c => c.Id).ToList();
+                post.Categories = await context.Set<Category>()
+                    .Where(c => categoryIds.Contains(c.Id))
+                    .ToListAsync();
+            }
+
             context.Set<Post>().Add(post);
             await context.SaveChangesAsync();
 
@@ -78,6 +99,15 @@ namespace it_department_site.Services
             existing.Thumbnail = post.Thumbnail;
             existing.PublishedAt = post.PublishedAt;
             existing.UpdatedAt = DateTime.UtcNow;
+
+            var categoryIds = post.Categories.Select(c => c.Id).ToList();
+            var newCategories = await context.Set<Category>()
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            existing.Categories.Clear();
+            foreach (var c in newCategories)
+                existing.Categories.Add(c);
 
             await context.SaveChangesAsync();
             await SchedulePostPublishingAsync(existing);

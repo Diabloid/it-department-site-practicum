@@ -9,7 +9,7 @@
         @foreach (var slide in slides)
         {
             <div class="banner-element banner-slide">
-                <img class="banner_image" src="@slide.ImageUrl" alt="@slide.AltText" />
+                <img class="banner_image" src="@(string.IsNullOrWhiteSpace(slide.ImageUrl) ? DefaultImages.Slider : slide.ImageUrl)" alt="@slide.AltText" />
             </div>
         }
     </div>
