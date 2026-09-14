@@ -65,49 +65,6 @@
   max-width: 820px;
 }
 
-.employees-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 20px;
-  padding: 8px 16px 8px 12px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #4338ca;
-  background: linear-gradient(
-    135deg,
-    rgba(var(--color-indigo-rgb), 0.12),
-    rgba(139, 92, 246, 0.08)
-  );
-  border: 1px solid rgba(var(--color-indigo-rgb), 0.2);
-  border-radius: 999px;
-  backdrop-filter: blur(6px);
-}
-
-.employees-kicker-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-indigo), #8b5cf6);
-  box-shadow: 0 0 0 4px rgba(var(--color-indigo-rgb), 0.18);
-  flex-shrink: 0;
-  animation: employees-kicker-pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes employees-kicker-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.85;
-  }
-}
-
 .employees-title-main {
   margin: 0 0 18px;
   font-size: 2.5rem;
@@ -179,26 +136,6 @@
   border: 1px solid rgba(var(--color-indigo-rgb), 0.15);
   border-radius: 12px;
   box-shadow: 0 4px 14px rgba(var(--color-indigo-rgb), 0.12);
-}
-
-.employees-back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #8c92d1 0%, #c1b3d9 100%);
-  color: white !important;
-  text-decoration: none;
-  border-radius: 14px;
-  font-weight: 600;
-  margin-bottom: 40px;
-  transition: 0.3s ease;
-  box-shadow: 0 4px 15px rgba(140, 146, 209, 0.3);
-}
-
-.employees-back-link:hover {
-  transform: translateX(-5px);
-  filter: brightness(1.05);
 }
 
 .employees-grid {
@@ -544,27 +481,6 @@
   font-size: 1.1rem;
 }
 
-.discipline-link {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  padding: 0.65rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-brand);
-  text-decoration: none;
-  border: 2px solid var(--color-brand);
-  border-radius: 999px;
-  background: var(--color-surface);
-  transition: all 0.25s ease;
-}
-
-.discipline-link:hover {
-  color: var(--color-surface);
-  background: var(--color-brand);
-  box-shadow: 0 6px 20px rgba(var(--color-brand-rgb), 0.25);
-}
-
 @media (max-width: 1200px) {
   .employees-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -653,5 +569,127 @@
   .certificate-card {
     width: 220px;
     height: 150px;
+  }
+}
+
+body:has(.employee-details-page) {
+  background-color: #ecedff;
+}
+
+.employee-header {
+  padding: 1.25rem 1.75rem 1.25rem 2.25rem;
+}
+
+.employee-header-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.employee-header-photo-wrap {
+  flex: 0 0 88px;
+  width: 88px;
+  height: 88px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 14px rgba(99, 106, 192, 0.12);
+  background: #fff;
+}
+
+.employee-header-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.employee-header-text {
+  min-width: 0;
+}
+
+.employee-header-email {
+  display: inline-block;
+  margin-top: 0.35rem;
+  color: #636ac0;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.employee-header-email:hover {
+  text-decoration: underline;
+}
+
+.employee-header-meta {
+  margin: 0.35rem 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.employee-bio {
+  margin-top: 0;
+  color: #374151;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  word-wrap: break-word;
+}
+
+.employee-bio p {
+  margin: 0 0 0.85rem;
+}
+
+.employee-bio p:last-child {
+  margin-bottom: 0;
+}
+
+.employee-bio h1,
+.employee-bio h2,
+.employee-bio h3,
+.employee-bio h4 {
+  color: #2c3258;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 0.5rem;
+}
+
+.employee-bio ul,
+.employee-bio ol {
+  margin: 0 0 0.85rem;
+  padding-left: 1.35rem;
+}
+
+.employee-bio a {
+  color: #636ac0;
+}
+
+.employee-bio img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.employee-details-page .certificates-section {
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .employee-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .employee-info-row {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .employee-details-page .certificates-track {
+    animation: none;
   }
 }

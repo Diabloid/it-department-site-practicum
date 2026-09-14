@@ -18,7 +18,7 @@
       asp-controller="Admin"
       asp-action="CreateEmployee"
       enctype="multipart/form-data"
-      onsubmit="return submitForm(this, event)">
+      onsubmit="event.preventDefault(); submitForm(this); return false;">
 
     @Html.AntiForgeryToken()
 
@@ -87,9 +87,10 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Біографія</label>
+        <label class="form-label">Інформація</label>
         <textarea asp-for="Bio" id="EmployeeBioCreate" class="form-control editor" rows="10"></textarea>
         <span asp-validation-for="Bio" class="text-danger"></span>
+        <div class="form-text">Цей текст з’являється на вкладці «Інформація» на сторінці викладача.</div>
     </div>
 
     <div class="mb-3">
