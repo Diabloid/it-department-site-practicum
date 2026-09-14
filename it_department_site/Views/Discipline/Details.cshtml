@@ -1,10 +1,9 @@
 @model it_department_site.Entities.Discipline
 @{
-    ViewData["Title"] = Model.Name;
     ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
     {
         new("Головна", "/"),
-        new("Дисципліни", Url.Action("Index", "Disciplines")),
+        new(ViewData["ParentTitle"].ToString(), ViewData["BackUrl"].ToString()),
         new(Model.Name)
     };
 }
@@ -45,7 +44,7 @@
                         {
                             <a class="card-container" asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id">
                                 <div class="avatar">
-                                    <img src="@(string.IsNullOrEmpty(employee.PhotoUrl) ? "/images/default/avatar.jpg" : employee.PhotoUrl)"
+                                    <img src="@(string.IsNullOrEmpty(employee.PhotoUrl) ? DefaultImages.Avatar : employee.PhotoUrl)"
                                          alt="@employee.LastName @employee.FirstName"/>
                                 </div>
                                 <span class="employee-name">@employee.FirstName @employee.LastName</span>
