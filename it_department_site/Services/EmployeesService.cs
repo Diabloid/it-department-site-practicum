@@ -47,7 +47,7 @@ public class EmployeeService : IEmployeeService
         existing.LastName = employee.LastName;
         existing.PatronymicName = employee.PatronymicName;
         existing.Specialization = employee.Specialization;
-        existing.Bio = employee.Bio ?? existing.Bio ?? string.Empty;
+        existing.Bio = employee.Bio;
         existing.Email = employee.Email;
         existing.GoogleDriveFolderUrl = employee.GoogleDriveFolderUrl;
 
