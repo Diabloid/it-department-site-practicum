@@ -1,10 +1,9 @@
 @model IEnumerable<it_department_site.Entities.Discipline>
 @{
-    ViewData["Title"] = "Дисципліни";
     ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
     {
         new("Головна", "/"),
-        new("Дисципліни")
+        new(ViewData["Title"].ToString())
     };
 }
 @section Styles {
