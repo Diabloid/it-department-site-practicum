@@ -16,17 +16,12 @@
 <article class="content">
     @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
-    <section class="employees-page container py-5">
+    <section class="employees-page">
         <header class="employees-hero" aria-labelledby="employees-page-title">
             <div class="employees-hero-glow employees-hero-glow--left" aria-hidden="true"></div>
             <div class="employees-hero-glow employees-hero-glow--right" aria-hidden="true"></div>
 
             <div class="employees-hero-inner">
-                <p class="employees-kicker">
-                    <span class="employees-kicker-dot" aria-hidden="true"></span>
-                    Спеціальність інженерії програмного забезпечення
-                </p>
-
                 <h1 id="employees-page-title" class="employees-title-main">
                     <span class="employees-title-line">Співробітники</span>
                     <span class="employees-title-accent">спеціальності</span>
@@ -52,7 +47,8 @@
                     <a asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id" class="employee-card-link">
 
                     <div class="employee-photo-wrap">
-                        <img src="@(string.IsNullOrEmpty(@employee.PhotoUrl) ? DefaultImages.Avatar : @employee.PhotoUrl)" alt="@employee.LastName" class="employee-photo" />
+                        <img src="@(string.IsNullOrEmpty(employee.PhotoUrl) ? DefaultImages.Avatar : employee.PhotoUrl)"
+                             alt="@employee.LastName" class="employee-photo" />
                     </div>
 
                     <div class="employee-body">

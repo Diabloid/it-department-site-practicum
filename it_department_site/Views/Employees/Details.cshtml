@@ -21,7 +21,7 @@
     <article class="discipline-article">
         <header class="discipline-header">
             <div class="employee-header-inner">
-                <div class="avatar">
+                <div class="employee-header-photo-wrap">
                     <img src="@(string.IsNullOrEmpty(Model.PhotoUrl) ? DefaultImages.Avatar : Model.PhotoUrl)"
                          alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
                          class="employee-profile-photo" />
@@ -65,6 +65,8 @@
                 </div>
                 <div id="disciplines" class="tab-panel">
                     <div class="resources-container">
+                    @if (Model.Disciplines.Count > 0)
+                    {
                         @foreach (var discipline in Model.Disciplines)
                         {
                             <a class="card-container"
@@ -74,7 +76,13 @@
                                 <span class="chevron">›</span>
                             </a>
                         }
+                    }
+                    else
+                    {
+                     <p class="discipline-description text-muted mb-0">Дисципліни ще не призначені.</p>
+                    }
                     </div>
+                            
                 </div>
                 <div id="certificates" class="tab-panel">
                     <div class="resources-container" id="employee-certificates">
