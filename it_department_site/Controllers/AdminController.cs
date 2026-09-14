@@ -288,7 +288,16 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> CreateEmployee()
         {
             ViewBag.AllDisciplines = await _disciplineService.GetAllAsync();
-            return PartialView("_CreateEmployee", new Employee());
+            return PartialView("_CreateEmployee", new Employee
+            {
+                Email = String.Empty,
+                FirstName = String.Empty,
+                LastName = String.Empty,
+                PatronymicName = String.Empty,
+                Bio = String.Empty,
+                Specialization = String.Empty,
+                PhotoUrl = String.Empty
+            });
         }
 
         public async Task<IActionResult> Employees()
