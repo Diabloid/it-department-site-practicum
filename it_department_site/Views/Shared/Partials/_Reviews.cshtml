@@ -14,7 +14,7 @@
             @foreach (var graduate in Model)
             {
                 var activeClass = slideIndex == 1 ? "active fade" : "fade";
-                var photoPath = string.IsNullOrEmpty(graduate.PhotoUrl) ? "@DefaultImages.Avatar" : graduate.PhotoUrl;
+                var photoPath = string.IsNullOrEmpty(graduate.PhotoUrl) ? DefaultImages.Avatar : graduate.PhotoUrl;
 
                 <div class="reviews-field @activeClass">
                     <div class="pfp-name-status">
@@ -22,7 +22,13 @@
                             <img src="@photoPath" alt="@graduate.FirstName @graduate.LastName" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
                         </div>
                         <div class="name-and-status">
-                            <h3>@graduate.FirstName @graduate.LastName</h3>
+                            <h3>
+                                <a asp-route="proudOfYou"
+                                   asp-fragment="graduate-@graduate.Id"
+                                   class="graduate-review-name-link">
+                                    @graduate.FirstName @graduate.LastName
+                                </a>
+                            </h3>
                             <p>Випускник @graduate.GraduationYear року</p>
                         </div>
                     </div>

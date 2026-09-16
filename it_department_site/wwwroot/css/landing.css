@@ -369,6 +369,9 @@ h3 {
   align-items: center !important;
   gap: 20px !important;
   margin-bottom: 20px !important;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .profile-picture {
@@ -384,12 +387,24 @@ h3 {
   display: flex !important;
   flex-direction: column !important;
   flex-wrap: wrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .name-and-status h3 {
   margin: 0 !important;
   color: #2d2f45 !important;
-  white-space: nowrap !important;
+}
+
+.graduate-review-name-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.graduate-review-name-link:hover,
+.graduate-review-name-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .name-and-status p {
@@ -1063,7 +1078,7 @@ h3 {
       }
     }
   }
-  
+
   .footer-bottom {
     height: 80px;
     grid-template-columns: repeat(2, 1fr);
@@ -1075,5 +1090,34 @@ h3 {
     .f-social-area {
       gap: 5px;
     }
+  }
+}
+
+@media (max-width: 480px) {
+  .reviews-area {
+    padding: 0 3% 32px;
+  }
+
+  .reviews-field {
+    padding: 20px 16px;
+    border-radius: 24px !important;
+  }
+
+  .pfp-name-status {
+    gap: 12px !important;
+  }
+
+  .profile-picture {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .name-and-status h3 {
+    font-size: 18px !important;
+    line-height: 1.25;
+  }
+
+  .name-and-status p {
+    font-size: 14px !important;
   }
 }

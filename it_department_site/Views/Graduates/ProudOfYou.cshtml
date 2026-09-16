@@ -43,7 +43,7 @@
             <div class="proud-list">
                 @foreach (var g in Model)
                 {
-                       <article class="proud-card">
+                       <article class="proud-card" id="graduate-@g.Id">
                         <div class="proud-card-photo">
                            <img src="@(string.IsNullOrEmpty(g.PhotoUrl) ? DefaultImages.Avatar : g.PhotoUrl)"
                              alt="@g.LastName @g.FirstName"
