@@ -10,6 +10,11 @@ public class UserService(ApplicationDbContext context) : IUserService
         return await context.Set<User>().AsNoTracking().FirstOrDefaultAsync(u => u.Username == username);
     }
 
+    public async Task<User?> FindUserByEmailAsync(string email)
+    {
+        return await context.Set<User>().AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+    }
+
     public async Task<IEnumerable<User>> GetAllAsync()
     {
         return await context.Set<User>().AsNoTracking().Include(u => u.Employee).ToListAsync();

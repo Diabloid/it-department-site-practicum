@@ -8,5 +8,6 @@
         Task CreateAsync(User user, string plainPassword);
         Task UpdateAsync(int id, User user, string? plainPassword);
         Task<IEnumerable<Employee>> GetAvailableEmployeesAsync(int? excludeUserId = null);
+        Task<User?> FindUserByEmailAsync(string email);
     }
 }
