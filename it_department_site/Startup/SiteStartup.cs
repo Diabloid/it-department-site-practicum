@@ -1,6 +1,10 @@
+using DotNetEnv;
 using it_department_site.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 using Quartz;
+using System.Security.Claims;
 
 namespace it_department_site.Startup
 {
@@ -10,14 +14,59 @@ namespace it_department_site.Startup
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            Env.Load();
+
             builder.Services.Configure<GoogleDriveOptions>(
                 builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
-            builder.Services.AddAuthentication().AddCookie(options =>
-            {
-                options.Cookie.Name = "IPZAuthCookie";
-                options.LoginPath = "/login";
-            });
+            // НОВА АВТОРИЗАЦІЯ ЧЕРЕЗ MICROSOFT ENTRA ID
+            builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(options =>
+                {
+                    options.Instance = "https://login.microsoftonline.com/";
+                    options.TenantId = Environment.GetEnvironmentVariable("EntraId__TenantId");
+                    options.ClientId = Environment.GetEnvironmentVariable("EntraId__ClientId");
+                    options.ClientSecret = Environment.GetEnvironmentVariable("EntraId__ClientSecret");
+                    options.CallbackPath = "/signin-oidc";
+
+                    options.Events.OnTokenValidated = async context =>
+                    {
+                        var email = context.Principal?.FindFirst("preferred_username")?.Value
+                                    ?? context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
+
+                        if (string.IsNullOrEmpty(email))
+                        {
+                            context.Fail("Email не знайдено в токені Entra ID.");
+                            return;
+                        }
+
+                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+                        var dbUser = await userService.FindUserByEmailAsync(email);
+
+                        if (dbUser == null)
+                        {
+                            context.Fail("Користувача не знайдено в базі даних.");
+                            return;
+                        }
+
+                        var claims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, dbUser.Id.ToString()),
+                            new Claim(ClaimTypes.Name, dbUser.Username)
+                        };
+                        claims.AddRange(dbUser.Roles.Select(r => new Claim(ClaimTypes.Role, r.ToString())));
+
+                        var appIdentity = new ClaimsIdentity(claims);
+                        context.Principal?.AddIdentity(appIdentity);
+                    };
+
+                    options.Events.OnAuthenticationFailed = context =>
+                    {
+                        context.Response.Redirect("/");
+                        context.HandleResponse();
+                        return Task.CompletedTask;
+                    };
+                });
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddSession();
