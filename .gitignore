@@ -403,3 +403,5 @@ it_department_site/secrets/
 
 # wwwroot
 */wwwroot/uploads/
+
+.env
