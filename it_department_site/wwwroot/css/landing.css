@@ -326,7 +326,6 @@ h3 {
 }
 
 .reviews-field.active .pfp-name-status,
-.reviews-field.active .rating-stars,
 .reviews-field.active .comments {
   opacity: 0;
   transform: translateY(15px);
@@ -337,9 +336,6 @@ h3 {
 
 .reviews-field.active .pfp-name-status {
   animation-delay: 0.2s !important;
-}
-.reviews-field.active .rating-stars {
-  animation-delay: 0.4s !important;
 }
 .reviews-field.active .comments {
   animation-delay: 0.6s !important;
@@ -403,6 +399,7 @@ h3 {
 
 .graduate-review-name-link:hover,
 .graduate-review-name-link:focus-visible {
+  color: #4a52a8;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -411,15 +408,6 @@ h3 {
   margin: 2px 0 0 0 !important;
   color: #575979 !important;
   font-size: 16px !important;
-}
-
-.rating-stars svg {
-  width: 100%;
-  height: 100%;
-}
-
-.rating-stars svg:not(:last-child) {
-  background-color: grey;
 }
 
 /* ТЕКСТ ВІДГУКУ */
@@ -462,7 +450,6 @@ h3 {
 .news-area,
 .reviews-general-title,
 .pfp-name-status,
-.rating-stars,
 .partners-area {
   transition:
     opacity 0.8s ease-out,
@@ -504,14 +491,12 @@ h3 {
 }
 
 /* --- 7.4. Scroll Reveal: Елементи відгуків (Зліва, послідовно) --- */
-.pfp-name-status,
-.rating-stars {
+.pfp-name-status {
   opacity: 0;
   transform: translateX(-30px);
 }
 
-.pfp-name-status.show,
-.rating-stars.show {
+.pfp-name-status.show {
   opacity: 1;
   transform: translateX(0);
 }
