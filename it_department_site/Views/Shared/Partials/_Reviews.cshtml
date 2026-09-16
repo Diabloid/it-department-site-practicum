@@ -14,7 +14,7 @@
             @foreach (var graduate in Model)
             {
                 var activeClass = slideIndex == 1 ? "active fade" : "fade";
-                var photoPath = string.IsNullOrEmpty(graduate.PhotoUrl) ? "@DefaultImages.Avatar" : graduate.PhotoUrl;
+                var photoPath = string.IsNullOrEmpty(graduate.PhotoUrl) ? DefaultImages.Avatar : graduate.PhotoUrl;
 
                 <div class="reviews-field @activeClass">
                     <div class="pfp-name-status">
@@ -22,18 +22,15 @@
                             <img src="@photoPath" alt="@graduate.FirstName @graduate.LastName" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
                         </div>
                         <div class="name-and-status">
-                            <h3>@graduate.FirstName @graduate.LastName</h3>
-                            <p>Випускник @graduate.GraduationYear</p>
+                            <h3>
+                                <a asp-route="proudOfYou"
+                                   asp-fragment="graduate-@graduate.Id"
+                                   class="graduate-review-name-link">
+                                    @graduate.FirstName @graduate.LastName
+                                </a>
+                            </h3>
+                            <p>Випускник @graduate.GraduationYear року</p>
                         </div>
-                    </div>
-                    <div class="rating-stars">
-                        <svg width="130" height="24" viewBox="0 0 130 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10.6 4.7L13.7 4.7L14.5 7.1H18.6L19.5 11.2L17.5 12.7L16.9 14.5L17.7 16.9L15.2 18.7L13.1 17.2L11.2 17.2L9.1 18.7L6.6 16.9L7.3 14.5L6.7 12.7L4.7 11.2L5.7 8.2H8.2L9.8 7.1L10.6 4.7Z" fill="#FFC353" />
-                            <path d="M37.0 4.7L40.2 4.7L41.0 7.1H45.0L46.0 11.2L44.0 12.7L43.4 14.5L44.2 16.9L41.6 18.7L39.5 17.2L37.6 17.2L35.5 18.7L33.0 16.9L33.8 14.5L33.2 12.7L31.2 11.2L32.1 8.2H34.7L36.2 7.1L37.0 4.7Z" fill="#FFC353" />
-                            <path d="M63.5 4.7L66.6 4.7L67.4 7.1H71.5L72.5 11.2L70.5 12.7L69.9 14.5L70.7 16.9L68.1 18.7L66.0 17.2L64.1 17.2L62.0 18.7L59.5 16.9L60.3 14.5L59.7 12.7L57.7 11.2L58.6 8.2H61.1L62.7 7.1L63.5 4.7Z" fill="#FFC353" />
-                            <path d="M90.0 4.7L93.1 4.7L93.9 7.1H98.0L98.9 11.2L96.9 12.7L96.3 14.5L97.1 16.9L94.6 18.7L92.5 17.2L90.6 17.2L88.5 18.7L86.0 16.9L86.7 14.5L86.1 12.7L84.1 11.2L85.1 8.2H87.6L89.2 7.1L90.0 4.7Z" fill="#FFC353" />
-                            <path d="M116.5 4.7L119.6 4.7L120.4 7.1H124.5L125.4 11.2L123.4 12.7L122.8 14.5L123.6 16.9L121.1 18.7L119.0 17.2L117.1 17.2L115.0 18.7L112.4 16.9L113.2 14.5L112.6 12.7L110.6 11.2L111.6 8.2H114.1L115.7 7.1L116.5 4.7Z" fill="#FFC353" />
-                        </svg>
                     </div>
                     <div class="comments">
                         <p>@graduate.Testimonial</p>
