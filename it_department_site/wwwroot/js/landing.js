@@ -178,7 +178,7 @@ ourLifeAndNews.forEach(el => {
 });
 
 // reviews-general-title (з'являється нізвідки)
-const reviewsTitle = document.querySelector('.reviews-general-title');
+const reviewsTitle = document.querySelector('.reviews-area');
 if (reviewsTitle) {
     observer.observe(reviewsTitle);
 }
@@ -190,41 +190,8 @@ partnersAreas.forEach((partnersArea) => {
 });
 
 
-// -----------------------------------
-// 3. Послідовна анімація відгуків (pfp-name-status, rating-stars, comments)
-// -----------------------------------
-
-const reviewElements = [
-    document.querySelector('.pfp-name-status'),
-    document.querySelector('.rating-stars')
-].filter(el => el);
-
-// Створюємо окремий Observer для послідовної появи
-const sequenceObserver = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            obs.unobserve(entry.target);
-
-            // Запускаємо послідовну анімацію
-            reviewElements.forEach((el, index) => {
-                // Затримка: 0с, 0.5с, 1.0с
-                const delay = index * 500;
-                setTimeout(() => {
-                    el.classList.add('show');
-                }, delay);
-            });
-        }
-    });
-}, {
-    threshold: 0.1
-});
-
-// Спостерігаємо за першим елементом в послідовності (pfp-name-status)
-if (reviewElements.length > 0) {
-    sequenceObserver.observe(reviewElements[0]);
-}
 //----------------------------------------------
-// 4. слайдер для відгуків 
+// 3. слайдер для відгуків
 //----------------------------------------------
 let slideIndex = 1;
 
@@ -237,7 +204,6 @@ function showSlides(n) {
     let dots = document.getElementsByClassName("dot");
 
     if (slides.length === 0) {
-        console.error("Бро, скрипт не знайшов блоки з класом .reviews-field!");
         return;
     }
 
@@ -246,7 +212,7 @@ function showSlides(n) {
 
     for (let i = 0; i < slides.length; i++) {
         slides[i].classList.remove("active");
-        slides[i].style.display = "none"; 
+        slides[i].style.display = "none";
     }
     for (let i = 0; i < dots.length; i++) {
         dots[i].classList.remove("active");
@@ -254,12 +220,19 @@ function showSlides(n) {
 
     slides[slideIndex - 1].classList.add("active");
     slides[slideIndex - 1].style.display = "flex";
-    dots[slideIndex - 1].classList.add("active");
+    if (dots[slideIndex - 1]) {
+        dots[slideIndex - 1].classList.add("active");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    const slides = document.getElementsByClassName("reviews-field");
+    if (slides.length === 0) {
+        return;
+    }
+
     showSlides(slideIndex);
-    
+
     setInterval(() => {
         slideIndex++;
         showSlides(slideIndex);

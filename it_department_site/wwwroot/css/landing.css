@@ -5,8 +5,9 @@
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  color: #333;
-  background-color: #ecedff;
+  -webkit-font-smoothing: antialiased; /* TODO: Check if need this property */
+  color: var(--color-text);
+  background-color: var(--color-page-bg);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -18,58 +19,37 @@ main {
   flex-grow: 1;
 }
 
+ article.content {
+   max-width: 1200px;
+   margin: auto;
+   padding: 24px 40px;
+ }
+ 
 .main-content {
   width: 100%;
-}
-
-.content-part-line {
-  /* Загальний Flex-контейнер для центрування */
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.content-part {
-  height: auto;
-  width: 100%;
-  max-width: 1393px; /* Обмеження ширини контенту */
+  padding: 40px 3%;
 }
 
 /* ====================================================================== */
 /* 3. СТИЛІ OUR LIFE та NEWS */
 /* ====================================================================== */
-/* Рівняння рядка */
-.ourlife-and-news {
-  display: flex !important;
-  flex-direction: row !important; /* РЯДОК, а не колонка */
-  align-items: flex-start !important;
-  gap: 30px !important;
-  margin-top: 30px !important; /* Відступ 30px зверху */
-  position: relative !important; /* Фіксує блок у потоці */
-}
 
-.ourlife-area {
-  align-items: center;
+.ourlife-and-news {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
 }
 
 /* Наше життя - робимо його контейнером */
 .ourlife-area {
-  width: 500px !important;
-  flex-shrink: 0 !important;
+  align-items: center;
+  padding: 0 20px;
+  text-decoration: none;
 }
 
 .ourlife-area,
 .news-area {
-  height: 100%;
-  display: flex;
-  justify-content: center;
   flex: 1;
-}
-
-.news-area {
-  margin-bottom: 15px;
 }
 
 .ourlife-square {
@@ -77,7 +57,6 @@ main {
   padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   color: white;
   background: #5759799b;
   backdrop-filter: blur(15px) !important;
@@ -98,22 +77,26 @@ main {
 }
 
 .image-field {
-  margin-top: 20px !important;
-  width: 100% !important;
-}
-
-.image-field img {
   width: 100%;
+  height: 400px;
   border-radius: 20px;
   display: block;
+  background-image: url("/images/our-life.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 /* NEWS CONTENT ---------------------------------------------------------------------------*/
 /* --- СЕКЦІЯ НОВИН --- */
 
-.news-area {
-  width: 100% !important;
-  display: block !important; /* Або прибери display: flex взагалі */
-  margin-top: 0 !important;
+.news-general-title h2,
+.reviews-general-title h2 {
+  color: var(--color-muted);
+  margin-bottom: 20px;
+  padding: 0;
+  font-size: 40px;
+  font-weight: 700;
 }
 
 .news-general-title {
@@ -121,19 +104,13 @@ main {
 }
 
 .news-content {
-  width: 100%;
-  padding: 0 15px;
-}
-
-.news-grid-container {
-  display: flex !important;
+  display: flex;
   gap: 30px;
-  align-items: flex-start;
 }
 
 /* --- ЗАГАЛЬНІ СТИЛІ КАРТОК --- */
 .main-news-block {
-  flex: 1.8;
+  flex: 1.5;
 }
 .side-news-list {
   flex: 1;
@@ -145,7 +122,7 @@ main {
 .side-news-list a {
   display: flex !important;
   text-decoration: none;
-  color: #333;
+  color: var(--color-text);
   background: rgba(255, 255, 255, 0.05);
   border-radius: 15px;
   padding: 20px;
@@ -168,7 +145,7 @@ main {
   height: auto !important;
 }
 .news-image {
-  width: 300px;
+  width: 100%;
   height: 300px;
   background-size: cover;
   background-position: center;
@@ -210,7 +187,7 @@ main {
   align-items: center;
   font-size: 10px;
   font-weight: 700;
-  color: #575979;
+  color: var(--color-muted);
   text-transform: uppercase;
   margin-bottom: 10px !important;
 }
@@ -247,7 +224,7 @@ h3 {
   align-items: center;
   font-size: 10px;
   font-weight: 700;
-  color: #575979;
+  color: var(--color-muted);
   text-transform: uppercase;
   margin-bottom: 8px;
   flex-shrink: 0; /* Не дає даті стискатися */
@@ -274,8 +251,7 @@ h3 {
 /* ====================================================================== */
 
 .reviews-area {
-  width: 100% !important;
-  margin-top: 50px !important;
+  padding: 0 3% 40px;
 }
 
 .reviews-general-title {
@@ -285,7 +261,7 @@ h3 {
 
 .reviews-general-title h2 {
   font-size: 32px !important;
-  color: #2d2f45 !important;
+  color: var(--color-title) !important;
   font-weight: 700 !important;
 }
 
@@ -297,7 +273,7 @@ h3 {
   backdrop-filter: blur(25px) !important;
   -webkit-backdrop-filter: blur(25px) !important;
   border-radius: 40px !important;
-  padding: 50px 80px !important;
+  padding: 50px 80px;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   box-shadow: 0 15px 50px rgba(118, 125, 207, 0.1) !important;
   overflow: hidden !important;
@@ -351,7 +327,6 @@ h3 {
 }
 
 .reviews-field.active .pfp-name-status,
-.reviews-field.active .rating-stars,
 .reviews-field.active .comments {
   opacity: 0;
   transform: translateY(15px);
@@ -362,9 +337,6 @@ h3 {
 
 .reviews-field.active .pfp-name-status {
   animation-delay: 0.2s !important;
-}
-.reviews-field.active .rating-stars {
-  animation-delay: 0.4s !important;
 }
 .reviews-field.active .comments {
   animation-delay: 0.6s !important;
@@ -394,6 +366,9 @@ h3 {
   align-items: center !important;
   gap: 20px !important;
   margin-bottom: 20px !important;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .profile-picture {
@@ -408,35 +383,37 @@ h3 {
 .name-and-status {
   display: flex !important;
   flex-direction: column !important;
+  flex-wrap: wrap;
 }
 
 .name-and-status h3 {
   margin: 0 !important;
-  color: #2d2f45 !important;
-  font-size: 24px !important;
-  white-space: nowrap !important;
+  color: var(--color-title) !important;
 }
 
 .name-and-status p {
   margin: 2px 0 0 0 !important;
-  color: #575979 !important;
+  color: var(--color-muted) !important;
   font-size: 16px !important;
 }
 
-.rating-stars svg {
-  width: 100%;
-  height: 100%;
+.graduate-review-name-link {
+  color: inherit;
+  text-decoration: none;
 }
 
-.rating-stars svg:not(:last-child) {
-  background-color: grey;
+.graduate-review-name-link:hover,
+.graduate-review-name-link:focus-visible {
+  color: #4a52a8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ТЕКСТ ВІДГУКУ */
 .comments p {
   font-size: 18px !important;
   line-height: 1.7 !important;
-  color: #2d2f45 !important;
+  color: var(--color-title) !important;
   text-align: left !important;
   margin: 0 !important;
 }
@@ -459,7 +436,7 @@ h3 {
 }
 
 .dot.active {
-  background-color: #575979;
+  background-color: var(--color-muted);
   transform: scale(1.4);
 }
 
@@ -470,9 +447,8 @@ h3 {
 /* Загальні налаштування для плавного переходу */
 .ourlife-area,
 .news-area,
-.reviews-general-title,
+.reviews-area,
 .pfp-name-status,
-.rating-stars,
 .partners-area {
   transition:
     opacity 0.8s ease-out,
@@ -481,36 +457,20 @@ h3 {
 }
 
 /* --- 7.2. Scroll Reveal: Our Life (Знизу) та News (Справа) --- */
-.ourlife-area {
+.ourlife-area,
+.news-area,
+.reviews-area,
+.partners-area {
   opacity: 0;
   transform: translateY(50px);
 }
 
-.ourlife-area.show {
+.ourlife-area.show,
+.news-area.show,
+.reviews-area.show,
+.partners-area.show {
   opacity: 1;
   transform: translateY(0);
-}
-
-.news-area {
-  opacity: 0;
-  transform: translateX(50px);
-}
-
-.news-area.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* --- 7.3. Scroll Reveal: Title та Partners (Нізвідки) --- */
-.reviews-general-title,
-.partners-area {
-  opacity: 0;
-}
-
-.reviews-general-title.show,
-.partners-area.show {
-  width: 80%;
-  opacity: 1;
 }
 
 /* --- 7.4. Scroll Reveal: Елементи відгуків (Зліва, послідовно) --- */
@@ -520,8 +480,7 @@ h3 {
   transform: translateX(-30px);
 }
 
-.pfp-name-status.show,
-.rating-stars.show {
+.pfp-name-status.show {
   opacity: 1;
   transform: translateX(0);
 }
@@ -529,19 +488,28 @@ h3 {
 /* ====================================================================== */
 
 /* Стилі для основної секції хедера */
+.header,
+.footer-bottom {
+  background: var(--color-header);
+  height: 80px;
+  width: 100%;
+  padding: 0 3%; /* the 3% is questionable value */
+  .logo img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
 .header {
-  background: #3d4176;
   position: fixed;
   top: 0;
   left: 0;
-  height: 80px;
-  width: 100%;
   z-index: 1000;
   transition: transform 1.5s;
-  box-shadow: 0 2px 12px rgba(44, 50, 88, 0.1);
+  box-shadow: 0 2px 12px rgba(var(--color-heading-rgb), 0.1);
   display: flex;
   align-items: center;
-  padding: 0 3%; /* the 3% is questionable value */
   will-change: transform;
 
   &.header-out {
@@ -557,12 +525,6 @@ h3 {
     flex: 1;
     display: flex;
     justify-content: flex-end;
-  }
-
-  .logo img {
-    height: 60px;
-    width: auto;
-    object-fit: contain;
   }
 
   .main-nav {
@@ -589,7 +551,7 @@ h3 {
 
       &:hover {
         background: rgba(255, 255, 255, 0.15);
-        color: #ffffff;
+        color: var(--color-surface);
       }
 
       &.group {
@@ -655,7 +617,7 @@ h3 {
       padding: 8px;
       margin: 0;
       border-radius: 12px;
-      background: #ffffff;
+      background: var(--color-surface);
       box-shadow: 0 26px 46px -20px rgba(20, 22, 50, 0.7);
       list-style: none;
 
@@ -667,7 +629,7 @@ h3 {
       > a:not(.divider) {
         padding: 11px 14px;
         border-radius: 12px;
-        color: #575979;
+        color: var(--color-muted);
         font-size: 14px;
         font-weight: 600;
         white-space: nowrap;
@@ -675,13 +637,13 @@ h3 {
         transition: background-color 0.15s ease;
 
         &:hover {
-          background: #ecedff;
-          color: #333;
+          background: var(--color-page-bg);
+          color: var(--color-text);
         }
       }
 
       > a.divider {
-        background: #e8e9f4;
+        background: var(--color-border);
         margin: 11px 14px;
         height: 1px;
       }
@@ -719,15 +681,217 @@ h3 {
       display: block;
       height: 2px;
       border-radius: 2px;
-      background: #fff;
+      background: var(--color-surface);
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
   }
 }
 
+.footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-top {
+  background: linear-gradient(0deg, var(--color-header) 19%, #8b92c4 60%, var(--color-page-bg) 100%);
+  padding: 60px 3%; /* the 3% is questionable value */
+  width: 100%;
+}
+
+.f-container {
+  max-width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  box-sizing: border-box;
+
+  .f-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    &:not(:first-child, :last-child) {
+      margin: 0 25px;
+    }
+
+    &:first-child {
+      margin-right: 25px
+    }
+
+    &:last-child {
+      margin-left: 25px;
+    }
+  }
+}
+
+
+.f-col h4 {
+  color: var(--color-muted);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.f-col p {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.f-line {
+  width: 1px;
+  background: white;
+  height: auto;
+  opacity: 0.2;
+}
+
+.f-action-link,
+.insta-post-card,
+.f-soc-list a {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.f-action-link:hover,
+.insta-post-card:hover,
+.f-soc-list a:hover {
+  opacity: 1;
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.f-action-link {
+  padding: 15px 20px;
+  justify-content: flex-start;
+  color: white !important;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 10px;
+  gap: 15px;
+}
+.f-link-wrap-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.f-insta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.insta-post-card {
+  height: 110px;
+}
+
+.post-img-side {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.post-img-side img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.post-text-side {
+  padding: 10px 15px;
+  flex-grow: 1;
+}
+
+.post-desc {
+  margin: 0;
+  color: white;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.live-map-container {
+  width: 100%;
+  max-width: 400px;
+  height: 110px;
+  border: 2px solid white;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: auto;
+  display: block;
+  line-height: 0;
+  font-size: 0;
+  background: white;
+}
+
+.live-map-container iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.footer-bottom {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.f-logo-area,
+.f-info-area,
+.f-social-area {
+  display: flex;
+  align-items: center;
+}
+
+.f-info-area {
+  span {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.f-social-area {
+  justify-content: flex-end;
+}
+
+.f-soc-list {
+  display: flex;
+  gap: 15px;
+}
+
+.f-soc-list a {
+  width: 50px;
+  height: 50px;
+  justify-content: center;
+}
+
+.f-soc-list a img {
+  width: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.f-logo-img {
+  height: 70px;
+  display: block;
+}
+
 @media (max-width: 900px) {
-  .header {
-    height: 64px;
+  .header,
+  .footer-bottom {
     padding: 0 18px;
 
     .logo img {
@@ -735,7 +899,10 @@ h3 {
       width: auto;
       object-fit: contain;
     }
+  }
 
+  .header {
+    height: 64px;
     .nav-toggle {
       display: flex;
     }
@@ -751,7 +918,7 @@ h3 {
       gap: 2px;
       height: auto;
       padding: 6px 12px 20px;
-      background: #3d4176;
+      background: var(--color-header);
       box-shadow: 0 24px 40px -24px rgba(20, 22, 50, 0.8);
       display: none;
 
@@ -826,5 +993,100 @@ h3 {
         margin: 10px 0;
       }
     }
+  }
+
+  main {
+    padding-top: 64px;
+
+    .main-content {
+      padding-top: 20px;
+    }
+    
+    .ourlife-and-news {
+      flex-direction: column;
+    }
+
+    .ourlife-area {
+      .text-field h2 {
+        font-size: 32px;
+      }
+
+      .image-field {
+        height: 250px;
+      }
+    }
+
+    .news-content {
+      flex-direction: column;
+      gap: 0;
+
+      .news-image {
+        height: 250px;
+      }
+
+    }
+  }
+  
+  .reviews-field {
+    padding: 30px 40px;
+  }
+
+  .footer-top {
+    padding-bottom: 0;
+    .f-container {
+      flex-direction: column;
+      margin: 0 10px;
+      .f-line {
+        display: none;
+      }
+      .f-col {
+        margin: 0 0 25px 0;
+        .f-contacts-title {
+          color: rgba(255, 255, 255, 0.82);
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    height: 80px;
+    grid-template-columns: repeat(2, 1fr);
+
+    .f-info-area {
+      display: none;
+    }
+
+    .f-social-area {
+      gap: 5px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .reviews-area {
+    padding: 0 3% 32px;
+  }
+
+  .reviews-field {
+    padding: 20px 16px;
+    border-radius: 24px !important;
+  }
+
+  .pfp-name-status {
+    gap: 12px !important;
+  }
+
+  .profile-picture {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .name-and-status h3 {
+    font-size: 18px !important;
+    line-height: 1.25;
+  }
+
+  .name-and-status p {
+    font-size: 14px !important;
   }
 }

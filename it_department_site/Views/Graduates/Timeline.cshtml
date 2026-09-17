@@ -1,23 +1,31 @@
 @model it_department_site.ViewModels.GraduateTimelinePageViewModel
 @{
     ViewData["Title"] = "Випускники";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Випускники")
+    };
 }
 @section Styles {
-    <link rel="stylesheet" href="~/css/graduates/graduates-page.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/graduates/graduate-timeline.css" asp-append-version="true" />
 }
 
-<section class="graduates-timeline-page">
-    <header class="graduates-hero">
-        <div class="graduates-hero-bg" aria-hidden="true"></div>
-        <div class="graduates-hero-content">
-            <p class="graduates-kicker">Спеціальність інженерії програмного забезпечення</p>
-            <h1 class="graduates-title">Випускники спеціальності</h1>
-            <p class="graduates-subtitle">
-                Наші випускники працюють у провідних ІТ-компаніях України та світу.
-            </p>
-        </div>
-    </header>
+<article class="content">
+    @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
-    @await Html.PartialAsync("_GraduateTimelineTree", Model)
-</section>
+	<section class="graduates-timeline-page">
+	    <header class="graduates-hero">
+		<div class="graduates-hero-bg" aria-hidden="true"></div>
+		<div class="graduates-hero-content">
+		    <p class="graduates-kicker">Спеціальність інженерії програмного забезпечення</p>
+		    <h1 class="graduates-title">Випускники спеціальності</h1>
+		    <p class="graduates-subtitle">
+		        Наші випускники працюють у провідних ІТ-компаніях України та світу.
+		    </p>
+		</div>
+	    </header>
+
+	    @await Html.PartialAsync("_GraduateTimelineTree", Model)
+	</section>
+</article>
