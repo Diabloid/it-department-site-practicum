@@ -34,20 +34,11 @@
         <div class="proud-list">
             @foreach (var g in Model)
             {
-                var initials = "";
-                if (!string.IsNullOrEmpty(g.FirstName)) initials += char.ToUpper(g.FirstName[0]);
-                if (!string.IsNullOrEmpty(g.LastName)) initials += char.ToUpper(g.LastName[0]);
-                if (string.IsNullOrEmpty(initials)) initials = "?";
                 <article class="proud-card">
                     <div class="proud-card-photo">
-                        @if (!string.IsNullOrEmpty(g.PhotoUrl))
-                        {
-                            <img src="@g.PhotoUrl" alt="@g.LastName @g.FirstName" loading="lazy" />
-                        }
-                        else
-                        {
-                            <div class="proud-photo-placeholder" aria-hidden="true">@initials</div>
-                        }
+                        <img src="@(string.IsNullOrEmpty(g.PhotoUrl) ? DefaultImages.Avatar : g.PhotoUrl)"
+                             alt="@g.LastName @g.FirstName"
+                             loading="lazy" />
                         @if (g.GraduationYear > 0)
                         {
                             <span class="proud-year-badge">@g.GraduationYear</span>

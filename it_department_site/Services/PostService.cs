@@ -16,6 +16,7 @@ namespace it_department_site.Services
         {
             return await context.Set<Post>()
                 .AsNoTracking()
+ 		.Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -25,6 +26,7 @@ namespace it_department_site.Services
                 .AsNoTracking()
                 .Include(p => p.Author)
                 .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
         }
 
@@ -49,6 +51,14 @@ namespace it_department_site.Services
             post.CreatedAt = DateTime.UtcNow;
             post.UpdatedAt = DateTime.UtcNow;
 
+            if (post.Categories.Count > 0)
+            {
+                var categoryIds = post.Categories.Select(c => c.Id).ToList();
+                post.Categories = await context.Set<Category>()
+                    .Where(c => categoryIds.Contains(c.Id))
+                    .ToListAsync();
+            }
+
             context.Set<Post>().Add(post);
             await context.SaveChangesAsync();
 
@@ -71,6 +81,15 @@ namespace it_department_site.Services
             existing.Thumbnail = post.Thumbnail;
             existing.PublishedAt = post.PublishedAt;
             existing.UpdatedAt = DateTime.UtcNow;
+
+            var categoryIds = post.Categories.Select(c => c.Id).ToList();
+            var newCategories = await context.Set<Category>()
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            existing.Categories.Clear();
+            foreach (var c in newCategories)
+                existing.Categories.Add(c);
 
             await context.SaveChangesAsync();
             await SchedulePostPublishingAsync(existing);
