@@ -219,7 +219,7 @@
 
 .disciplines-search {
   display: flex;
-  justify-content: center;
+  justify-content: right;
   margin: 0 auto 1.75rem;
 }
 
