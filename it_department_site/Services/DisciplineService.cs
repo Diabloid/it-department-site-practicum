@@ -14,16 +14,6 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Discipline>> GetAllAsync(bool includeRequired)
-    {
-        return await context.Disciplines
-            .Where(d => d.IsRequired == includeRequired)
-            .Include(d => d.ResourceLinks.OrderBy(l => l.Order))
-            .OrderBy(d => d.SortOrder)
-            .ThenBy(d => d.Name)
-            .ToListAsync();
-    }
-
     public async Task<Discipline?> GetByIdAsync(int id)
     {
         return await context.Disciplines
@@ -68,9 +58,11 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<Discipline>> GetPagedAsync(int pageNumber, int pageSize, string? name)
+    public async Task<List<Discipline>> GetPagedAsync(bool includeRequired, string? name, int pageNumber, int pageSize)
     {
-        var query = context.Disciplines.AsQueryable();
+        var query = context.Disciplines
+            .Where(d => d.IsRequired == includeRequired)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(name))
         {
@@ -80,8 +72,14 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
         return await query
             .OrderBy(d => d.SortOrder)
             .ThenBy(d => d.Name)
-            .Skip((pageNumber - 1) * pageSize)
+            .Skip(Math.Max(pageNumber - 1, 0) * pageSize)
             .Take(pageSize)
             .ToListAsync();
+    }
+    
+    public async Task<int> GetTotalPagesCountAsync(int pageSize)
+    {
+        var totalPagesCount = await context.Disciplines.CountAsync();
+        return (int)Math.Ceiling((double)totalPagesCount / pageSize);
     }
 }
