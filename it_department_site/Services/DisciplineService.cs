@@ -67,4 +67,21 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
         context.Disciplines.Remove(existing);
         await context.SaveChangesAsync();
     }
+
+    public async Task<List<Discipline>> GetPagedAsync(int pageNumber, int pageSize, string? name)
+    {
+        var query = _context.Disciplines.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            query = query.Where(d => EF.Functions.Like(d.Name, $"%{name}%"));
+        }
+
+        return await query
+            .OrderBy(d => d.SortOrder)
+            .ThenBy(d => d.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
 }
