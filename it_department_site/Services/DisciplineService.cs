@@ -62,6 +62,7 @@ public class DisciplineService : IDisciplineService
         _context.Disciplines.Remove(existing);
         await _context.SaveChangesAsync();
     }
+
     public async Task<List<Discipline>> GetPagedAsync(int pageNumber, int pageSize, string? name)
     {
         var query = _context.Disciplines.AsQueryable();
