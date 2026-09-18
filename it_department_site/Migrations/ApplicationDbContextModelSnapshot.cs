@@ -586,26 +586,6 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Id");
 
-                    b.Property<string>("CustomCss")
-                        .HasColumnType("text")
-                        .HasColumnName("custom_css");
-
-                    b.Property<string>("FooterCss")
-                        .HasColumnType("text")
-                        .HasColumnName("footer_css");
-
-                    b.Property<string>("FooterHtml")
-                        .HasColumnType("text")
-                        .HasColumnName("footer_html");
-
-                    b.Property<string>("HeaderCss")
-                        .HasColumnType("text")
-                        .HasColumnName("header_css");
-
-                    b.Property<string>("HeaderHtml")
-                        .HasColumnType("text")
-                        .HasColumnName("header_html");
-
                     b.Property<int?>("HomePageId")
                         .HasColumnType("int")
                         .HasColumnName("home_page_id");

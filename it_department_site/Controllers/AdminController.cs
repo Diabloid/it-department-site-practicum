@@ -57,9 +57,9 @@ namespace it_department_site.Controllers
             _disciplineService = disciplineService;
             _userService = userService;
             _fileStorageService = fileStorageService;
-           _organizationInfoService = organizationInfoService;
-            _categoryService = categoryService; 
-       }
+            _organizationInfoService = organizationInfoService;
+            _categoryService = categoryService;
+        }
 
         public async Task<IActionResult> LayoutSettings()
         {
@@ -77,8 +77,26 @@ namespace it_department_site.Controllers
             }
             var current = await _settingsService.GetAsync();
             current.SiteTitle = model.SiteTitle;
-            current.FooterHtml = model.FooterHtml;
             current.HomePageId = model.HomePageId;
+            await _settingsService.SaveAsync(current);
+            TempData["Success"] = "Зміни збережено!";
+            return RedirectToAction(nameof(LayoutSettings));
+        }
+        [HttpPost]
+        public async Task<IActionResult> LayoutSettings(SiteSettings model, IFormFile? logoFile)
+        {
+            if (string.IsNullOrWhiteSpace(model.SiteTitle))
+            {
+                TempData["Error"] = "Назва сайту не може бути порожньою!";
+                return RedirectToAction(nameof(LayoutSettings));
+            }
+            var current = await _settingsService.GetAsync();
+            current.SiteTitle = model.SiteTitle;
+            current.HomePageId = model.HomePageId;
+
+            if (logoFile != null)
+                current.SiteLogoUrl = await _fileStorageService.SaveImage(logoFile, "logo");
+
             await _settingsService.SaveAsync(current);
             TempData["Success"] = "Зміни збережено!";
             return RedirectToAction(nameof(LayoutSettings));
