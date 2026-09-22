@@ -23,8 +23,7 @@ public class AuthController : Controller
     {
         return SignOut(
             new AuthenticationProperties { RedirectUri = "/" },
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            OpenIdConnectDefaults.AuthenticationScheme
+            CookieAuthenticationDefaults.AuthenticationScheme
         );
     }
 }

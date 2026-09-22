@@ -1,5 +1,6 @@
 using DotNetEnv;
 using it_department_site.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
@@ -19,7 +20,6 @@ namespace it_department_site.Startup
             builder.Services.Configure<GoogleDriveOptions>(
                 builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
-            // НОВА АВТОРИЗАЦІЯ ЧЕРЕЗ MICROSOFT ENTRA ID
             builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(options =>
                 {
@@ -28,6 +28,7 @@ namespace it_department_site.Startup
                     options.ClientId = Environment.GetEnvironmentVariable("EntraId__ClientId");
                     options.ClientSecret = Environment.GetEnvironmentVariable("EntraId__ClientSecret");
                     options.CallbackPath = "/signin-oidc";
+                    options.ResponseType = "code";
 
                     options.Events.OnTokenValidated = async context =>
                     {
@@ -36,7 +37,7 @@ namespace it_department_site.Startup
 
                         if (string.IsNullOrEmpty(email))
                         {
-                            context.Fail("Email не знайдено в токені Entra ID.");
+                            context.Fail("Email не знайдено в токені.");
                             return;
                         }
 
@@ -56,7 +57,7 @@ namespace it_department_site.Startup
                         };
                         claims.AddRange(dbUser.Roles.Select(r => new Claim(ClaimTypes.Role, r.ToString())));
 
-                        var appIdentity = new ClaimsIdentity(claims);
+                        var appIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         context.Principal?.AddIdentity(appIdentity);
                     };
 
@@ -67,6 +68,12 @@ namespace it_department_site.Startup
                         return Task.CompletedTask;
                     };
                 });
+
+            builder.Services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.Name = "IPZAuthCookie";
+                options.LoginPath = "/login";
+            });
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddSession();
