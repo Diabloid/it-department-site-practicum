@@ -93,7 +93,7 @@
             .then(html => {
                 document.getElementById('contentArea').innerHTML = html;
                 if (typeof initRichTextEditors === 'function') initRichTextEditors();
-                if (typeof window.initPostAutosave === 'function') window.initPostAutosave();
+                if (typeof window.initPostActions === 'function') window.initPostActions();
             })
             .catch(err => {
                 console.error('Publish error:', err);
@@ -102,6 +102,6 @@
     };
 
     // Залишив функцію порожньою, щоб HTML-в'юшки не видавали помилку "is not a function" при завантаженні
-    window.initPostAutosave = function () {
+    window.initPostActions = function () {
     };
 })();
