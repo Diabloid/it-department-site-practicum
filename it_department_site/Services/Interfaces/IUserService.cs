@@ -2,11 +2,10 @@
 {
     public interface IUserService
     {
-        Task<User?> FindUserByUsernameAsync(string username);
         Task<IEnumerable<User>> GetAllAsync();
         Task<User?> GetByIdAsync(int id);
-        Task CreateAsync(User user, string plainPassword);
-        Task UpdateAsync(int id, User user, string? plainPassword);
+        Task CreateAsync(User user);
+        Task UpdateAsync(int id, User user);
         Task<IEnumerable<Employee>> GetAvailableEmployeesAsync(int? excludeUserId = null);
         Task<User?> FindUserByEmailAsync(string email);
     }

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
+namespace it_department_site.Controllers;
+
 public class AuthController : Controller
 {
     [HttpGet("/login")]

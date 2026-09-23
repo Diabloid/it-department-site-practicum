@@ -24,11 +24,6 @@ namespace it_department_site.Entities
         public required string Email { get; set; }
 
         [Required]
-        [MaxLength(255)]
-        [Column("password")]
-        public string Password { get; set; }
-
-        [Required]
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 

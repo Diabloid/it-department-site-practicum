@@ -5,10 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 public class UserService(ApplicationDbContext context) : IUserService
 {
-    public async Task<User?> FindUserByUsernameAsync(string username)
-    {
-        return await context.Set<User>().AsNoTracking().FirstOrDefaultAsync(u => u.Username == username);
-    }
 
     public async Task<User?> FindUserByEmailAsync(string email)
     {
@@ -25,15 +21,14 @@ public class UserService(ApplicationDbContext context) : IUserService
         return await context.Set<User>().FirstOrDefaultAsync(u => u.Id == id);
     }
 
-    public async Task CreateAsync(User user, string plainPassword)
+    public async Task CreateAsync(User user)
     {
-        user.Password = BCrypt.Net.BCrypt.HashPassword(plainPassword);
         user.CreatedAt = DateTime.UtcNow;
         context.Set<User>().Add(user);
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(int id, User user, string? plainPassword)
+    public async Task UpdateAsync(int id, User user)
     {
         var existing = await context.Set<User>().FirstOrDefaultAsync(u => u.Id == id);
         if (existing == null) return;
@@ -42,11 +37,6 @@ public class UserService(ApplicationDbContext context) : IUserService
         existing.Email = user.Email;
         existing.EmployeeId = user.EmployeeId;
         existing.Roles = user.Roles;
-
-        if (!string.IsNullOrWhiteSpace(plainPassword))
-        {
-            existing.Password = BCrypt.Net.BCrypt.HashPassword(plainPassword);
-        }
 
         await context.SaveChangesAsync();
     }
