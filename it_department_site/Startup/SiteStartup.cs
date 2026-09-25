@@ -13,10 +13,8 @@ namespace it_department_site.Startup
     {
         public async Task StartAsync()
         {
-            var builder = WebApplication.CreateBuilder(args);
-
             Env.Load();
-
+            var builder = WebApplication.CreateBuilder(args);
             builder.Services.Configure<GoogleDriveOptions>(
                 builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
@@ -24,49 +22,13 @@ namespace it_department_site.Startup
                 .AddMicrosoftIdentityWebApp(options =>
                 {
                     options.Instance = "https://login.microsoftonline.com/";
-                    options.TenantId = Environment.GetEnvironmentVariable("EntraId__TenantId");
-                    options.ClientId = Environment.GetEnvironmentVariable("EntraId__ClientId");
-                    options.ClientSecret = Environment.GetEnvironmentVariable("EntraId__ClientSecret");
+                    options.TenantId = builder.Configuration["EntraId:TenantId"];
+                    options.ClientId = builder.Configuration["EntraId:ClientId"];
+                    options.ClientSecret = builder.Configuration["EntraId:ClientSecret"];
                     options.CallbackPath = "/signin-oidc";
                     options.ResponseType = "code";
 
-                    options.Events.OnTokenValidated = async context =>
-                    {
-                        var email = context.Principal?.FindFirst("preferred_username")?.Value
-                                    ?? context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
-
-                        if (string.IsNullOrEmpty(email))
-                        {
-                            context.Fail("Email не знайдено в токені.");
-                            return;
-                        }
-
-                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                        var dbUser = await userService.FindUserByEmailAsync(email);
-
-                        if (dbUser == null)
-                        {
-                            context.Fail("Користувача не знайдено в базі даних.");
-                            return;
-                        }
-
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.NameIdentifier, dbUser.Id.ToString()),
-                            new Claim(ClaimTypes.Name, dbUser.Username)
-                        };
-                        claims.AddRange(dbUser.Roles.Select(r => new Claim(ClaimTypes.Role, r.ToString())));
-
-                        var appIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        context.Principal?.AddIdentity(appIdentity);
-                    };
-
-                    options.Events.OnAuthenticationFailed = context =>
-                    {
-                        context.Response.Redirect("/");
-                        context.HandleResponse();
-                        return Task.CompletedTask;
-                    };
+                    options.EventsType = typeof(EntraIdAuthenticationEvents);
                 });
 
             builder.Services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -96,6 +58,7 @@ namespace it_department_site.Startup
 
             builder.Services.AddScoped<IProfileService, ProfileService>();
 
+            builder.Services.AddScoped<EntraIdAuthenticationEvents>();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             builder.Services.AddScoped<IPartnerService, PartnerService>();
