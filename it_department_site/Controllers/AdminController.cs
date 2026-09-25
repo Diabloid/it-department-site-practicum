@@ -88,12 +88,41 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-
         [HttpPost]
+        public IActionResult CreateGraduate()
+        {
+            return PartialView("_CreateGraduate", new Graduate());
+        }
+        public async Task<IActionResult> CreateUser()
+        {
+            var employees = await _userService.GetAvailableEmployeesAsync();
+            var model = new UserFormViewModel { AvailableEmployees = employees.ToList() };
+            return PartialView("_CreateUser", model);
+        }
+
+        public async Task<IActionResult> EditUser(int id)
+        {
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var employees = await _userService.GetAvailableEmployeesAsync(excludeUserId: id);
+
+            var model = new UserFormViewModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                EmployeeId = user.EmployeeId,
+                AvailableEmployees = employees.ToList(),
+                SelectedRoles = user.Roles.ToList()
+            };
+            return PartialView("_EditUser", model);
+        }
+
         [ValidateAntiForgeryToken]
+        [HttpPost]
         public async Task<IActionResult> CreateUser(UserFormViewModel model)
         {
-
             if (!ModelState.IsValid)
             {
                 model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
@@ -130,38 +159,6 @@ namespace it_department_site.Controllers
                 model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
                 return PartialView("_CreateUser", model);
             }
-        }
-
-        [HttpPost]
-        public IActionResult CreateGraduate()
-        {
-            return PartialView("_CreateGraduate", new Graduate());
-        }
-
-        public async Task<IActionResult> CreateUser()
-        {
-            var employees = await _userService.GetAvailableEmployeesAsync();
-            var model = new UserFormViewModel { AvailableEmployees = employees.ToList() };
-            return PartialView("_CreateUser", model);
-        }
-
-        public async Task<IActionResult> EditUser(int id)
-        {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null) return NotFound();
-
-            var employees = await _userService.GetAvailableEmployeesAsync(excludeUserId: id);
-
-            var model = new UserFormViewModel
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                EmployeeId = user.EmployeeId,
-                AvailableEmployees = employees.ToList(),
-                SelectedRoles = user.Roles.ToList()
-            };
-            return PartialView("_EditUser", model);
         }
 
         [HttpPost]
@@ -205,6 +202,7 @@ namespace it_department_site.Controllers
                 return PartialView("_EditUser", model);
             }
         }
+
         public async Task<IActionResult> Graduates()
         {
             var graduates = await _graduateService.GetAllAsync();

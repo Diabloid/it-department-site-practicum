@@ -16,9 +16,7 @@ namespace it_department_site.Services
             get
             {
                 var user = GetClaimsPrincipal();
-
-                var idClaim = user?.Claims.FirstOrDefault(c =>
-                    c.Type == ClaimTypes.NameIdentifier && int.TryParse(c.Value, out _));
+                var idClaim = user?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
                 if (idClaim != null && int.TryParse(idClaim.Value, out int id))
                 {
