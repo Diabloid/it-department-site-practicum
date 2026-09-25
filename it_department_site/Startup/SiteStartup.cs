@@ -1,6 +1,11 @@
+using DotNetEnv;
 using it_department_site.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 using Quartz;
+using System.Security.Claims;
 
 namespace it_department_site.Startup
 {
@@ -8,12 +13,25 @@ namespace it_department_site.Startup
     {
         public async Task StartAsync()
         {
+            Env.Load();
             var builder = WebApplication.CreateBuilder(args);
-
             builder.Services.Configure<GoogleDriveOptions>(
                 builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
-            builder.Services.AddAuthentication().AddCookie(options =>
+            builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(options =>
+                {
+                    options.Instance = "https://login.microsoftonline.com/";
+                    options.TenantId = builder.Configuration["EntraId:TenantId"];
+                    options.ClientId = builder.Configuration["EntraId:ClientId"];
+                    options.ClientSecret = builder.Configuration["EntraId:ClientSecret"];
+                    options.CallbackPath = "/signin-oidc";
+                    options.ResponseType = "code";
+
+                    options.EventsType = typeof(EntraIdAuthenticationEvents);
+                });
+
+            builder.Services.Configure<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
                 options.Cookie.Name = "IPZAuthCookie";
                 options.LoginPath = "/login";
@@ -35,12 +53,12 @@ namespace it_department_site.Startup
             builder.Services.AddScoped<IGraduateService, GraduateService>();
             builder.Services.AddScoped<IDisciplineService, DisciplineService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
 
             builder.Services.AddScoped<IProfileService, ProfileService>();
 
+            builder.Services.AddScoped<EntraIdAuthenticationEvents>();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             builder.Services.AddScoped<IPartnerService, PartnerService>();
