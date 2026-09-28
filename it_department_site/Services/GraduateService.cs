@@ -23,6 +23,15 @@ public class GraduateService : IGraduateService
         return await _context.Graduates.FirstOrDefaultAsync(g => g.Id == id);
     }
 
+    public async Task<IEnumerable<Graduate>> GetRandomReviewsAsync(int count = 5)
+    {
+        return await _context.Graduates
+            .Where(g => !string.IsNullOrEmpty(g.Testimonial))
+            .OrderBy(g => EF.Functions.Random())
+            .Take(count)
+            .ToListAsync();
+    }
+
     public async Task CreateAsync(Graduate graduate)
     {
         _context.Graduates.Add(graduate);
@@ -31,7 +40,7 @@ public class GraduateService : IGraduateService
 
     public async Task UpdateAsync(int id, Graduate graduate)
 {
-    var existing = GetByIdAsync(id).Result;
+    var existing = await GetByIdAsync(id);
     if (existing == null) return;
 
     existing.FirstName = graduate.FirstName;
@@ -50,7 +59,7 @@ public class GraduateService : IGraduateService
 
     public async Task DeleteAsync(int id)
     {
-        var existing = GetByIdAsync(id).Result;
+        var existing = await GetByIdAsync(id);
         if (existing == null) return;
 
         _context.Graduates.Remove(existing);

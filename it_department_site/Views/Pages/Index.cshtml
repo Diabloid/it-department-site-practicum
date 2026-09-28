@@ -3,208 +3,79 @@
    var newsList = (ViewBag.News as IEnumerable<Post>)?.ToList() ?? new List<Post>();
    var mainSliderSlides = (ViewBag.MainSliderSlides as IEnumerable<MainSliderSlide>)?.ToList()
        ?? new List<MainSliderSlide>();
+
+   var reviewsList = (ViewBag.Reviews as IEnumerable<it_department_site.Entities.Graduate>)?.ToList()
+       ?? new List<it_department_site.Entities.Graduate>();
 }
 
-
+@if (mainSliderSlides.Any())
+{
+    <div class="start-banner">
+        @await Html.PartialAsync("Partials/_MainBannerSlider", mainSliderSlides)
+    </div>
+}
 <div class="main-content">
+            <div class="ourlife-and-news">
 
-
-   @if (mainSliderSlides.Any())
-   {
-       <div class="start-banner">
-           @await Html.PartialAsync("Partials/_MainBannerSlider", mainSliderSlides)
-       </div>
-   }
-
-
-   <div class="content-part-line">
-       <div class="content-part">
-
-
-           <div class="ourlife-and-news">
-
-
-               <div class="ourlife-area">
-                   <div class="ourlife-square">
-                       <div class="text-field">
-                           <h2>НАШЕ ЖИТТЯ</h2>
-                           <p>Студентське життя сповнене подій та емоцій. Тут ми ділимося найяскравішими моментами нашого навчання та відпочинку.</p>
-                       </div>
-                       <div class="image-field">
-                           <img src="~/images/our-life.jpg" alt="Our Life Image" />
-                       </div>
-                   </div>
-               </div>
-
-
-               <div class="news-area">
-                   <div class="news-content-and-title">
-                       <div class="news-general-title">
-                           <h2>Новини</h2>
-                       </div>
-                       <div class="news-content">
-                           @if (newsList.Any())
-                           {
-                               var mainPost = newsList.First();
-                               var sidePosts = newsList.Skip(1).Take(3).ToList();
-
-
-                       <div class="news-grid-container">
-                           <div class="main-news-block">
-                               <a href="/posts/@(mainPost.Slug)">
-                                 <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? DefaultImages.News : mainPost.Thumbnail)');"></div>
-                                  <span class="news-date">
-                                       <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
-                                        @mainPost.CreatedAt.ToString("dd.MM.yyyy")
-                                  </span>
-                                  <h3>@mainPost.Title</h3>
-                                 <div class="news-excerpt">@Html.Raw(mainPost.Excerpt)</div>
-                               </a>
-                           </div>
-
-
-                               <div class="side-news-list">
-                                       @foreach (var item in sidePosts)
-                                   {
-                                       <a href="/posts/@(item.Slug)">
-                                           <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? DefaultImages.News : item.Thumbnail)');"></div>
-                                               <div class="news-info-container">
-                                                   <small>
-                                                        <div class="news-meta" >
-                                                             <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
-                                                              @item.CreatedAt.ToString("dd.MM.yyyy")
-                                                        </div>
-                                                      
-                                                   </small>
-                                                <div class="news-title-wrapper">
-                                                     <div class="news-title-small">@item.Title</div>
-                                                </div>
-                                           </div>
-                                       </a>
-                                   }
-                               </div>
-                           </div>
-                             }
+                <a class="ourlife-area" asp-controller="Post" asp-action="Index" asp-route-category="our-life">
+                    <div class="ourlife-square">
+                        <div class="text-field">
+                            <h2>НАШЕ ЖИТТЯ</h2>
+                            <p>Студентське життя сповнене подій та емоцій. Тут ми ділимося найяскравішими моментами нашого навчання та відпочинку.</p>
                         </div>
-                   </div>
-               </div>
-           </div>
+                        <div class="image-field">
+                        </div>
+                    </div>
+                </a>
 
-<!-- початок відгука -->
-        <div class="reviews-area">
-    <div class="news-general-title">
-        <h2>Відгуки</h2>
-    </div>
+                <div class="news-area">
+                    <div class="news-content-and-title">
+                        <div class="news-general-title">
+                            <h2>Новини</h2>
+                        </div>
+                        <div class="news-content">
+                            @if (newsList.Any())
+                            {
+                                var mainPost = newsList.First();
+                                var sidePosts = newsList.Skip(1).Take(3).ToList();
 
-    <div class="slider-container">
-        
-        <div class="reviews-field active fade">
-            <div class="pfp-name-status">
-                <div class="profile-picture">
-                    <img src="@DefaultImages.Avatar" alt="Олександр Петренко" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
-                </div>
-                <div class="name-and-status">
-                    <h3>Олександр Петренко</h3>
-                    <p>Студент</p>
-                </div>
-            </div>
-            <div class="rating-stars">
-                <svg width="130" height="24" viewBox="0 0 130 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.6 4.7L13.7 4.7L14.5 7.1H18.6L19.5 11.2L17.5 12.7L16.9 14.5L17.7 16.9L15.2 18.7L13.1 17.2L11.2 17.2L9.1 18.7L6.6 16.9L7.3 14.5L6.7 12.7L4.7 11.2L5.7 8.2H8.2L9.8 7.1L10.6 4.7Z" fill="#FFC353" />
-                    <path d="M37.0 4.7L40.2 4.7L41.0 7.1H45.0L46.0 11.2L44.0 12.7L43.4 14.5L44.2 16.9L41.6 18.7L39.5 17.2L37.6 17.2L35.5 18.7L33.0 16.9L33.8 14.5L33.2 12.7L31.2 11.2L32.1 8.2H34.7L36.2 7.1L37.0 4.7Z" fill="#FFC353" />
-                    <path d="M63.5 4.7L66.6 4.7L67.4 7.1H71.5L72.5 11.2L70.5 12.7L69.9 14.5L70.7 16.9L68.1 18.7L66.0 17.2L64.1 17.2L62.0 18.7L59.5 16.9L60.3 14.5L59.7 12.7L57.7 11.2L58.6 8.2H61.1L62.7 7.1L63.5 4.7Z" fill="#FFC353" />
-                    <path d="M90.0 4.7L93.1 4.7L93.9 7.1H98.0L98.9 11.2L96.9 12.7L96.3 14.5L97.1 16.9L94.6 18.7L92.5 17.2L90.6 17.2L88.5 18.7L86.0 16.9L86.7 14.5L86.1 12.7L84.1 11.2L85.1 8.2H87.6L89.2 7.1L90.0 4.7Z" fill="#FFC353" />
-                    <path d="M116.5 4.7L119.6 4.7L120.4 7.1H124.5L125.4 11.2L123.4 12.7L122.8 14.5L123.6 16.9L121.1 18.7L119.0 17.2L117.1 17.2L115.0 18.7L112.4 16.9L113.2 14.5L112.6 12.7L110.6 11.2L111.6 8.2H114.1L115.7 7.1L116.5 4.7Z" fill="#FFC353" />
-                </svg>
-            </div>
-            <div class="comments">
-                <p><b>Чудове місце!</b> Якісна освіта, сучасні підходи та дружній колектив. Рекомендую!</p>
-            </div>
-        </div>
+                                <div class="main-news-block">
+                                    <a href="/posts/@(mainPost.Slug)">
+                                       <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? DefaultImages.News : mainPost.Thumbnail)');"></div>
+                                        <span class="news-date">
+                                            <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
+                                            @mainPost.CreatedAt.ToString("dd.MM.yyyy")
+                                        </span>
+                                        <h3>@mainPost.Title</h3>
+                                        <div class="news-excerpt">@Html.Raw(mainPost.Excerpt)</div>
+                                    </a>
+                                </div>
 
-        <div class="reviews-field fade">
-            <div class="pfp-name-status">
-                <div class="profile-picture">
-                    <img src="@DefaultImages.Avatar" alt="Марія Ковальчук" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
-                </div>
-                <div class="name-and-status">
-                    <h3>Марія Ковальчук</h3>
-                    <p>Випускник</p>
-                </div>
-            </div>
-            <div class="rating-stars">
-                <svg width="130" height="24" viewBox="0 0 130 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.6 4.7L13.7 4.7L14.5 7.1H18.6L19.5 11.2L17.5 12.7L16.9 14.5L17.7 16.9L15.2 18.7L13.1 17.2L11.2 17.2L9.1 18.7L6.6 16.9L7.3 14.5L6.7 12.7L4.7 11.2L5.7 8.2H8.2L9.8 7.1L10.6 4.7Z" fill="#FFC353" />
-                    <path d="M37.0 4.7L40.2 4.7L41.0 7.1H45.0L46.0 11.2L44.0 12.7L43.4 14.5L44.2 16.9L41.6 18.7L39.5 17.2L37.6 17.2L35.5 18.7L33.0 16.9L33.8 14.5L33.2 12.7L31.2 11.2L32.1 8.2H34.7L36.2 7.1L37.0 4.7Z" fill="#FFC353" />
-                    <path d="M63.5 4.7L66.6 4.7L67.4 7.1H71.5L72.5 11.2L70.5 12.7L69.9 14.5L70.7 16.9L68.1 18.7L66.0 17.2L64.1 17.2L62.0 18.7L59.5 16.9L60.3 14.5L59.7 12.7L57.7 11.2L58.6 8.2H61.1L62.7 7.1L63.5 4.7Z" fill="#FFC353" />
-                    <path d="M90.0 4.7L93.1 4.7L93.9 7.1H98.0L98.9 11.2L96.9 12.7L96.3 14.5L97.1 16.9L94.6 18.7L92.5 17.2L90.6 17.2L88.5 18.7L86.0 16.9L86.7 14.5L86.1 12.7L84.1 11.2L85.1 8.2H87.6L89.2 7.1L90.0 4.7Z" fill="#FFC353" />
-                    <path d="M116.5 4.7L119.6 4.7L120.4 7.1H124.5L125.4 11.2L123.4 12.7L122.8 14.5L123.6 16.9L121.1 18.7L119.0 17.2L117.1 17.2L115.0 18.7L112.4 16.9L113.2 14.5L112.6 12.7L110.6 11.2L111.6 8.2H114.1L115.7 7.1L116.5 4.7Z" fill="#FFC353" />
-                </svg>
-            </div>
-            <div class="comments">
-                <p><b>Найкращі викладачі!</b> Тут я отримала не тільки знання, а й справжніх друзів. Практика на висоті!</p>
-            </div>
-        </div>
-
-        <div class="reviews-field fade">
-            <div class="pfp-name-status">
-                <div class="profile-picture">
-                    <img src="@DefaultImages.Avatar" alt="Дмитро Іванов" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
-                </div>
-                <div class="name-and-status">
-                    <h3>Дмитро Іванов</h3>
-                    <p>Студент</p>
+                                <div class="side-news-list">
+                                    @foreach (var item in sidePosts)
+                                    {
+                                        <a href="/posts/@(item.Slug)">
+                                            <div class="news-image-small" style="background-image:url('@(string.IsNullOrEmpty(item.Thumbnail) ? DefaultImages.News : item.Thumbnail)');"></div>
+                                            <div class="news-info-container">
+                                                <small>
+                                                    <div class="news-meta" >
+                                                        <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
+                                                        @item.CreatedAt.ToString("dd.MM.yyyy")
+                                                    </div>
+                                                  
+                                                </small>
+                                                <div class="news-title-wrapper">
+                                                    <div class="news-title-small">@item.Title</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="rating-stars">
-                <svg width="130" height="24" viewBox="0 0 130 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.6 4.7L13.7 4.7L14.5 7.1H18.6L19.5 11.2L17.5 12.7L16.9 14.5L17.7 16.9L15.2 18.7L13.1 17.2L11.2 17.2L9.1 18.7L6.6 16.9L7.3 14.5L6.7 12.7L4.7 11.2L5.7 8.2H8.2L9.8 7.1L10.6 4.7Z" fill="#FFC353" />
-                    <path d="M37.0 4.7L40.2 4.7L41.0 7.1H45.0L46.0 11.2L44.0 12.7L43.4 14.5L44.2 16.9L41.6 18.7L39.5 17.2L37.6 17.2L35.5 18.7L33.0 16.9L33.8 14.5L33.2 12.7L31.2 11.2L32.1 8.2H34.7L36.2 7.1L37.0 4.7Z" fill="#FFC353" />
-                    <path d="M63.5 4.7L66.6 4.7L67.4 7.1H71.5L72.5 11.2L70.5 12.7L69.9 14.5L70.7 16.9L68.1 18.7L66.0 17.2L64.1 17.2L62.0 18.7L59.5 16.9L60.3 14.5L59.7 12.7L57.7 11.2L58.6 8.2H61.1L62.7 7.1L63.5 4.7Z" fill="#FFC353" />
-                    <path d="M90.0 4.7L93.1 4.7L93.9 7.1H98.0L98.9 11.2L96.9 12.7L96.3 14.5L97.1 16.9L94.6 18.7L92.5 17.2L90.6 17.2L88.5 18.7L86.0 16.9L86.7 14.5L86.1 12.7L84.1 11.2L85.1 8.2H87.6L89.2 7.1L90.0 4.7Z" fill="#FFC353" />
-                    <path d="M116.5 4.7L119.6 4.7L120.4 7.1H124.5L125.4 11.2L123.4 12.7L122.8 14.5L123.6 16.9L121.1 18.7L119.0 17.2L117.1 17.2L115.0 18.7L112.4 16.9L113.2 14.5L112.6 12.7L110.6 11.2L111.6 8.2H114.1L115.7 7.1L116.5 4.7Z" fill="#FFC353" />
-                </svg>
-            </div>
-            <div class="comments">
-                <p><b>Дуже задоволений!</b> Цікаві проекти, багато практики і можливість поєднувати з роботою. Дякую за знання.</p>
-            </div>
-        </div>
-
-        <div class="reviews-field fade">
-            <div class="pfp-name-status">
-                <div class="profile-picture">
-                    <img src="@DefaultImages.Avatar" alt="Олена Козак" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />
-                </div>
-                <div class="name-and-status">
-                    <h3>Олена Козак</h3>
-                    <p>Студентка</p>
-                </div>
-            </div>
-            <div class="rating-stars">
-                <svg width="130" height="24" viewBox="0 0 130 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.6 4.7L13.7 4.7L14.5 7.1H18.6L19.5 11.2L17.5 12.7L16.9 14.5L17.7 16.9L15.2 18.7L13.1 17.2L11.2 17.2L9.1 18.7L6.6 16.9L7.3 14.5L6.7 12.7L4.7 11.2L5.7 8.2H8.2L9.8 7.1L10.6 4.7Z" fill="#FFC353" />
-                    <path d="M37.0 4.7L40.2 4.7L41.0 7.1H45.0L46.0 11.2L44.0 12.7L43.4 14.5L44.2 16.9L41.6 18.7L39.5 17.2L37.6 17.2L35.5 18.7L33.0 16.9L33.8 14.5L33.2 12.7L31.2 11.2L32.1 8.2H34.7L36.2 7.1L37.0 4.7Z" fill="#FFC353" />
-                    <path d="M63.5 4.7L66.6 4.7L67.4 7.1H71.5L72.5 11.2L70.5 12.7L69.9 14.5L70.7 16.9L68.1 18.7L66.0 17.2L64.1 17.2L62.0 18.7L59.5 16.9L60.3 14.5L59.7 12.7L57.7 11.2L58.6 8.2H61.1L62.7 7.1L63.5 4.7Z" fill="#FFC353" />
-                    <path d="M90.0 4.7L93.1 4.7L93.9 7.1H98.0L98.9 11.2L96.9 12.7L96.3 14.5L97.1 16.9L94.6 18.7L92.5 17.2L90.6 17.2L88.5 18.7L86.0 16.9L86.7 14.5L86.1 12.7L84.1 11.2L85.1 8.2H87.6L89.2 7.1L90.0 4.7Z" fill="#FFC353" />
-                    <path d="M116.5 4.7L119.6 4.7L120.4 7.1H124.5L125.4 11.2L123.4 12.7L122.8 14.5L123.6 16.9L121.1 18.7L119.0 17.2L117.1 17.2L115.0 18.7L112.4 16.9L113.2 14.5L112.6 12.7L110.6 11.2L111.6 8.2H114.1L115.7 7.1L116.5 4.7Z" fill="#FFC353" />
-                </svg>
-            </div>
-            <div class="comments">
-                <p><b>Крута атмосфера!</b> Завжди є підтримка від викладачів та одногрупників. Навчання в задоволення.</p>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="slider-dots">
-        <span class="dot active" onclick="currentSlide(1)"></span>
-        <span class="dot" onclick="currentSlide(2)"></span>
-        <span class="dot" onclick="currentSlide(3)"></span>
-        <span class="dot" onclick="currentSlide(4)"></span>
-    </div>
 </div>
-            <!-- кінець відгука -->
-       </div>
-   </div>
-</div>
+@await Html.PartialAsync("Partials/_Reviews", reviewsList)
 @await Html.PartialAsync("Partials/_PartnerSlider", (List<Partner>)(ViewBag.Partners ?? new List<Partner>()))

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Services
 {
-    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory, ILogger<PostService> logger) : IPostService
+    public class PostService(ApplicationDbContext context, ISchedulerFactory schedulerFactory) : IPostService
     {
         public async Task<IEnumerable<Post>> GetAllAsync()
         {
@@ -16,7 +16,7 @@ namespace it_department_site.Services
         {
             return await context.Set<Post>()
                 .AsNoTracking()
- 		.Include(p => p.Categories)
+ 		        .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -28,6 +28,17 @@ namespace it_department_site.Services
                 .ThenInclude(a => a!.Employee)
                 .Include(p => p.Categories)
                 .FirstOrDefaultAsync(p => p.Slug == slug);
+        }
+
+        public async Task<IEnumerable<Post>> GetByCategoryName(string categoryName)
+        {
+            return await context.Set<Post>()
+                .AsNoTracking()
+                .Include(p => p.Author)
+                .ThenInclude(a => a!.Employee)
+                .Include(p => p.Categories)
+                .Where(p => p.Categories.Any(c => c.Name == categoryName))
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Post>> GetLatestAsync(int count, int? excludeId = null)
