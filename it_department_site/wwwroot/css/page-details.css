@@ -331,7 +331,6 @@
   max-width: 100%;
   height: auto;
   border-radius: 12px;
-  margin: 1.5rem 0;
   box-shadow: 0 4px 20px rgba(var(--color-heading-rgb), 0.1);
 }
 
@@ -457,3 +456,10 @@
     max-width: none;
   }
 }
+
+/*CKEditor 5 content styles */
+.image-style-align-left  { float: left;  margin: 0 1.5em 1em 0; }
+.image-style-align-right { float: right; margin: 0 0 1em 1.5em; }
+.image.image_resized     { max-width: 100%; }
+.image.image_resized img { width: 100%; }
+.ck-content::after       { content: ""; display: block; clear: both; } /* stop float leaking out */
