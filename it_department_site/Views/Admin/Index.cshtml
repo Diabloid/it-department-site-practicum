@@ -3,7 +3,7 @@
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-<script src="~/ckeditor/ckeditor.js"></script>
+<script src="~/ckeditor5/ckeditor5.js"></script>
 <script src="~/js/admin-post-actions.js"></script>
 
 <div class="container mt-5">
@@ -100,6 +100,7 @@
                     return response.text();
                 })
                 .then(html => {
+                    destroyRichTextEditors();
                     document.getElementById("contentArea").innerHTML = html;
 
                     // 2. Якщо завантажили партнерів - вмикаємо перетягування
@@ -108,7 +109,7 @@
                     }
 
                     initRichTextEditors();
-                    if (typeof window.initPostActions === 'function') window.initPostActions();
+                    if (typeof initPostAutosave === 'function') initPostAutosave();
                 })
                 .catch(error => {
                     console.error("Error loading content:", error);
@@ -153,38 +154,112 @@
             }
         }
 
+    let adminEditors = [];
+    let adminEditorReady = [];
+
+    function destroyRichTextEditors() {
+        adminEditors.forEach(({ editor }) => {
+            if (editor && typeof editor.destroy === 'function') {
+                editor.destroy().catch(() => {});
+            }
+        });
+        adminEditors = [];
+        adminEditorReady = [];
+    }
+
+    function writeEditorDataToForm(form, name, data) {
+        if (!form || !name) return;
+        const fields = form.querySelectorAll(`[name="${name}"]`);
+        if (fields.length === 0) {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = name;
+            hidden.value = data;
+            form.appendChild(hidden);
+            return;
+        }
+        fields.forEach(field => { field.value = data; });
+    }
+
+    function collectEditorValues(form) {
+        const values = {};
+        const apply = (name, editor, textarea) => {
+            if (!editor || typeof editor.getData !== 'function') return;
+            const data = editor.getData();
+            const key = name || textarea?.getAttribute('name');
+            if (textarea) textarea.value = data;
+            if (key) {
+                values[key] = data;
+                writeEditorDataToForm(form, key, data);
+            }
+            if (typeof editor.updateSourceElement === 'function') {
+                editor.updateSourceElement();
+            }
+        };
+
+        adminEditors.forEach(({ name, editor, textarea, form: editorForm }) => {
+            if (form && editorForm && editorForm !== form) return;
+            apply(name, editor, textarea);
+        });
+
+        form?.querySelectorAll('textarea.editor').forEach(textarea => {
+            apply(textarea.getAttribute('name'), textarea.ckeditorInstance, textarea);
+        });
+
+        return values;
+    }
+
     function initRichTextEditors() {
         if (typeof FullEditor === 'undefined') return;
         document.querySelectorAll('#contentArea textarea.editor').forEach(textarea => {
             if (textarea.dataset.ckeReady === '1') return;
             textarea.dataset.ckeReady = '1';
-            FullEditor.create(textarea, { ckfinder: { uploadUrl: '/ckeditor/upload' } })
-                .then(editor => { textarea.ckeditorInstance = editor; })
-                .catch(err => console.error('CKEditor init error:', err));
+            const form = textarea.closest('form');
+            const fieldName = textarea.getAttribute('name');
+            const ready = FullEditor.create(textarea, { ckfinder: { uploadUrl: '/ckeditor/upload' } })
+                .then(editor => {
+                    textarea.ckeditorInstance = editor;
+                    adminEditors.push({ name: fieldName, editor, textarea, form });
+                    const sync = () => writeEditorDataToForm(form, fieldName, editor.getData());
+                    sync();
+                    editor.model.document.on('change:data', sync);
+                    return editor;
+                })
+                .catch(err => {
+                    delete textarea.dataset.ckeReady;
+                    console.error('CKEditor init error:', err);
+                });
+            adminEditorReady.push(ready);
         });
     }
 
     function syncRichTextEditors(form) {
-        form.querySelectorAll('textarea.editor').forEach(textarea => {
-            if (textarea.ckeditorInstance) {
-                textarea.value = textarea.ckeditorInstance.getData();
-            }
-        });
+        collectEditorValues(form);
     }
 
     function submitForm(form) {
-        if (typeof event !== 'undefined') event.preventDefault();
-        syncRichTextEditors(form);
-        fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form)
-        })
-        .then(r => r.text())
-        .then(html => {
+        if (typeof event !== 'undefined' && event.preventDefault) event.preventDefault();
+
+        const send = async () => {
+            if (adminEditorReady.length) {
+                await Promise.all(adminEditorReady.map(p => Promise.resolve(p).catch(() => {})));
+            }
+            const values = collectEditorValues(form);
+            const body = new FormData(form);
+            Object.entries(values).forEach(([name, data]) => body.set(name, data));
+            const res = await fetch(form.action, {
+                method: 'POST',
+                body,
+                credentials: 'same-origin'
+            });
+            const html = await res.text();
+            destroyRichTextEditors();
             document.getElementById("contentArea").innerHTML = html;
             initRichTextEditors();
-            if (typeof window.initPostActions === 'function') window.initPostActions();
-        });
+            if (typeof initPostAutosave === 'function') initPostAutosave();
+        };
+
+        send().catch(err => console.error('submitForm error:', err));
         return false;
     }
 
@@ -203,6 +278,8 @@
           if(document.getElementById('pageId')) document.getElementById('pageId').value = '';
           if(document.getElementById('customUrl')) document.getElementById('customUrl').value = '';
           if(document.getElementById('sortOrder')) document.getElementById('sortOrder').value = '';
+          if(document.getElementById('menuType')) document.getElementById('menuType').value = 'Item';
+          if(document.getElementById('menuDisabled')) document.getElementById('menuDisabled').checked = false;
         }
 
         function fillFormFromButton(el) {
@@ -240,6 +317,4 @@
             container.appendChild(row);
         }
     </script>
-    if(document.getElementById('menuType')) document.getElementById('menuType').value = 'Item';
-    if(document.getElementById('menuDisabled')) document.getElementById('menuDisabled').checked = false;
 }
