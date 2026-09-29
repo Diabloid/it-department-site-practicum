@@ -70,7 +70,7 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
 
     public async Task<List<Discipline>> GetPagedAsync(int pageNumber, int pageSize, string? name)
     {
-        var query = _context.Disciplines.AsQueryable();
+        var query = context.Disciplines.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(name))
         {
