@@ -1,7 +1,14 @@
 ﻿@using it_department_site.ViewModels
 @{
     ViewData["Title"] = "Профіль користувача";
+    ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
+    {
+        new("Головна", "/"),
+        new("Профіль")
+    };
 }
+
+@await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
 <h2>Ваш профіль</h2>
 

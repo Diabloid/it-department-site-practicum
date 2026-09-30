@@ -10,30 +10,34 @@ namespace it_department_site.Entities
         [Column("id")]
         public int Id { get; set; }
 
-        [Required]
         [MaxLength(100)]
+        [Required]
         [Column("first_name")]
-        public string FirstName { get; set; }
+        public required string FirstName { get; set; }
 
-        [Required]
         [MaxLength(100)]
+        [Required]
         [Column("last_name")]
-        public string LastName { get; set; }
+        public required string LastName { get; set; }
 
         [Required]
         [Column("graduation_year")]
         public int GraduationYear { get; set; }
 
+        [Required]
         [Column("specialization")]
-        public string Specialization { get; set; }
+        public required string Specialization { get; set; }
 
+        [Required]
         [Column("photo_url")]
-        public string PhotoUrl { get; set; }
+        public required string PhotoUrl { get; set; }
 
+        [Required]
         [Column("job_description")]
-        public string JobDescription { get; set; }
+        public required string JobDescription { get; set; }
         
+        [Required]
         [Column("testimonial")]
-        public string Testimonial { get; set; }
+        public required string Testimonial { get; set; }
     }
 }
