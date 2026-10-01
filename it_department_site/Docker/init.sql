@@ -64,7 +64,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `site_settings` WRITE;
 /*!40000 ALTER TABLE `site_settings` DISABLE KEYS */;
-INSERT INTO `site_settings` (Id, site_title, logo_url, home_page_id) VALUES (1, 'Супер крутий сайт', NULL, NULL);
+INSERT INTO `site_settings` (Id, site_title, logo_url, home_page_id) VALUES (1, 'Супер крутий сайт', '/images/default/logo.png', NULL);
 /*!40000 ALTER TABLE `site_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
