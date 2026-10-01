@@ -13,11 +13,7 @@ namespace it_department_site.Services
                 return new SiteSettings
                 {
                     Id = 0,
-                    HeaderHtml = "<header></header>",
-                    FooterHtml = "<footer></footer>",
-                    HeaderCss = "",
-                    FooterCss = "",
-                    CustomCss = ""
+                    SiteTitle = string.Empty
                 };
             }
 
@@ -34,11 +30,6 @@ namespace it_department_site.Services
             }
             else
             {
-                existingSettings.HeaderHtml = settings.HeaderHtml;
-                existingSettings.HeaderCss = settings.HeaderCss;
-                existingSettings.FooterHtml = settings.FooterHtml;
-                existingSettings.FooterCss = settings.FooterCss;
-                existingSettings.CustomCss = settings.CustomCss;
                 existingSettings.SiteTitle = settings.SiteTitle;
                 existingSettings.SiteLogoUrl = settings.SiteLogoUrl;
                 existingSettings.HomePageId = settings.HomePageId;
