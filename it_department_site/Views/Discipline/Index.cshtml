@@ -5,6 +5,31 @@
         new("Головна", "/"),
         new(ViewData["Title"].ToString())
     };
+
+    var currentPage = ViewData["CurrentPage"] as int? ?? 1;
+    var totalPages = ViewData["TotalPages"] as int? ?? 0;
+    var searchName = ViewData["SearchName"] as string ?? "";
+    var requiredQuery = (Context.Request.Query["required"].FirstOrDefault() ?? "").Trim();
+    var isRequiredFromView = ViewData["IsRequired"] is bool requiredFlag && requiredFlag;
+    var isRequired = requiredQuery.Equals("true", StringComparison.OrdinalIgnoreCase)
+        || requiredQuery == "1"
+        || isRequiredFromView;
+    var hasSearch = !string.IsNullOrWhiteSpace(searchName);
+
+    string PagerUrl(int page)
+    {
+        var query = new List<string>
+        {
+            $"required={(isRequired ? "true" : "false")}",
+            $"pageNumber={page}"
+        };
+        if (hasSearch)
+        {
+            query.Add($"name={Uri.EscapeDataString(searchName)}");
+        }
+
+        return "/disciplines?" + string.Join("&", query);
+    }
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
@@ -37,23 +62,27 @@
             </div>
         </header>
 
-        @if (!Model.Any())
-        {
-            <div class="disciplines-empty">
-                Дисципліни ще не додано.
-            </div>
-        }
-        else
-        {
-          <form class="disciplines-search" role="search" action="#" method="get">
+        <form class="disciplines-search" role="search" action="/disciplines" method="get">
+            <input type="hidden" name="required" value="@(isRequired ? "true" : "false")" />
             <label class="visually-hidden" for="disciplines-search-input">Пошук дисципліни</label>
             <input id="disciplines-search-input"
                    class="disciplines-search-input"
                    type="search"
-                   name="q"
+                   name="name"
+                   value="@searchName"
                    placeholder="Пошук дисципліни…"
+                   maxlength="50"
                    autocomplete="off" />
-           </form>
+        </form>
+
+        @if (!Model.Any())
+        {
+            <div class="disciplines-empty">
+                @(hasSearch ? "Нічого не знайдено." : "Дисципліни ще не додано.")
+            </div>
+        }
+        else
+        {
             <div class="disciplines-grid">
                 @foreach (var discipline in Model)
                 {
@@ -67,6 +96,47 @@
                     </article>
                 }
             </div>
+        }
+
+        @if (totalPages > 1)
+        {
+            <nav class="disciplines-pager" aria-label="Пагінація дисциплін">
+                @if (currentPage <= 1)
+                {
+                    <span class="disciplines-pager-btn disciplines-pager-prev is-disabled" aria-disabled="true">&lt;</span>
+                }
+                else
+                {
+                    <a class="disciplines-pager-btn disciplines-pager-prev"
+                       href="@PagerUrl(currentPage - 1)"
+                       aria-label="Попередня сторінка">&lt;</a>
+                }
+
+                @for (var i = 1; i <= totalPages; i++)
+                {
+                    if (i == currentPage)
+                    {
+                        <span class="disciplines-pager-btn is-active" aria-current="page">@i</span>
+                    }
+                    else
+                    {
+                        <a class="disciplines-pager-btn"
+                           href="@PagerUrl(i)"
+                           aria-label="Сторінка @i">@i</a>
+                    }
+                }
+
+                @if (currentPage >= totalPages)
+                {
+                    <span class="disciplines-pager-btn disciplines-pager-next is-disabled" aria-disabled="true">&gt;</span>
+                }
+                else
+                {
+                    <a class="disciplines-pager-btn disciplines-pager-next"
+                       href="@PagerUrl(currentPage + 1)"
+                       aria-label="Наступна сторінка">&gt;</a>
+                }
+            </nav>
         }
     </section>
 </article>
