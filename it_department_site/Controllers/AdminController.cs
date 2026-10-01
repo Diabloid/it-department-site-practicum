@@ -67,21 +67,7 @@ namespace it_department_site.Controllers
             ViewBag.Pages = await _pageService.GetAllPagesAsync();
             return View("EditLayout", settings);
         }
-        [HttpPost]
-        public async Task<IActionResult> LayoutSettings(SiteSettings model)
-        {
-            if (string.IsNullOrWhiteSpace(model.SiteTitle))
-            {
-                TempData["Error"] = "Назва сайту не може бути порожньою!";
-                return RedirectToAction(nameof(LayoutSettings));
-            }
-            var current = await _settingsService.GetAsync();
-            current.SiteTitle = model.SiteTitle;
-            current.HomePageId = model.HomePageId;
-            await _settingsService.SaveAsync(current);
-            TempData["Success"] = "Зміни збережено!";
-            return RedirectToAction(nameof(LayoutSettings));
-        }
+
         [HttpPost]
         public async Task<IActionResult> LayoutSettings(SiteSettings model, IFormFile? logoFile)
         {
@@ -95,7 +81,9 @@ namespace it_department_site.Controllers
             current.HomePageId = model.HomePageId;
 
             if (logoFile != null)
-                current.SiteLogoUrl = await _fileStorageService.SaveImage(logoFile, "logo");
+            {
+                current.SiteLogoUrl = await _fileStorageService.SaveImage(logoFile, string.Empty);
+            }
 
             await _settingsService.SaveAsync(current);
             TempData["Success"] = "Зміни збережено!";
