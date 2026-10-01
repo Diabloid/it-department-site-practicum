@@ -13,7 +13,7 @@ namespace it_department_site.Entities
         [Required]
         [MaxLength(200)]
         [Column("site_title")]
-        public string SiteTitle { get; set; }
+        public required string SiteTitle { get; set; }
 
         [MaxLength(255)]
         [Column("logo_url")]
