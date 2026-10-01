@@ -94,11 +94,20 @@ namespace it_department_site.Controllers
         {
             return View();
         }
-        [HttpPost]
+        [HttpGet]
         public IActionResult CreateGraduate()
         {
-            return PartialView("_CreateGraduate", new Graduate());
+            return PartialView("_CreateGraduate", new Graduate
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                JobDescription = string.Empty,
+                Specialization = string.Empty,
+                PhotoUrl = string.Empty,
+                Testimonial = string.Empty
+            });
         }
+
         public async Task<IActionResult> CreateUser()
         {
             var employees = await _userService.GetAvailableEmployeesAsync();
@@ -125,17 +134,10 @@ namespace it_department_site.Controllers
             return PartialView("_EditUser", model);
         }
 
-        [HttpPost]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> CreateUser(UserFormViewModel model)
         {
-            ModelState.Remove("Password");
-            if (string.IsNullOrWhiteSpace(model.Password))
-            {
-                ModelState.AddModelError(nameof(model.Password), "Пароль обов'язковий");
-            }
-
             if (!ModelState.IsValid)
             {
                 model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
@@ -151,7 +153,7 @@ namespace it_department_site.Controllers
                     EmployeeId = model.EmployeeId,
                     Roles = model.SelectedRoles
                 };
-                await _userService.CreateAsync(user, model.Password!);
+                await _userService.CreateAsync(user);
                 return await Users();
             }
             catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
@@ -178,7 +180,6 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(UserFormViewModel model)
         {
-            ModelState.Remove("Password");
             if (!ModelState.IsValid)
             {
                 model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync(excludeUserId: model.Id)).ToList();
@@ -194,7 +195,7 @@ namespace it_department_site.Controllers
                     EmployeeId = model.EmployeeId,
                     Roles = model.SelectedRoles
                 };
-                await _userService.UpdateAsync(model.Id, user, model.Password);
+                await _userService.UpdateAsync(model.Id, user);
                 return await Users();
             }
             catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
@@ -216,6 +217,7 @@ namespace it_department_site.Controllers
                 return PartialView("_EditUser", model);
             }
         }
+
         public async Task<IActionResult> Graduates()
         {
             var graduates = await _graduateService.GetAllAsync();

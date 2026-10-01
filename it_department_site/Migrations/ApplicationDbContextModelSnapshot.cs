@@ -629,12 +629,6 @@ namespace it_department_site.Migrations
                         .HasColumnType("int")
                         .HasColumnName("employee_id");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("password");
-
                     b.Property<string>("Roles")
                         .IsRequired()
                         .HasColumnType("json")

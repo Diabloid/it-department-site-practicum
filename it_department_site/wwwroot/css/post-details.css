@@ -218,3 +218,7 @@ a.post-author-name {
     color: #636ac0;
   }
 }
+
+article.post-content {
+  max-width: 800px;
+}
