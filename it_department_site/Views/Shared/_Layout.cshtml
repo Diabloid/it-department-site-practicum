@@ -18,10 +18,7 @@
     var siteSettings = await SettingsService.GetAsync();
     var controllerName = ViewContext.RouteData.Values["controller"]?.ToString();
     var isAdminPage = controllerName == "Admin";
-
     var menuHtml = RenderHtml(await Component.InvokeAsync("Menu"));
-
-    
 }
 
 @{
@@ -32,7 +29,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - @(siteSettings?.SiteTitle ?? "IT Department")</title>
+    <title>@ViewData["Title"] - @siteSettings.SiteTitle</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="preload" href="~/fonts/inter/inter.css" asp-append-version="true" />
@@ -53,7 +50,7 @@
     <header class="header">
         <div class="left-side">
             <a class="logo" href="/">
-                <img src="~/images/light-logo-with-text.png" alt="Logo"/>
+                <img src="@siteSettings.SiteLogoUrl" alt="Logo"/>
             </a>
         </div>
 
@@ -158,9 +155,9 @@
     <div class="footer-bottom">
         <div class="f-bottom-content">
             <div class="f-logo-area">
-                <img src="~/images/light-logo-with-text.png" alt="Logo" class="f-logo-img" />
+                <img src="@siteSettings.SiteLogoUrl" alt="Logo" class="f-logo-img"/>
             </div>
-            
+
             <div class="f-info-area">
                 <p>© 2026 Чернівецький політехнічний фаховий коледж</p>
             </div>
