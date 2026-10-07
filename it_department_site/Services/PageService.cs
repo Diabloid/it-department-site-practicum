@@ -64,7 +64,13 @@ namespace it_department_site.Services
         public async Task UpdatePageAsync(Page page)
         {
             SerializeContent(page);
+
             dbContext.Set<Page>().Update(page);
+
+            dbContext.Entry(page).Property(p => p.ViewsCount).IsModified = false;
+
+            dbContext.Entry(page).Property(p => p.CreatedAt).IsModified = false;
+
             await dbContext.SaveChangesAsync();
         }
 
