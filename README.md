@@ -40,20 +40,11 @@ cd it_department_site
 
 Застосунок очікує:
 
-  
+db name: `website`
 
-| Параметр | Значення |
+username: `site_admin`
 
-|---|---|
-
-| База | `website` |
-
-| Користувач | `site_admin` |
-
-| Пароль | `strongpassword` |
-
-| Порт | `3306` |
-
+password: `strongpassword`
 
 ### Варіант A — Linux (MariaDB)
 
