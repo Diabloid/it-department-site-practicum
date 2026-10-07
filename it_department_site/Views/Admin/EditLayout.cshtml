@@ -42,17 +42,17 @@
     <button type="submit" class="btn btn-success mt-3">💾 Зберегти</button>
 </form>
 
-<script src="~/ckeditor/ckeditor.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        FullEditor
-            .create(document.querySelector('#FooterHtml'), {
-                ckfinder: {
-                    uploadUrl: '/ckeditor/upload'
-                }
-            })
+@section Styles {
+    <link rel="stylesheet" href="~/ckeditor5/ckeditor5.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script type="module">
+        import { createEditor } from '/js/editor.js';
+
+        createEditor(document.querySelector('#FooterHtml'))
             .catch(error => {
                 console.error("❌ CKEditor не ініціалізувався:", error);
             });
-    });
-</script>
+    </script>
+}
