@@ -137,6 +137,7 @@ FLUSH PRIVILEGES;
 
 cd it_department_site
 
+dotnet tool install --global dotnet-ef
 
 dotnet run -- --migrate # створює таблиці
 
