@@ -16,8 +16,8 @@ public class GraduatesController : Controller
     public async Task<IActionResult> Details(int id)
     {
         var graduate = await _graduateService.GetByIdAsync(id);
-        if (graduate == null) return NotFound();
-        return View(graduate);
+        if (graduate == null) return RedirectToAction("ProudOfYou", "Graduates", null, null);;
+        return RedirectToAction("ProudOfYou", "Graduates", null, $"graduate-{id}");
     }
 
     public async Task<IActionResult> ProudOfYou()
