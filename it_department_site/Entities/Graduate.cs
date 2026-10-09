@@ -24,17 +24,15 @@ namespace it_department_site.Entities
         [Column("graduation_year")]
         public int GraduationYear { get; set; }
 
-        [Required]
         [Column("specialization")]
-        public required string Specialization { get; set; }
+        public string? Specialization { get; set; }
 
         [Required]
         [Column("photo_url")]
         public required string PhotoUrl { get; set; }
 
-        [Required]
         [Column("job_description")]
-        public required string JobDescription { get; set; }
+        public string? JobDescription { get; set; }
         
         [Required]
         [Column("testimonial")]
