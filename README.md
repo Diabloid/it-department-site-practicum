@@ -5,7 +5,8 @@
 
 ## 1. Що потрібно встановити
 
-.NET SDK **8.x** 
+
+.NET SDK **10.x** 
 
  MySQL **або** MariaDB | MySQL 8.0+ / MariaDB LTS 
 
@@ -128,9 +129,6 @@ FLUSH PRIVILEGES;
   
 
 `--migrate` і `--demo-data` — це **аргументи застосунку**, а не команди `dotnet`.
-
-Їх передають після `--`:
-
   
 
 ```bash
@@ -139,9 +137,9 @@ cd it_department_site
 
 dotnet tool install --global dotnet-ef
 
-dotnet run -- --migrate # створює таблиці
+dotnet run --migrate # створює таблиці
 
-dotnet run -- --demo-data # заливає демо-дані
+dotnet run --demo-data # заливає демо-дані
 dotnet run # запускає сайт
 
 ```
@@ -176,7 +174,7 @@ dotnet run # запускає сайт
 
 ## 6. Доступ до адмінки
 
-  
+Доступ до адмінки можна отрмимати за посиланням: localhost:7278/admin
 
 Демо-дані створюють користувача `admin` з поштою `admin@example.com` і роллю `Admin`.
 
