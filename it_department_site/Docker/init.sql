@@ -64,7 +64,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `site_settings` WRITE;
 /*!40000 ALTER TABLE `site_settings` DISABLE KEYS */;
-INSERT INTO `site_settings` VALUES (1,'<header>     <nav class=\"navbar navbar-expand-sm navbar-toggleable-sm bg-primary border-bottom box-shadow mb-3\" data-bs-theme=\"dark\">         <div class=\"container\">             <a class=\"navbar-brand\" href=\"/Pages/Index\">@SiteTitle</a>             <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#navbarContent\" aria-controls=\"navbarContent\"                     aria-expanded=\"false\" aria-label=\"Toggle navigation\">                 <span class=\"navbar-toggler-icon\"></span>             </button>             <div class=\"collapse navbar-collapse\" id=\"navbarContent\">                 <ul class=\"navbar-nav ms-auto\">      <li class=\"nav-item\" data-dynamic=\"search\">[пошук]</li>                     <li class=\"nav-item\" data-dynamic=\"menu\">[меню]</li>                     <li class=\"nav-item\" data-dynamic=\"login-button\">[вхід/адмін]</li>     </ul>             </div>         </div>     </nav> </header>','<p><span style=\"font-size:18px;\">© 2025 - супер - </span><a href=\"/about-us\"><span style=\"font-size:18px;\">посилання</span></a></p>','','','','Супер крутий сайт',NULL, NULL);
+INSERT INTO `site_settings` (Id, site_title, logo_url, home_page_id) VALUES (1, 'Супер крутий сайт', '/images/default/logo.png', NULL);
 /*!40000 ALTER TABLE `site_settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -141,3 +141,13 @@ INSERT INTO organization_info (id, address, email, phone_numbers) VALUES(1, '580
 INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(1, 'Instagram', 'https://www.instagram.com/ckprogr', 'instagram-icon.svg', 0, 1);
 INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(2, 'YouTube', 'https://www.youtube.com/channel/UC2wIoLJ20hBEZhvrqtOSRBw', 'youtube-icon.svg', 1, 1);
 INSERT INTO organization_info_social_links (id, title, url, icon, `order`, organization_info_id) VALUES(3, 'Email', 'mailto:ipz@polytech.cv.ua', 'email-icon.svg', 2, 1);
+
+
+INSERT INTO posts (slug, title, excerpt, content, thumbnail, status, created_at, updated_at, published_at, author_id, views_count) VALUES
+('welcome-to-our-site', 'Ласкаво просимо на сайт кафедри!', 'Коротко про те, чим ми займаємось', '<p>Це перший тестовий пост для перевірки роботи стрічки новин.</p>', NULL, 'Published', '2026-08-01 10:00:00', '2026-08-01 10:00:00', '2026-08-01 10:00:00', 1, 12),
+('open-day-announcement', 'День відкритих дверей', 'Запрошуємо абітурієнтів', '<p>Деталі про день відкритих дверей будуть додані пізніше.</p>', NULL, 'Published', '2026-08-15 09:30:00', '2026-08-15 09:30:00', '2026-08-15 09:30:00', 1, 5),
+('draft-post-example', 'Чернетка для тестування', NULL, '<p>Цей пост ще не опубліковано — для перевірки статусу Draft.</p>', NULL, 'Draft', '2026-09-01 14:00:00', '2026-09-01 14:00:00', NULL, 1, 0);
+
+INSERT INTO post_categories (category_id, post_id) VALUES
+(1, 1),
+(2, 2);

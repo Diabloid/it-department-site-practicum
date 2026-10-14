@@ -1,4 +1,4 @@
-﻿@model             SiteSettings
+﻿@model SiteSettings
 
 <h2>Редагування сайту</h2>
 
@@ -11,25 +11,32 @@
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
-<form method="post" asp-action="LayoutSettings" asp-controller="Admin">
+<form method="post" asp-action="LayoutSettings" asp-controller="Admin" enctype="multipart/form-data">
     <div class="mb-3">
         <label>Назва сайту (в хедері):</label>
         <input type="text" class="form-control" name="SiteTitle" value="@Model.SiteTitle" />
     </div>
 
-    <div class="form-group">
-        <label for="FooterHtml">Редагування футера (HTML):</label>
-        <textarea id="FooterHtml" name="FooterHtml" class="form-control">@Model.FooterHtml</textarea>
-    </div>
     <div class="mb-3">
-    <label for="HomePageId">Головна сторінка сайту:</label>
-    <select class="form-control" id="HomePageId" name="HomePageId">
-        <option value="">— не обрано —</option>
-        @foreach (var p in ViewBag.Pages as List<it_department_site.Entities.Page>)
+        <label for="logoFile">Логотип сайту:</label>
+        @if (!string.IsNullOrEmpty(Model.SiteLogoUrl))
         {
-            <option value="@p.Id" selected="@(Model.HomePageId == p.Id)">@p.Title</option>
+            <div class="mb-2">
+                <img src="@Model.SiteLogoUrl" alt="Поточний логотип" style="max-height: 80px;" />
+            </div>
         }
-    </select>
+        <input type="file" class="form-control" id="logoFile" name="logoFile" accept="image/*" />
+    </div>
+
+    <div class="mb-3">
+        <label for="HomePageId">Головна сторінка сайту:</label>
+        <select class="form-control" id="HomePageId" name="HomePageId">
+            <option value="">— не обрано —</option>
+            @foreach (var p in ViewBag.Pages as List<it_department_site.Entities.Page>)
+            {
+                <option value="@p.Id" selected="@(Model.HomePageId == p.Id)">@p.Title</option>
+            }
+        </select>
     </div>
 
     <button type="submit" class="btn btn-success mt-3">💾 Зберегти</button>

@@ -8,8 +8,8 @@ import {
     Image, ImageInsert, ImageUpload, ImageToolbar, ImageCaption, ImageStyle, ImageResize,
     MediaEmbed, HtmlEmbed, SourceEditing, ShowBlocks, FindAndReplace, PasteFromOffice,
     GeneralHtmlSupport, CKFinderUploadAdapter
-} from 'ckeditor5';
-import uk from 'ckeditor5/translations/uk.js';
+} from '/ckeditor5/ckeditor5.js';
+import uk from '/ckeditor5/translations/uk.js';
 
 export const fullConfig = {
     licenseKey: 'GPL',

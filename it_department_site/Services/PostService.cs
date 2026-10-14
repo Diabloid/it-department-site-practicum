@@ -88,7 +88,9 @@ namespace it_department_site.Services
 
         public async Task UpdateAsync(Post post)
         {
-            var existing = await context.Set<Post>().FindAsync(post.Id);
+            var existing = await context.Set<Post>()
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == post.Id);
             if (existing is null)
                 return;
 
