@@ -57,9 +57,9 @@ namespace it_department_site.Controllers
             _disciplineService = disciplineService;
             _userService = userService;
             _fileStorageService = fileStorageService;
-           _organizationInfoService = organizationInfoService;
-            _categoryService = categoryService; 
-       }
+            _organizationInfoService = organizationInfoService;
+            _categoryService = categoryService;
+        }
 
         public async Task<IActionResult> LayoutSettings()
         {
@@ -67,8 +67,9 @@ namespace it_department_site.Controllers
             ViewBag.Pages = await _pageService.GetAllPagesAsync();
             return View("EditLayout", settings);
         }
+
         [HttpPost]
-        public async Task<IActionResult> LayoutSettings(SiteSettings model)
+        public async Task<IActionResult> LayoutSettings(SiteSettings model, IFormFile? logoFile)
         {
             if (string.IsNullOrWhiteSpace(model.SiteTitle))
             {
@@ -77,8 +78,13 @@ namespace it_department_site.Controllers
             }
             var current = await _settingsService.GetAsync();
             current.SiteTitle = model.SiteTitle;
-            current.FooterHtml = model.FooterHtml;
             current.HomePageId = model.HomePageId;
+
+            if (logoFile != null)
+            {
+                current.SiteLogoUrl = await _fileStorageService.SaveImage(logoFile, string.Empty);
+            }
+
             await _settingsService.SaveAsync(current);
             TempData["Success"] = "Зміни збережено!";
             return RedirectToAction(nameof(LayoutSettings));

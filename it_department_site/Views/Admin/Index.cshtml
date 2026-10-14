@@ -3,8 +3,7 @@
 }
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-<script src="~/ckeditor/ckeditor.js"></script>
-<script src="~/js/admin-post-autosave.js"></script>
+<script src="~/js/admin-post-actions.js"></script>
 
 <div class="container mt-5">
     <div class="row">
@@ -58,7 +57,15 @@
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="~/ckeditor5/ckeditor5.css" asp-append-version="true" />
+}
+
 @section Scripts {
+    <script type="module">
+        import { createEditor } from '/js/editor.js';
+        window.FullEditor = { create: createEditor };
+    </script>
     <script>
         let pendingConfirmForm = null;
 

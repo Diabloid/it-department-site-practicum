@@ -13,11 +13,9 @@ public class GraduatesController : Controller
         return View(timeline);
     }
 
-    public async Task<IActionResult> Details(int id)
+    public IActionResult Details(int id)
     {
-        var graduate = await _graduateService.GetByIdAsync(id);
-        if (graduate == null) return NotFound();
-        return View(graduate);
+        return RedirectToAction("ProudOfYou", "Graduates", null, $"graduate-{id}");
     }
 
     public async Task<IActionResult> ProudOfYou()
