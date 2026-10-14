@@ -103,13 +103,13 @@
             <nav class="disciplines-pager" aria-label="Пагінація дисциплін">
                 @if (currentPage <= 1)
                 {
-                    <span class="disciplines-pager-btn disciplines-pager-prev is-disabled" aria-disabled="true">&lt;</span>
+                    <span class="disciplines-pager-btn disciplines-pager-prev is-disabled" aria-disabled="true">‹</span>
                 }
                 else
                 {
                     <a class="disciplines-pager-btn disciplines-pager-prev"
                        href="@PagerUrl(currentPage - 1)"
-                       aria-label="Попередня сторінка">&lt;</a>
+                       aria-label="Попередня сторінка">‹</a>
                 }
 
                 @for (var i = 1; i <= totalPages; i++)
@@ -128,13 +128,13 @@
 
                 @if (currentPage >= totalPages)
                 {
-                    <span class="disciplines-pager-btn disciplines-pager-next is-disabled" aria-disabled="true">&gt;</span>
+                    <span class="disciplines-pager-btn disciplines-pager-next is-disabled" aria-disabled="true">›</span>
                 }
                 else
                 {
                     <a class="disciplines-pager-btn disciplines-pager-next"
                        href="@PagerUrl(currentPage + 1)"
-                       aria-label="Наступна сторінка">&gt;</a>
+                       aria-label="Наступна сторінка">›</a>
                 }
             </nav>
         }
