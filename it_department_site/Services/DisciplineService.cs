@@ -60,26 +60,31 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
 
     public async Task<List<Discipline>> GetPagedAsync(bool includeRequired, string? name, int pageNumber, int pageSize)
     {
-        var query = context.Disciplines
-            .Where(d => d.IsRequired == includeRequired)
-            .AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(name))
-        {
-            query = query.Where(d => EF.Functions.Like(d.Name, $"%{name}%"));
-        }
-
-        return await query
+        return await FilteredQuery(includeRequired, name)
             .OrderBy(d => d.SortOrder)
             .ThenBy(d => d.Name)
             .Skip(Math.Max(pageNumber - 1, 0) * pageSize)
             .Take(pageSize)
             .ToListAsync();
     }
-    
-    public async Task<int> GetTotalPagesCountAsync(int pageSize)
+
+    public async Task<int> GetTotalPagesCountAsync(bool includeRequired, string? name, int pageSize)
     {
-        var totalPagesCount = await context.Disciplines.CountAsync();
-        return (int)Math.Ceiling((double)totalPagesCount / pageSize);
+        if (pageSize < 1) pageSize = 1;
+
+        var totalCount = await FilteredQuery(includeRequired, name).CountAsync();
+        return (int)Math.Ceiling(totalCount / (double)pageSize);
+    }
+
+    private IQueryable<Discipline> FilteredQuery(bool includeRequired, string? name)
+    {
+        var query = context.Disciplines.Where(d => d.IsRequired == includeRequired);
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            query = query.Where(d => EF.Functions.Like(d.Name, $"%{name}%"));
+        }
+
+        return query;
     }
 }

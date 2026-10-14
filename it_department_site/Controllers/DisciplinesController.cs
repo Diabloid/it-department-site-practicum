@@ -7,14 +7,30 @@ public class DisciplinesController(IDisciplineService disciplineService) : Contr
         [FromQuery] bool required = false,
         [FromQuery] string name = "",
         int pageNumber = 1,
-        int pageSize = 10)
+        int pageSize = 5)
     {
-        var disciplines = await disciplineService.GetPagedAsync(required, name, pageNumber, pageSize);
-        var totalPages = await disciplineService.GetTotalPagesCountAsync(pageSize);
+        if (pageSize < 1) pageSize = 5;
+        if (pageNumber < 1) pageNumber = 1;
+
+        var searchName = name?.Trim() ?? "";
+        if (searchName.Length > 50)
+        {
+            searchName = searchName[..50];
+        }
+        var totalPages = await disciplineService.GetTotalPagesCountAsync(required, searchName, pageSize);
+        if (totalPages > 0 && pageNumber > totalPages)
+        {
+            pageNumber = totalPages;
+        }
+
+        var disciplines = await disciplineService.GetPagedAsync(required, searchName, pageNumber, pageSize);
 
         ViewData["Title"] = required ? "Обов'язкові дисципліни" : "Вибіркові дисципліни";
         ViewData["CurrentPage"] = pageNumber;
         ViewData["TotalPages"] = totalPages;
+        ViewData["SearchName"] = searchName;
+        ViewData["IsRequired"] = required;
+        ViewData["PageSize"] = pageSize;
         return View("~/Views/Discipline/Index.cshtml", disciplines);
     }
 

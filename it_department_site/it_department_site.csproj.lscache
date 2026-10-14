@@ -1,4 +1,4 @@
-version=1
+version=2.2
 
 # This file caches language service data to improve the performance of C# Dev Kit.
 # It is not intended for manual editing. It can safely be deleted and will be
@@ -8,21 +8,22 @@ version=1
 #   "dotnet.projectsystem.cacheInProjectFolder": true
 
 [project]
+project=it_department_site.csproj
 language=C#
 primary
 lastDtbSucceeded
 
 [properties]
 AssemblyName=it_department_site
-CommandLineArgsForDesignTimeEvaluation=-langversion:12.0 -define:TRACE
-CompilerGeneratedFilesOutputPath=
+BaseIntermediateOutputPath=<PATH>obj/
+BaseOutputPath=bin/
 MaxSupportedLangVersion=12.0
+OutputType=Exe
 ProjectAssetsFile=<PATH>obj/project.assets.json
 RootNamespace=it_department_site
-RunAnalyzers=
-RunAnalyzersDuringLiveAnalysis=
-SolutionPath=<PATH>it_department_site.sln
+TargetFramework=net8.0
 TargetFrameworkIdentifier=.NETCoreApp
+TargetFrameworkVersion=v8.0
 TargetPath=<PATH>bin/Debug/net8.0/it_department_site.dll
 TargetRefPath=<PATH>obj/Debug/net8.0/ref/it_department_site.dll
 TemporaryDependencyNodeTargetIdentifier=net8.0
@@ -53,404 +54,198 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
+BackgroundJobs/PublishPostJob.cs
 Components/ViewComponent.cs
 Controllers/
  AdminController.cs
  AuthController.cs
+ DisciplinesController.cs
+ EmployeeController.cs
  EmployeesController.cs
- FavoriteController.cs
+ ErrorController.cs
  GraduatesController.cs
- HomeController.cs
- LikeController.cs
  PagesController.cs
+ PostController.cs
  ProfileController.cs
 DTOs/PageDto.cs
 Entities/
+ Category.cs
+ Discipline.cs
+ DisciplineResourceLink.cs
  Employee.cs
- Favorite.cs
+ EmployeeCertificate.cs
  Graduate.cs
- Like.cs
+ MainSliderSlide.cs
  MenuItem.cs
+ OrganizationInfo.cs
+ OrganizationSocialLinkItem.cs
  Page.cs
  Partner.cs
  Post.cs
  SiteSettings.cs
  User.cs
-GlobalUsings.cs
 Infrastructure/
- ApplicationDbContext.cs
- EncryptionService.cs
+ Extensions/DatasourceExtension.cs
  Mappers/PageMapper.cs
+ ApplicationDbContext.cs
+ DefaultImages.cs
+ GoogleDriveOptions.cs
 Migrations/
  20260422095241_users.cs
  20260422095241_users.Designer.cs
  20260422100512_update_users.cs
  20260422100512_update_users.Designer.cs
- 20260428075033_CreateEmployees.cs
- 20260428075033_CreateEmployees.Designer.cs
  20260511094438_ChangeGraduateTableName.cs
  20260511094438_ChangeGraduateTableName.Designer.cs
+ 20260513075935_AddPagesTable.cs
+ 20260513075935_AddPagesTable.Designer.cs
+ 20260513085357_AddPostsTable.cs
+ 20260513085357_AddPostsTable.Designer.cs
+ 20260518080639_update_employee.cs
+ 20260518080639_update_employee.Designer.cs
+ 20260519165912_RefactorSiteSettingsToEF.cs
+ 20260519165912_RefactorSiteSettingsToEF.Designer.cs
+ 20260519175555_CreatePartnersTable.cs
+ 20260519175555_CreatePartnersTable.Designer.cs
+ 20260520081624_AddEmployeeCertificatesTable.cs
+ 20260520081624_AddEmployeeCertificatesTable.Designer.cs
+ 20260520120000_AddGoogleDriveFolderUrlToEmployees.cs
+ 20260520120000_AddGoogleDriveFolderUrlToEmployees.Designer.cs
+ 20260520140000_AddCertificateDriveFileIdAndSortOrder.cs
+ 20260520140000_AddCertificateDriveFileIdAndSortOrder.Designer.cs
+ 20260520150000_AddCertificateMimeTypeAndFileName.cs
+ 20260520150000_AddCertificateMimeTypeAndFileName.Designer.cs
+ 20260604085323_UpdetPostsAdeTable.cs
+ 20260604085323_UpdetPostsAdeTable.Designer.cs
+ 20260609120000_CreateDisciplinesTable.cs
+ 20260609120000_CreateDisciplinesTable.Designer.cs
+ 20260724122539_RefactorPageEntity.cs
+ 20260724122539_RefactorPageEntity.Designer.cs
+ 20260728071719_RefactorSiteSettings.cs
+ 20260728071719_RefactorSiteSettings.Designer.cs
+ 20260728205642_RefactorPosts.cs
+ 20260728205642_RefactorPosts.Designer.cs
+ 20260731172858_AddEmployeeDisciplinesManyToMany.cs
+ 20260731172858_AddEmployeeDisciplinesManyToMany.Designer.cs
+ 20260731193524_AddViewsCountToPosts.cs
+ 20260731193524_AddViewsCountToPosts.Designer.cs
+ 20260814112014_MenuItems.cs
+ 20260814112014_MenuItems.Designer.cs
+ 20260817205356_AddOrganizationInfoTable.cs
+ 20260817205356_AddOrganizationInfoTable.Designer.cs
+ 20260819080205_ModifyDisciplinesMapping.cs
+ 20260819080205_ModifyDisciplinesMapping.Designer.cs
+ 20260824051831_AddEmployeeToUser.cs
+ 20260824051831_AddEmployeeToUser.Designer.cs
+ 20260824182653_AddPostPublishedAt.cs
+ 20260824182653_AddPostPublishedAt.Designer.cs
+ 20260824182704_AddQuartzSchema.cs
+ 20260824182704_AddQuartzSchema.Designer.cs
+ 20260824200203_UpdateOrganizationInfoMapping.cs
+ 20260824200203_UpdateOrganizationInfoMapping.Designer.cs
+ 20260826055411_ExtendDisciplinesWithLinks.cs
+ 20260826055411_ExtendDisciplinesWithLinks.Designer.cs
+ 20260826062208_FixIsRequiredDefault.cs
+ 20260826062208_FixIsRequiredDefault.Designer.cs
+ 20260826111026_MainSliderSlide_fix.cs
+ 20260826111026_MainSliderSlide_fix.Designer.cs
+ 20260826212813_ModifyDisciplineResourcesMapping.cs
+ 20260826212813_ModifyDisciplineResourcesMapping.Designer.cs
+ 20260827100914_AddMenuItemTypeAndDisabled.cs
+ 20260827100914_AddMenuItemTypeAndDisabled.Designer.cs
+ 20260827235820_SeparateSocialLinksTable.cs
+ 20260827235820_SeparateSocialLinksTable.Designer.cs
+ 20260828061440_AddRolesToUser.cs
+ 20260828061440_AddRolesToUser.Designer.cs
+ 20260828073657_AddHomePageToSiteSettings.cs
+ 20260828073657_AddHomePageToSiteSettings.Designer.cs
+ 20260828151309_OrganizaionResourceLink.cs
+ 20260828151309_OrganizaionResourceLink.Designer.cs
+ 20260829193659_ChangeUserRoleFieldTypeToJson.cs
+ 20260829193659_ChangeUserRoleFieldTypeToJson.Designer.cs
+ 20260902051556_AddCategoryToPost.cs
+ 20260902051556_AddCategoryToPost.Designer.cs
+ 20260905142432_AddUniqueKeyForCategory.cs
+ 20260905142432_AddUniqueKeyForCategory.Designer.cs
+ 20260905160008_AddTitleToCategory.cs
+ 20260905160008_AddTitleToCategory.Designer.cs
  ApplicationDbContextModelSnapshot.cs
 obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  it_department_site.AssemblyInfo.cs
  it_department_site.GlobalUsings.g.cs
+ it_department_site.MvcApplicationPartsAssemblyInfo.cs
  it_department_site.RazorAssemblyInfo.cs
-Program.cs
-Repositories/
- FavoriteRepository.cs
- GraduateService.cs
- Interfaces/
-  IFavoriteRepository.cs
-  IGraduateService.cs
-  ILikeRepository.cs
-  IMenuRepository.cs
-  IPageRepository.cs
-  IPartnerRepository.cs
-  IPostRepository.cs
-  IProfileRepository.cs
-  ISiteSettingsRepository.cs
-  IUserService.cs
- LikeRepository.cs
- MenuRepository.cs
- PageRepository.cs
- PartnerRepository.cs
- PostRepository.cs
- ProfileRepository.cs
- SiteSettingsRepository.cs
- UserService.cs
 Services/
- AuthService.cs
- CurrentUserService.cs
- FavoriteService.cs
  Interfaces/
   IAuthService.cs
+  ICategoryService.cs
   ICurrentUserService.cs
-  IFavoriteService.cs
-  ILikeService.cs
+  IDisciplineService.cs
+  IEmployeeService.cs
+  IFileStorageService.cs
+  IGoogleDriveService.cs
+  IGraduateService.cs
+  IMainSliderService.cs
   IMenuService.cs
+  IOrganizationInfoService.cs
   IPageService.cs
   IPartnerService.cs
+  IPostService.cs
   IProfileService.cs
   ISiteSettingsService.cs
- LikeService.cs
+  IUserService.cs
+ AuthService.cs
+ CategoryService.cs
+ CurrentUserService.cs
+ DisciplineService.cs
+ EmployeesService.cs
+ FileStorageService.cs
+ GoogleDriveFileHelper.cs
+ GoogleDriveIdHelper.cs
+ GoogleDriveService.cs
+ GraduateService.cs
+ MainSliderService.cs
  MenuService.cs
+ OrganizationInfoService.cs
  PageService.cs
  PartnerService.cs
+ PostService.cs
  ProfileService.cs
  SiteSettingsService.cs
+ UserService.cs
+Startup/
+ DemoDataSeedStartup.cs
+ IStartup.cs
+ MigrationStartup.cs
+ SiteStartup.cs
+ StartupFactory.cs
 ViewModels/
+ BreadcrumbItem.cs
+ DriveCertificatePickerItemViewModel.cs
+ DriveSyncResultViewModel.cs
  EmployeeInfoViewModel.cs
  ErrorViewModel.cs
- FavoritePageViewModel.cs
+ GraduateTimelineViewModel.cs
  PagedPageListViewModel.cs
  PageEditorViewModel.cs
+ UserFormViewModel.cs
+ UserViewModel.cs
+GlobalUsings.cs
+Program.cs
+
+[frameworkPacks]
+Microsoft.AspNetCore.App.Ref
+Microsoft.NETCore.App.Ref
 
 [metadataReferences]
-<DOTNET>/packs/Microsoft.AspNetCore.App.Ref/8.0.25/ref/net8.0/
- Microsoft.AspNetCore.Antiforgery.dll
- Microsoft.AspNetCore.Authentication.Abstractions.dll
- Microsoft.AspNetCore.Authentication.BearerToken.dll
- Microsoft.AspNetCore.Authentication.Cookies.dll
- Microsoft.AspNetCore.Authentication.Core.dll
- Microsoft.AspNetCore.Authentication.dll
- Microsoft.AspNetCore.Authentication.OAuth.dll
- Microsoft.AspNetCore.Authorization.dll
- Microsoft.AspNetCore.Authorization.Policy.dll
- Microsoft.AspNetCore.Components.Authorization.dll
- Microsoft.AspNetCore.Components.dll
- Microsoft.AspNetCore.Components.Endpoints.dll
- Microsoft.AspNetCore.Components.Forms.dll
- Microsoft.AspNetCore.Components.Server.dll
- Microsoft.AspNetCore.Components.Web.dll
- Microsoft.AspNetCore.Connections.Abstractions.dll
- Microsoft.AspNetCore.CookiePolicy.dll
- Microsoft.AspNetCore.Cors.dll
- Microsoft.AspNetCore.Cryptography.Internal.dll
- Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
- Microsoft.AspNetCore.DataProtection.Abstractions.dll
- Microsoft.AspNetCore.DataProtection.dll
- Microsoft.AspNetCore.DataProtection.Extensions.dll
- Microsoft.AspNetCore.Diagnostics.Abstractions.dll
- Microsoft.AspNetCore.Diagnostics.dll
- Microsoft.AspNetCore.Diagnostics.HealthChecks.dll
- Microsoft.AspNetCore.dll
- Microsoft.AspNetCore.HostFiltering.dll
- Microsoft.AspNetCore.Hosting.Abstractions.dll
- Microsoft.AspNetCore.Hosting.dll
- Microsoft.AspNetCore.Hosting.Server.Abstractions.dll
- Microsoft.AspNetCore.Html.Abstractions.dll
- Microsoft.AspNetCore.Http.Abstractions.dll
- Microsoft.AspNetCore.Http.Connections.Common.dll
- Microsoft.AspNetCore.Http.Connections.dll
- Microsoft.AspNetCore.Http.dll
- Microsoft.AspNetCore.Http.Extensions.dll
- Microsoft.AspNetCore.Http.Features.dll
- Microsoft.AspNetCore.Http.Results.dll
- Microsoft.AspNetCore.HttpLogging.dll
- Microsoft.AspNetCore.HttpOverrides.dll
- Microsoft.AspNetCore.HttpsPolicy.dll
- Microsoft.AspNetCore.Identity.dll
- Microsoft.AspNetCore.Localization.dll
- Microsoft.AspNetCore.Localization.Routing.dll
- Microsoft.AspNetCore.Metadata.dll
- Microsoft.AspNetCore.Mvc.Abstractions.dll
- Microsoft.AspNetCore.Mvc.ApiExplorer.dll
- Microsoft.AspNetCore.Mvc.Core.dll
- Microsoft.AspNetCore.Mvc.Cors.dll
- Microsoft.AspNetCore.Mvc.DataAnnotations.dll
- Microsoft.AspNetCore.Mvc.dll
- Microsoft.AspNetCore.Mvc.Formatters.Json.dll
- Microsoft.AspNetCore.Mvc.Formatters.Xml.dll
- Microsoft.AspNetCore.Mvc.Localization.dll
- Microsoft.AspNetCore.Mvc.Razor.dll
- Microsoft.AspNetCore.Mvc.RazorPages.dll
- Microsoft.AspNetCore.Mvc.TagHelpers.dll
- Microsoft.AspNetCore.Mvc.ViewFeatures.dll
- Microsoft.AspNetCore.OutputCaching.dll
- Microsoft.AspNetCore.RateLimiting.dll
- Microsoft.AspNetCore.Razor.dll
- Microsoft.AspNetCore.Razor.Runtime.dll
- Microsoft.AspNetCore.RequestDecompression.dll
- Microsoft.AspNetCore.ResponseCaching.Abstractions.dll
- Microsoft.AspNetCore.ResponseCaching.dll
- Microsoft.AspNetCore.ResponseCompression.dll
- Microsoft.AspNetCore.Rewrite.dll
- Microsoft.AspNetCore.Routing.Abstractions.dll
- Microsoft.AspNetCore.Routing.dll
- Microsoft.AspNetCore.Server.HttpSys.dll
- Microsoft.AspNetCore.Server.IIS.dll
- Microsoft.AspNetCore.Server.IISIntegration.dll
- Microsoft.AspNetCore.Server.Kestrel.Core.dll
- Microsoft.AspNetCore.Server.Kestrel.dll
- Microsoft.AspNetCore.Server.Kestrel.Transport.NamedPipes.dll
- Microsoft.AspNetCore.Server.Kestrel.Transport.Quic.dll
- Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.dll
- Microsoft.AspNetCore.Session.dll
- Microsoft.AspNetCore.SignalR.Common.dll
- Microsoft.AspNetCore.SignalR.Core.dll
- Microsoft.AspNetCore.SignalR.dll
- Microsoft.AspNetCore.SignalR.Protocols.Json.dll
- Microsoft.AspNetCore.StaticFiles.dll
- Microsoft.AspNetCore.WebSockets.dll
- Microsoft.AspNetCore.WebUtilities.dll
- Microsoft.Extensions.Caching.Abstractions.dll
- Microsoft.Extensions.Caching.Memory.dll
- Microsoft.Extensions.Configuration.Abstractions.dll
- Microsoft.Extensions.Configuration.Binder.dll
- Microsoft.Extensions.Configuration.CommandLine.dll
- Microsoft.Extensions.Configuration.dll
- Microsoft.Extensions.Configuration.EnvironmentVariables.dll
- Microsoft.Extensions.Configuration.FileExtensions.dll
- Microsoft.Extensions.Configuration.Ini.dll
- Microsoft.Extensions.Configuration.Json.dll
- Microsoft.Extensions.Configuration.KeyPerFile.dll
- Microsoft.Extensions.Configuration.UserSecrets.dll
- Microsoft.Extensions.Configuration.Xml.dll
- Microsoft.Extensions.DependencyInjection.Abstractions.dll
- Microsoft.Extensions.DependencyInjection.dll
- Microsoft.Extensions.Diagnostics.Abstractions.dll
- Microsoft.Extensions.Diagnostics.dll
- Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions.dll
- Microsoft.Extensions.Diagnostics.HealthChecks.dll
- Microsoft.Extensions.Features.dll
- Microsoft.Extensions.FileProviders.Abstractions.dll
- Microsoft.Extensions.FileProviders.Composite.dll
- Microsoft.Extensions.FileProviders.Embedded.dll
- Microsoft.Extensions.FileProviders.Physical.dll
- Microsoft.Extensions.FileSystemGlobbing.dll
- Microsoft.Extensions.Hosting.Abstractions.dll
- Microsoft.Extensions.Hosting.dll
- Microsoft.Extensions.Http.dll
- Microsoft.Extensions.Identity.Core.dll
- Microsoft.Extensions.Identity.Stores.dll
- Microsoft.Extensions.Localization.Abstractions.dll
- Microsoft.Extensions.Localization.dll
- Microsoft.Extensions.Logging.Abstractions.dll
- Microsoft.Extensions.Logging.Configuration.dll
- Microsoft.Extensions.Logging.Console.dll
- Microsoft.Extensions.Logging.Debug.dll
- Microsoft.Extensions.Logging.dll
- Microsoft.Extensions.Logging.EventLog.dll
- Microsoft.Extensions.Logging.EventSource.dll
- Microsoft.Extensions.Logging.TraceSource.dll
- Microsoft.Extensions.ObjectPool.dll
- Microsoft.Extensions.Options.ConfigurationExtensions.dll
- Microsoft.Extensions.Options.DataAnnotations.dll
- Microsoft.Extensions.Options.dll
- Microsoft.Extensions.Primitives.dll
- Microsoft.Extensions.WebEncoders.dll
- Microsoft.JSInterop.dll
- Microsoft.Net.Http.Headers.dll
- System.Diagnostics.EventLog.dll
- System.Security.Cryptography.Xml.dll
- System.Threading.RateLimiting.dll
-<DOTNET>/packs/Microsoft.NETCore.App.Ref/8.0.25/ref/net8.0/
- Microsoft.CSharp.dll
- Microsoft.VisualBasic.Core.dll
- Microsoft.VisualBasic.dll
- Microsoft.Win32.Primitives.dll
- Microsoft.Win32.Registry.dll
- mscorlib.dll
- netstandard.dll
- System.AppContext.dll
- System.Buffers.dll
- System.Collections.Concurrent.dll
- System.Collections.dll
- System.Collections.Immutable.dll
- System.Collections.NonGeneric.dll
- System.Collections.Specialized.dll
- System.ComponentModel.Annotations.dll
- System.ComponentModel.DataAnnotations.dll
- System.ComponentModel.dll
- System.ComponentModel.EventBasedAsync.dll
- System.ComponentModel.Primitives.dll
- System.ComponentModel.TypeConverter.dll
- System.Configuration.dll
- System.Console.dll
- System.Core.dll
- System.Data.Common.dll
- System.Data.DataSetExtensions.dll
- System.Data.dll
- System.Diagnostics.Contracts.dll
- System.Diagnostics.Debug.dll
- System.Diagnostics.DiagnosticSource.dll
- System.Diagnostics.FileVersionInfo.dll
- System.Diagnostics.Process.dll
- System.Diagnostics.StackTrace.dll
- System.Diagnostics.TextWriterTraceListener.dll
- System.Diagnostics.Tools.dll
- System.Diagnostics.TraceSource.dll
- System.Diagnostics.Tracing.dll
- System.dll
- System.Drawing.dll
- System.Drawing.Primitives.dll
- System.Dynamic.Runtime.dll
- System.Formats.Asn1.dll
- System.Formats.Tar.dll
- System.Globalization.Calendars.dll
- System.Globalization.dll
- System.Globalization.Extensions.dll
- System.IO.Compression.Brotli.dll
- System.IO.Compression.dll
- System.IO.Compression.FileSystem.dll
- System.IO.Compression.ZipFile.dll
- System.IO.dll
- System.IO.FileSystem.AccessControl.dll
- System.IO.FileSystem.dll
- System.IO.FileSystem.DriveInfo.dll
- System.IO.FileSystem.Primitives.dll
- System.IO.FileSystem.Watcher.dll
- System.IO.IsolatedStorage.dll
- System.IO.MemoryMappedFiles.dll
- System.IO.Pipes.AccessControl.dll
- System.IO.Pipes.dll
- System.IO.UnmanagedMemoryStream.dll
- System.Linq.dll
- System.Linq.Expressions.dll
- System.Linq.Parallel.dll
- System.Linq.Queryable.dll
- System.Memory.dll
- System.Net.dll
- System.Net.Http.dll
- System.Net.Http.Json.dll
- System.Net.HttpListener.dll
- System.Net.Mail.dll
- System.Net.NameResolution.dll
- System.Net.NetworkInformation.dll
- System.Net.Ping.dll
- System.Net.Primitives.dll
- System.Net.Quic.dll
- System.Net.Requests.dll
- System.Net.Security.dll
- System.Net.ServicePoint.dll
- System.Net.Sockets.dll
- System.Net.WebClient.dll
- System.Net.WebHeaderCollection.dll
- System.Net.WebProxy.dll
- System.Net.WebSockets.Client.dll
- System.Net.WebSockets.dll
- System.Numerics.dll
- System.Numerics.Vectors.dll
- System.ObjectModel.dll
- System.Reflection.DispatchProxy.dll
- System.Reflection.dll
- System.Reflection.Emit.dll
- System.Reflection.Emit.ILGeneration.dll
- System.Reflection.Emit.Lightweight.dll
- System.Reflection.Extensions.dll
- System.Reflection.Metadata.dll
- System.Reflection.Primitives.dll
- System.Reflection.TypeExtensions.dll
- System.Resources.Reader.dll
- System.Resources.ResourceManager.dll
- System.Resources.Writer.dll
- System.Runtime.CompilerServices.Unsafe.dll
- System.Runtime.CompilerServices.VisualC.dll
- System.Runtime.dll
- System.Runtime.Extensions.dll
- System.Runtime.Handles.dll
- System.Runtime.InteropServices.dll
- System.Runtime.InteropServices.JavaScript.dll
- System.Runtime.InteropServices.RuntimeInformation.dll
- System.Runtime.Intrinsics.dll
- System.Runtime.Loader.dll
- System.Runtime.Numerics.dll
- System.Runtime.Serialization.dll
- System.Runtime.Serialization.Formatters.dll
- System.Runtime.Serialization.Json.dll
- System.Runtime.Serialization.Primitives.dll
- System.Runtime.Serialization.Xml.dll
- System.Security.AccessControl.dll
- System.Security.Claims.dll
- System.Security.Cryptography.Algorithms.dll
- System.Security.Cryptography.Cng.dll
- System.Security.Cryptography.Csp.dll
- System.Security.Cryptography.dll
- System.Security.Cryptography.Encoding.dll
- System.Security.Cryptography.OpenSsl.dll
- System.Security.Cryptography.Primitives.dll
- System.Security.Cryptography.X509Certificates.dll
- System.Security.dll
- System.Security.Principal.dll
- System.Security.Principal.Windows.dll
- System.Security.SecureString.dll
- System.ServiceModel.Web.dll
- System.ServiceProcess.dll
- System.Text.Encoding.CodePages.dll
- System.Text.Encoding.dll
- System.Text.Encoding.Extensions.dll
- System.Text.RegularExpressions.dll
- System.Threading.Channels.dll
- System.Threading.dll
- System.Threading.Overlapped.dll
- System.Threading.Tasks.Dataflow.dll
- System.Threading.Tasks.dll
- System.Threading.Tasks.Extensions.dll
- System.Threading.Tasks.Parallel.dll
- System.Threading.Thread.dll
- System.Threading.ThreadPool.dll
- System.Threading.Timer.dll
- System.Transactions.dll
- System.Transactions.Local.dll
- System.ValueTuple.dll
- System.Web.dll
- System.Web.HttpUtility.dll
- System.Windows.dll
- System.Xml.dll
- System.Xml.Linq.dll
- System.Xml.ReaderWriter.dll
- System.Xml.Serialization.dll
- System.Xml.XDocument.dll
- System.Xml.XmlDocument.dll
- System.Xml.XmlSerializer.dll
- System.Xml.XPath.dll
- System.Xml.XPath.XDocument.dll
- WindowsBase.dll
 <NUGET>/
  bcrypt.net-next/4.1.0/lib/netstandard2.1/BCrypt.Net-Next.dll
  bouncycastle.cryptography/2.3.1/lib/net6.0/BouncyCastle.Cryptography.dll
- dapper/2.1.66/lib/net8.0/Dapper.dll
+ google.apis.auth/1.69.0/lib/net6.0/Google.Apis.Auth.dll
+ google.apis.core/1.69.0/lib/net6.0/Google.Apis.Core.dll
+ google.apis.drive.v3/1.69.0.3740/lib/net6.0/Google.Apis.Drive.v3.dll
+ google.apis/1.69.0/lib/net6.0/Google.Apis.dll
  google.protobuf/3.26.1/lib/net5.0/Google.Protobuf.dll
  humanizer.core/2.14.1/lib/net6.0/Humanizer.dll
  k4os.compression.lz4.streams/1.3.8/lib/net6.0/K4os.Compression.LZ4.Streams.dll
@@ -499,10 +294,14 @@ ViewModels/
  nuget.protocol/6.11.0/lib/net5.0/NuGet.Protocol.dll
  nuget.versioning/6.11.0/lib/netstandard2.0/NuGet.Versioning.dll
  pomelo.entityframeworkcore.mysql/8.0.0/lib/net8.0/Pomelo.EntityFrameworkCore.MySql.dll
+ quartz.extensions.dependencyinjection/3.19.1/lib/net8.0/Quartz.Extensions.DependencyInjection.dll
+ quartz.extensions.hosting/3.19.1/lib/net8.0/Quartz.Extensions.Hosting.dll
+ quartz.serialization.json/3.19.1/lib/netstandard2.0/Quartz.Serialization.Json.dll
+ quartz/3.19.1/lib/net8.0/Quartz.dll
  swashbuckle.aspnetcore.swagger/8.1.1/lib/net8.0/Swashbuckle.AspNetCore.Swagger.dll
  swashbuckle.aspnetcore.swaggergen/8.1.1/lib/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
  swashbuckle.aspnetcore.swaggerui/8.1.1/lib/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
- system.codedom/5.0.0/ref/netstandard2.0/System.CodeDom.dll
+ system.codedom/7.0.0/lib/net7.0/System.CodeDom.dll
  system.composition.attributedmodel/7.0.0/lib/net7.0/System.Composition.AttributedModel.dll
  system.composition.convention/7.0.0/lib/net7.0/System.Composition.Convention.dll
  system.composition.hosting/7.0.0/lib/net7.0/System.Composition.Hosting.dll
@@ -510,6 +309,7 @@ ViewModels/
  system.composition.typedparts/7.0.0/lib/net7.0/System.Composition.TypedParts.dll
  system.configuration.configurationmanager/8.0.0/lib/net8.0/System.Configuration.ConfigurationManager.dll
  system.io.pipelines/9.0.0/lib/net8.0/System.IO.Pipelines.dll
+ system.management/7.0.2/lib/net7.0/System.Management.dll
  system.reflection.metadataloadcontext/7.0.0/lib/net7.0/System.Reflection.MetadataLoadContext.dll
  system.security.cryptography.pkcs/6.0.4/lib/net6.0/System.Security.Cryptography.Pkcs.dll
  system.security.cryptography.protecteddata/8.0.0/lib/net8.0/System.Security.Cryptography.ProtectedData.dll
@@ -520,132 +320,101 @@ ViewModels/
  zstdsharp.port/0.8.0/lib/net8.0/ZstdSharp.dll
 
 [analyzerReferences]
-<DOTNET>/packs/Microsoft.AspNetCore.App.Ref/8.0.25/analyzers/dotnet/cs/
- Microsoft.AspNetCore.App.Analyzers.dll
- Microsoft.AspNetCore.App.CodeFixes.dll
- Microsoft.AspNetCore.Components.Analyzers.dll
-<DOTNET>/packs/Microsoft.AspNetCore.App.Ref/8.0.25/analyzers/dotnet/roslyn4.4/cs/
- Microsoft.Extensions.Logging.Generators.dll
- Microsoft.Extensions.Options.SourceGeneration.dll
-<DOTNET>/packs/Microsoft.NETCore.App.Ref/8.0.25/analyzers/dotnet/cs/
- Microsoft.Interop.ComInterfaceGenerator.dll
- Microsoft.Interop.JavaScript.JSImportGenerator.dll
- Microsoft.Interop.LibraryImportGenerator.dll
- Microsoft.Interop.SourceGeneration.dll
- System.Text.RegularExpressions.Generator.dll
-<DOTNET>/sdk/10.0.201/Sdks/Microsoft.NET.Sdk.Razor/source-generators/
- Microsoft.AspNetCore.Razor.Utilities.Shared.dll
- Microsoft.CodeAnalysis.Razor.Compiler.dll
- Microsoft.Extensions.ObjectPool.dll
-<DOTNET>/sdk/10.0.201/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/
- Microsoft.AspNetCore.Analyzers.dll
- Microsoft.AspNetCore.Mvc.Analyzers.dll
-<DOTNET>/sdk/10.0.201/Sdks/Microsoft.NET.Sdk/analyzers/
- Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll
- Microsoft.CodeAnalysis.NetAnalyzers.dll
-<NUGET>/microsoft.codeanalysis.analyzers/3.3.4/analyzers/dotnet/cs/
- Microsoft.CodeAnalysis.Analyzers.dll
- Microsoft.CodeAnalysis.CSharp.Analyzers.dll
+<NETSDK>/Sdks/
+ Microsoft.NET.Sdk.Razor/source-generators/
+  Microsoft.AspNetCore.Razor.Utilities.Shared.dll
+  Microsoft.CodeAnalysis.Razor.Compiler.dll
+ Microsoft.NET.Sdk.Web/analyzers/cs/
+  Microsoft.AspNetCore.Analyzers.dll
+  Microsoft.AspNetCore.Mvc.Analyzers.dll
+ Microsoft.NET.Sdk/analyzers/
+  Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll
+  Microsoft.CodeAnalysis.NetAnalyzers.dll
 <NUGET>/
+ microsoft.codeanalysis.analyzers/3.3.4/analyzers/dotnet/cs/
+  Microsoft.CodeAnalysis.Analyzers.dll
+  Microsoft.CodeAnalysis.CSharp.Analyzers.dll
  microsoft.entityframeworkcore.analyzers/8.0.0/analyzers/dotnet/cs/Microsoft.EntityFrameworkCore.Analyzers.dll
  system.text.json/9.0.0/analyzers/dotnet/roslyn4.4/cs/System.Text.Json.SourceGeneration.dll
 
+[sdkAnalyzerConfigPolicy]
+Microsoft.NET.Sdk/analyzers
+
 [analyzerConfigFiles]
-<DOTNET>/sdk/10.0.201/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_8_default.globalconfig
 obj/Debug/net8.0/it_department_site.GeneratedMSBuildEditorConfig.editorconfig
 
 [additionalFiles]
-Views/Admin/
- AllPages.cshtml
- CreatePage.cshtml
- EditLayout.cshtml
- EditMenuItem.cshtml
- Index.cshtml
- PageEditor.cshtml
- Pages.cshtml
- Posts.cshtml
- _CreateGraduate.cshtml
- _CreatePost.cshtml
- _EditGraduate.cshtml
- _EditPost.cshtml
- _GraduatesTable.cshtml
- _MenuItemsTable.cshtml
- _PagesTable.cshtml
- _Partners.cshtml
- _PostsTable.cshtml
- _UsersTable.cshtml
 Views/
+ Admin/
+  AllPages.cshtml
+  CreatePage.cshtml
+  EditLayout.cshtml
+  EditMenuItem.cshtml
+  Index.cshtml
+  PageEditor.cshtml
+  Settings.cshtml
+  _CreateDiscipline.cshtml
+  _CreateEmployee.cshtml
+  _CreateGraduate.cshtml
+  _CreatePost.cshtml
+  _CreateUser.cshtml
+  _DisciplinesTable.cshtml
+  _DriveCertificatePicker.cshtml
+  _EditDiscipline.cshtml
+  _EditEmployee.cshtml
+  _EditGraduate.cshtml
+  _EditPost.cshtml
+  _EditUser.cshtml
+  _EmployeesTable.cshtml
+  _GraduatesTable.cshtml
+  _MainSlider.cshtml
+  _MenuItemsTable.cshtml
+  _PagesTable.cshtml
+  _Partners.cshtml
+  _PostForm.cshtml
+  _PostsTable.cshtml
+  _UsersTable.cshtml
  Auth/Login.cshtml
+ Discipline/
+  Details.cshtml
+  Index.cshtml
  Employees/
   Details.cshtml
   Index.cshtml
- Graduate/Index.cshtml
- Home/
-  EducationalPrograms.cshtml
-  ELearning.cshtml
-  FAQ.cshtml
-  Info.cshtml
-  Practices.cshtml
-  Privacy.cshtml
-  SocialSurveys.cshtml
+ Graduates/
+  ProudOfYou.cshtml
+  Timeline.cshtml
  Pages/
+  Details.cshtml
+  Index.cshtml
+ Post/
   Details.cshtml
   Index.cshtml
  Profile/Index.cshtml
  Shared/
   Components/Menu/_MenuPartial.cshtml
+  Partials/
+   _Breadcrumbs.cshtml
+   _MainBannerSlider.cshtml
+   _PartnerSlider.cshtml
+   _Reviews.cshtml
   Error.cshtml
   NotFound.cshtml
-  Partials/_PartnerSlider.cshtml
+  _CertificateDisplay.cshtml
+  _GraduateTimelineTree.cshtml
   _Layout.cshtml
   _ValidationScriptsPartial.cshtml
  _ViewImports.cshtml
  _ViewStart.cshtml
 
-[dynamicFiles]
-Views/Admin/
- AllPages.cshtml
- CreatePage.cshtml
- EditLayout.cshtml
- EditMenuItem.cshtml
- Index.cshtml
- PageEditor.cshtml
- Pages.cshtml
- Posts.cshtml
- _CreateGraduate.cshtml
- _CreatePost.cshtml
- _EditGraduate.cshtml
- _EditPost.cshtml
- _GraduatesTable.cshtml
- _MenuItemsTable.cshtml
- _PagesTable.cshtml
- _Partners.cshtml
- _PostsTable.cshtml
- _UsersTable.cshtml
-Views/
- Auth/Login.cshtml
- Employees/
-  Details.cshtml
-  Index.cshtml
- Graduate/Index.cshtml
- Home/
-  EducationalPrograms.cshtml
-  ELearning.cshtml
-  FAQ.cshtml
-  Info.cshtml
-  Practices.cshtml
-  Privacy.cshtml
-  SocialSurveys.cshtml
- Pages/
-  Details.cshtml
-  Index.cshtml
- Profile/Index.cshtml
- Shared/
-  Components/Menu/_MenuPartial.cshtml
-  Error.cshtml
-  NotFound.cshtml
-  Partials/_PartnerSlider.cshtml
-  _Layout.cshtml
-  _ValidationScriptsPartial.cshtml
- _ViewImports.cshtml
- _ViewStart.cshtml
+[projectReferences]
+
+[capabilities]
+AspNetCore
+CrossPlatformExecutable
+DotNetCoreRazor
+DotNetCoreWeb
+NativeAOT
+Pack
+SupportsHotReload
+Web
