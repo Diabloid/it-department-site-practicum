@@ -78,7 +78,9 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
 
     private IQueryable<Discipline> FilteredQuery(bool includeRequired, string? name)
     {
-        var query = context.Disciplines.Where(d => d.IsRequired == includeRequired);
+        var query = context.Set<Discipline>()
+            .AsNoTracking()
+            .Where(d => d.IsRequired == includeRequired);
 
         if (!string.IsNullOrWhiteSpace(name))
         {
