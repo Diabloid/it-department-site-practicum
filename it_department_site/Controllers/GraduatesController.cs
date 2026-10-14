@@ -13,7 +13,7 @@ public class GraduatesController : Controller
         return View(timeline);
     }
 
-    public async Task<IActionResult> Details(int id)
+    public IActionResult Details(int id)
     {
         return RedirectToAction("ProudOfYou", "Graduates", null, $"graduate-{id}");
     }
