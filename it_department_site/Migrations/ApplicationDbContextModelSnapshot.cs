@@ -252,7 +252,6 @@ namespace it_department_site.Migrations
                         .HasColumnName("graduation_year");
 
                     b.Property<string>("JobDescription")
-                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("job_description");
 
@@ -268,7 +267,6 @@ namespace it_department_site.Migrations
                         .HasColumnName("photo_url");
 
                     b.Property<string>("Specialization")
-                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("specialization");
 
