@@ -581,17 +581,14 @@ body:has(.employee-details-page) {
 }
 
 .employee-header-inner {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   gap: 1.25rem;
 }
 
 .employee-header-photo-wrap {
-  flex: 0 0 88px;
-  width: 88px;
-  height: 88px;
+  width: 120px;
+  height: 120px;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.8);

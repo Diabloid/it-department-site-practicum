@@ -25,13 +25,13 @@
 
     <div class="mb-3">
         <label class="form-label">Рік випуску</label>
-        <input asp-for="GraduationYear" type="number" class="form-control" required min="1945" max="2100" required />
+        <input asp-for="GraduationYear" type="number" class="form-control" required min="2003" max="2100" />
         <span asp-validation-for="GraduationYear" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Спеціалізація</label>
-        <input asp-for="Specialization" class="form-control" required />
+        <input asp-for="Specialization" class="form-control" />
         <span asp-validation-for="Specialization" class="text-danger"></span>
     </div>
 
@@ -48,13 +48,13 @@
 
     <div class="mb-3">
         <label class="form-label">Місце роботи</label>
-        <input asp-for="JobDescription" class="form-control" required />
+        <input asp-for="JobDescription" class="form-control" />
         <span asp-validation-for="JobDescription" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Відгук</label>
-        <textarea asp-for="Testimonial" rows="4" class="form-control" required></textarea>
+        <textarea asp-for="Testimonial" rows="4" class="form-control editor"></textarea>
         <span asp-validation-for="Testimonial" class="text-danger"></span>
     </div>
 
