@@ -252,9 +252,6 @@
 
 .disciplines-search-input:focus {
   border-color: rgba(99, 106, 192, 0.55);
-  box-shadow:
-    0 0 0 3px rgba(99, 106, 192, 0.18),
-    0 12px 32px rgba(99, 106, 192, 0.11);
 }
 
 .disciplines-search-empty {
