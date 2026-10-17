@@ -9,6 +9,24 @@ public class DisciplinesController(IDisciplineService disciplineService) : Contr
         int pageNumber = 1,
         int pageSize = 5)
     {
+        var disciplines = await LoadPageAsync(required, name, pageNumber, pageSize);
+        ViewData["Title"] = required ? "Обов'язкові дисципліни" : "Вибіркові дисципліни";
+        return View("~/Views/Discipline/Index.cshtml", disciplines);
+    }
+
+    [HttpGet("/disciplines/paged")]
+    public async Task<IActionResult> GetPagedDisciplinesAsync(
+        [FromQuery] bool required = false,
+        [FromQuery] string name = "",
+        int pageNumber = 1,
+        int pageSize = 5)
+    {
+        var disciplines = await LoadPageAsync(required, name, pageNumber, pageSize);
+        return PartialView("Partials/_Disciplines", disciplines);
+    }
+
+    private async Task<List<Discipline>> LoadPageAsync(bool required, string? name, int pageNumber, int pageSize)
+    {
         if (pageSize < 1) pageSize = 5;
         if (pageNumber < 1) pageNumber = 1;
 
@@ -25,13 +43,12 @@ public class DisciplinesController(IDisciplineService disciplineService) : Contr
 
         var disciplines = await disciplineService.GetPagedAsync(required, searchName, pageNumber, pageSize);
 
-        ViewData["Title"] = required ? "Обов'язкові дисципліни" : "Вибіркові дисципліни";
         ViewData["CurrentPage"] = pageNumber;
         ViewData["TotalPages"] = totalPages;
         ViewData["SearchName"] = searchName;
         ViewData["IsRequired"] = required;
         ViewData["PageSize"] = pageSize;
-        return View("~/Views/Discipline/Index.cshtml", disciplines);
+        return disciplines;
     }
 
     [HttpGet("/disciplines/{id:int}")]
