@@ -4,14 +4,14 @@
     const container = document.getElementById("disciplines-results");
     if (!form || !input || !container) return;
 
-    const DEBOUNCE_MS = 300;
-    const MAX_QUERY_LENGTH = 50;
+    const DEBOUNCE_MS = 500;
+    const MAX_NAME_QUERY_LENGTH = 50;
     let debounceTimer = null;
     let activeRequest = null;
     let lastQuery = currentQuery();
 
     function currentQuery() {
-        const value = input.value.slice(0, MAX_QUERY_LENGTH);
+        const value = input.value.slice(0, MAX_NAME_QUERY_LENGTH);
         if (value !== input.value) {
             input.value = value;
         }
