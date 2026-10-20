@@ -2,6 +2,7 @@ using DotNetEnv;
 using it_department_site.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Quartz;
@@ -38,6 +39,17 @@ namespace it_department_site.Startup
             });
 
             builder.Services.AddControllersWithViews();
+
+            // Вьюхи для area "Admin" лежать у папці Admin/ у корені проєкту
+            // (Admin/Settings/Settings.cshtml, Admin/Settings/_Edit.cshtml тощо)
+            builder.Services.Configure<RazorViewEngineOptions>(options =>
+            {
+                options.AreaViewLocationFormats.Clear();
+                options.AreaViewLocationFormats.Add("/Admin/{1}/{0}.cshtml");
+                options.AreaViewLocationFormats.Add("/Admin/Shared/{0}.cshtml");
+                options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+            });
+
             builder.Services.AddSession();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -118,6 +130,11 @@ namespace it_department_site.Startup
             app.UseSession();
 
             // Маршрути
+            app.MapControllerRoute(
+                name: "zones",
+                pattern: "{area:exists}/{controller}/{action=Index}/{id?}"
+            );
+
             app.MapControllerRoute(
                 name: "admin",
                 pattern: "Admin",
