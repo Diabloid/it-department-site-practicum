@@ -5,6 +5,13 @@
         new("Головна", "/"),
         new(ViewData["Title"].ToString())
     };
+
+    var searchName = ViewData["SearchName"] as string ?? "";
+    var requiredQuery = (Context.Request.Query["required"].FirstOrDefault() ?? "").Trim();
+    var isRequiredFromView = ViewData["IsRequired"] is bool requiredFlag && requiredFlag;
+    var isRequired = requiredQuery.Equals("true", StringComparison.OrdinalIgnoreCase)
+        || requiredQuery == "1"
+        || isRequiredFromView;
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
@@ -37,27 +44,25 @@
             </div>
         </header>
 
-        @if (!Model.Any())
-        {
-            <div class="disciplines-empty">
-                Дисципліни ще не додано.
-            </div>
-        }
-        else
-        {
-            <div class="disciplines-grid">
-                @foreach (var discipline in Model)
-                {
-                    <article class="discipline-card">
-                        <a asp-controller="Disciplines"
-                           asp-action="Details"
-                           asp-route-id="@discipline.Id"
-                           class="discipline-card-link">
-                            <h2 class="discipline-card-name">@discipline.Name</h2>
-                        </a>
-                    </article>
-                }
-            </div>
-        }
+        <form class="disciplines-search" role="search" action="/disciplines" method="get">
+            <input type="hidden" name="required" value="@(isRequired ? "true" : "false")" />
+            <label class="visually-hidden" for="disciplines-search-input">Пошук дисципліни</label>
+            <input id="disciplines-search-input"
+                   class="disciplines-search-input"
+                   type="search"
+                   name="name"
+                   value="@searchName"
+                   placeholder="Пошук дисципліни…"
+                   maxlength="50"
+                   autocomplete="off" />
+        </form>
+
+        <div id="disciplines-results" aria-live="polite">
+            @await Html.PartialAsync("Partials/_Disciplines", Model)
+        </div>
     </section>
 </article>
+
+@section Scripts {
+    <script src="~/js/disciplines-list.js" asp-append-version="true"></script>
+}
