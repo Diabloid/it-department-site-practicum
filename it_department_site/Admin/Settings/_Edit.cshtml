@@ -1,6 +1,6 @@
 ﻿@model SiteSettings
 
-<h2>Редагування сайту</h2>
+<h4 class="mb-3">Налаштування сайту</h4>
 
 @if (TempData["Success"] != null)
 {
@@ -11,10 +11,10 @@
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
-<form method="post" asp-action="LayoutSettings" asp-controller="Admin" enctype="multipart/form-data">
+<form method="post" asp-action="LayoutSettings" asp-controller="Settings" asp-area="Admin" enctype="multipart/form-data">
     <div class="mb-3">
-        <label>Назва сайту (в хедері):</label>
-        <input type="text" class="form-control" name="SiteTitle" value="@Model.SiteTitle" />
+        <label for="SiteTitle">Назва сайту (в хедері):</label>
+        <input type="text" class="form-control" id="SiteTitle" name="SiteTitle" value="@Model.SiteTitle" />
     </div>
 
     <div class="mb-3">
@@ -32,27 +32,15 @@
         <label for="HomePageId">Головна сторінка сайту:</label>
         <select class="form-control" id="HomePageId" name="HomePageId">
             <option value="">— не обрано —</option>
-            @foreach (var p in ViewBag.Pages as List<it_department_site.Entities.Page>)
+            @if (ViewBag.Pages is List<Page> pages)
             {
-                <option value="@p.Id" selected="@(Model.HomePageId == p.Id)">@p.Title</option>
+                foreach (var p in pages)
+                {
+                    <option value="@p.Id" selected="@(Model.HomePageId == p.Id)">@p.Title</option>
+                }
             }
         </select>
     </div>
 
     <button type="submit" class="btn btn-success mt-3">💾 Зберегти</button>
 </form>
-
-<script src="~/ckeditor/ckeditor.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        FullEditor
-            .create(document.querySelector('#FooterHtml'), {
-                ckfinder: {
-                    uploadUrl: '/ckeditor/upload'
-                }
-            })
-            .catch(error => {
-                console.error("❌ CKEditor не ініціалізувався:", error);
-            });
-    });
-</script>
