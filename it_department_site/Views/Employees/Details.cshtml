@@ -1,7 +1,5 @@
 @model it_department_site.ViewModels.EmployeeInfoViewModel
-
 @{
-    ViewData["Title"] = "Деталі співробітника";
     var employeeName = $"{Model.LastName} {Model.FirstName} {Model.PatronymicName}".Trim();
     ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
     {
@@ -9,104 +7,107 @@
         new("Співробітники", "/Employees"),
         new(employeeName)
     };
+    ViewData["Title"] = employeeName;
 }
 
 @section Styles {
+    <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
+    <script src="~/js/disciplines.js"></script>
     <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
 }
 <article class="content">
     @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
-    <section class="employees-page employees-details-page container py-5">
-
-        <div class="employees-details-header">
-            <a href="/Employees/Index" class="employees-back-link">
-                ← Назад до списку співробітників
-            </a>
-        </div>
-
-        <div class="employees-main-wrapper">
-            <header class="employees-hero employee-detail-hero">
-            	<div class="employee-profile-photo-wrap employee-detail-photo-wrap">
-			<img src="@(string.IsNullOrEmpty(@Model.PhotoUrl) ? DefaultImages.Avatar : @Model.PhotoUrl)"
-			     alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
-			     class="employee-profile-photo" />
-            	</div>
-                <div class="employees-hero-inner employee-detail-hero-inner">
-                    <div class="employee-detail-hero-content">
-                        <p class="employees-kicker">
-                            <span class="employees-kicker-dot" aria-hidden="true"></span>
-                            Профіль викладача
-                        </p>
-                        <h1 class="employees-title-main employee-detail-title">
-                            <span class="employees-title-line">@Model.LastName</span>
-                            <span class="employees-title-accent">@Model.FirstName @Model.PatronymicName</span>
-                        </h1>
-                        <p class="employees-subtitle employee-detail-subtitle">@Model.Specialization</p>
-                        <div class="employee-card-contact-box mt-3">
-                            <span class="contact-label">Email для зв'язку</span>
-                            <a href="mailto:@Model.Email" class="employee-contact-link">@Model.Email</a>
-                        </div>
-                    </div>
+    <article class="discipline-article">
+        <header class="discipline-header">
+            <div class="employee-header-inner">
+                <div class="employee-header-photo-wrap">
+                    <img src="@(string.IsNullOrEmpty(Model.PhotoUrl) ? DefaultImages.Avatar : Model.PhotoUrl)"
+                         alt="@Model.LastName @Model.FirstName @Model.PatronymicName"
+                         class="employee-profile-photo" />
                 </div>
-            </header>
+                <div class="employee-header-text">
+                    <h1 class="discipline-header-title">@employeeName</h1>
+                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                    {
+                        <a href="mailto:@Model.Email" class="employee-header-email">@Model.Email</a>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Specialization))
+                    {
+                        <p class="employee-header-meta">@Model.Specialization</p>
+                    }
+                </div>
+            </div>
+        </header>
 
-            <div class="employees-divider"></div>
+        <div class="tabs-container" role="tablist">
+            <div class="tab-menu">
+                <button class="tab-btn active" data-tab="info" role="tab">Інформація</button>
+                <button class="tab-btn" data-tab="disciplines" role="tab">Дисципліни</button>
+                <button class="tab-btn" data-tab="certificates" role="tab">Сертифікати</button>
+            </div>
 
-            <section>
-                @Html.Raw(Model.Bio)
-            </section>
-
-            <div class="employees-divider"></div>
-
-            <section class="employee-disciplines-section my-4">
-                <h3 class="employees-section-title mb-3">Викладає дисципліни</h3>
-                @if (Model.Disciplines != null && Model.Disciplines.Count > 0)
-                {
-                    <div class="d-flex flex-wrap gap-2">
-                        @foreach (var discipline in Model.Disciplines.OrderBy(d => d.SortOrder))
+            <div class="tab-panels">
+                <div id="info" class="tab-panel active">
+                    @if (!string.IsNullOrWhiteSpace(Model.Bio))
+                    {
+                        var infoHtml = Model.Bio.Contains("&lt;")
+                            ? System.Net.WebUtility.HtmlDecode(Model.Bio)
+                            : Model.Bio;
+                        <div class="employee-bio">
+                            @Html.Raw(infoHtml)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="discipline-description text-muted">Опис ще не додано.</div>
+                    }
+                </div>
+                <div id="disciplines" class="tab-panel">
+                    <div class="resources-container">
+                    @if (Model.Disciplines.Count > 0)
+                    {
+                        @foreach (var discipline in Model.Disciplines)
                         {
-                            <a asp-controller="Disciplines"
-                               asp-action="Details"
-                               asp-route-id="@discipline.Id"
-                               class="discipline-link">
-                                @discipline.Name
+                            <a class="card-container"
+                               asp-controller="disciplines"
+                               asp-route-id="@discipline.Id">
+                                <span class="link-title">@discipline.Name</span>
+                                <span class="chevron">›</span>
                             </a>
                         }
+                    }
+                    else
+                    {
+                     <p class="discipline-description text-muted mb-0">Дисципліни ще не призначені.</p>
+                    }
                     </div>
-                }
-                else
-                {
-                    <p class="text-muted fst-italic">Дисципліни ще не призначені.</p>
-                }
-            </section>
-
-            @if (Model.Certificates.Count > 0)
-            {
-                <div class="employees-divider"></div>
-                <section class="certificates-section">
-                    <h2 class="employees-section-title">Сертифікати</h2>
-                    <div class="certificates-slider-wrap">
-                        <div class="certificates-mask-wrapper">
-                            <div class="certificates-track">
-                                @for (var i = 0; i < Model.Certificates.Count; i++)
-                                {
-                                    @await Html.PartialAsync("_CertificateDisplay", Model.Certificates[i])
-                                }
-
-                                @if (Model.Certificates.Count > 1)
-                                {
-                                    @for (var i = 0; i < Model.Certificates.Count; i++)
-                                    {
-                                        @await Html.PartialAsync("_CertificateDisplay", Model.Certificates[i])
-                                    }
-                                }
+                            
+                </div>
+                <div id="certificates" class="tab-panel">
+                    <div class="resources-container" id="employee-certificates">
+                        @if (Model.Certificates.Count > 0)
+                        {
+                            <div class="certificates-section">
+                                <div class="certificates-slider-wrap">
+                                    <div class="certificates-mask-wrapper">
+                                        <div class="certificates-track">
+                                            @foreach (var t in Model.Certificates)
+                                            {
+                                                @await Html.PartialAsync("_CertificateDisplay", t)
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <p class="discipline-description text-muted mb-0">Сертифікати ще не додано.</p>
+                        }
                     </div>
-                </section>
-            }
+                </div>
+            </div>
         </div>
-
-    </section>
+    </article>
 </article>

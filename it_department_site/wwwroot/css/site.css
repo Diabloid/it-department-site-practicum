@@ -1,81 +1,27 @@
-html {
-  font-size: 14px;
+:root {
+  --color-page-bg: #ecedff;
+  --color-page-bg-rgb: 236, 237, 255;
+  --color-surface: #ffffff;
+  --color-text: #333333;
+  --color-heading: #2c3258;
+  --color-heading-rgb: 44, 50, 88;
+  --color-title: #2d2f45;
+  --color-muted: #575979;
+  --color-subtle: #6b7280;
+  --color-brand: #636ac0;
+  --color-brand-rgb: 99, 106, 192;
+  --color-brand-hover: #4a52a8;
+  --color-brand-dark: #545bb0;
+  --color-brand-deep: #5d64ad;
+  --color-brand-mid: #767dcf;
+  --color-brand-light: #949dff;
+  --color-brand-pale: #b8bfff;
+  --color-brand-shadow: #4f56a8;
+  --color-header: #3d4176;
+  --color-border: #e8e9f4;
+  --color-border-light: #f0f0f0;
+  --color-slate: #0f172a;
+  --color-slate-muted: #475569;
+  --color-indigo: #6366f1;
+  --color-indigo-rgb: 99, 102, 241;
 }
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-.content {
-    padding: 20px;
-}
-
-.sidebar {
-    max-width: 100%;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-    .sidebar * {
-        max-width: 100%;
-    }
-/* Загальний стиль для зображень, вставлених CKEditor'ом */
-figure.image {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-    vertical-align: middle;
-    float: none; /* обов’язково прибирає float */
-}
-
-    figure.image img {
-        display: inline-block;
-        max-width: 100%;
-        height: auto;
-        vertical-align: middle;
-        border-radius: 4px;
-    }
-
-    /* Вирівнювання */
-    figure.image.image-style-align-left {
-        float: left;
-        margin-right: 1rem;
-    }
-
-    figure.image.image-style-align-right {
-        float: right;
-        margin-left: 1rem;
-    }
-
-    figure.image.image-style-align-center {
-        display: table;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-    }
-    figure.image.image-style-align-left,
-    figure.image.image-style-align-right {
-        max-width: 35%;
-    }
-    /* Підпис до зображення */
-    figure.image figcaption {
-        font-size: 0.9em;
-        color: #666;
-        text-align: center;
-        margin-top: 0.3rem;
-    }

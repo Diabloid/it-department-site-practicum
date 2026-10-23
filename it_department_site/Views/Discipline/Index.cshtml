@@ -1,26 +1,41 @@
 @model IEnumerable<it_department_site.Entities.Discipline>
 @{
-    ViewData["Title"] = "Дисципліни";
     ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
     {
         new("Головна", "/"),
-        new("Дисципліни")
+        new(ViewData["Title"].ToString())
     };
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/employees.css" asp-append-version="true" />
 }
 <article class="content">
     @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
     <section class="disciplines-page">
-        <div class="disciplines-hero">
-            <p class="disciplines-kicker mb-2">Освітній процес</p>
-            <h1 class="disciplines-title mb-2">Дисципліни</h1>
-            <p class="disciplines-subtitle mb-0">
-                Перелік навчальних дисциплін спеціальності інженерії програмного забезпечення.
-            </p>
-        </div>
+
+        <header class="employees-hero" aria-labelledby="employees-page-title">
+            <div class="employees-hero-glow employees-hero-glow--left" aria-hidden="true"></div>
+            <div class="employees-hero-glow employees-hero-glow--right" aria-hidden="true"></div>
+
+            <div class="employees-hero-inner">
+                <h1 id="employees-page-title" class="employees-title-main">
+                    <span class="employees-title-line">@ViewData["Title"]</span>
+                    <span class="employees-title-accent">спеціальності</span>
+                </h1>
+
+                <p class="employees-subtitle">
+                    Перелік навчальних дисциплін спеціальності "Інженерія програмного забезпечення"
+                </p>
+
+                <div class="employees-hero-divider" aria-hidden="true">
+                    <span class="employees-hero-divider-line"></span>
+
+                    <span class="employees-hero-divider-line"></span>
+                </div>
+            </div>
+        </header>
 
         @if (!Model.Any())
         {

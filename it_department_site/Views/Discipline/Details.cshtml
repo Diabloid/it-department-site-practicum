@@ -1,38 +1,70 @@
 @model it_department_site.Entities.Discipline
 @{
-    ViewData["Title"] = Model.Name;
     ViewData["Breadcrumbs"] = new List<BreadcrumbItem>
     {
         new("Головна", "/"),
-        new("Дисципліни", Url.Action("Index", "Disciplines")),
+        new(ViewData["ParentTitle"].ToString(), ViewData["BackUrl"].ToString()),
         new(Model.Name)
     };
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/disciplines.css" asp-append-version="true" />
+    <script src="~/js/disciplines.js"></script>
 }
+
 <article class="content">
     @await Html.PartialAsync("Partials/_Breadcrumbs", ViewData["Breadcrumbs"])
 
-    <section class="discipline-details-page">
+    <article class="discipline-article">
+
         <header class="discipline-header">
             <h1 class="discipline-header-title">@Model.Name</h1>
         </header>
+        <div class="tabs-container" role="tablist">
+            <div class="tab-menu">
+                <button class="tab-btn active" data-tab="info" role="tab">Опис</button>
+                <button class="tab-btn" data-tab="employees" role="tab">Викладачі</button>
+                <button class="tab-btn" data-tab="resources" role="tab">Ресурси</button>
+            </div>
 
-        <article class="discipline-article">
-
-            @if (!string.IsNullOrWhiteSpace(Model.Description))
-            {
-                <div class="discipline-description">@Model.Description</div>
-            }
-            else
-            {
-                <div class="discipline-description text-muted">Опис ще не додано.</div>
-            }
-        </article>
-
-        <a asp-controller="Disciplines" asp-action="Index" class="discipline-back">
-            ← Назад до дисциплін
-        </a>
-    </section>
+            <div class="tab-panels">
+                <div id="info" class="tab-panel active">
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <div class="discipline-description">@Model.Description</div>
+                }
+                else
+                {
+                    <div class="discipline-description text-muted">Опис ще не додано.</div>
+                }
+                </div>
+                <div id="employees" class="tab-panel">
+                    <div class="employees-grid">
+                        @foreach (var employee in Model.Employees)
+                        {
+                            <a class="card-container" asp-controller="Employees" asp-action="Details" asp-route-id="@employee.Id">
+                                <div class="avatar">
+                                    <img src="@(string.IsNullOrEmpty(employee.PhotoUrl) ? DefaultImages.Avatar : employee.PhotoUrl)"
+                                         alt="@employee.LastName @employee.FirstName"/>
+                                </div>
+                                <span class="employee-name">@employee.FirstName @employee.LastName</span>
+                                <span class="chevron">›</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div id="resources" class="tab-panel">
+                    <div class="resources-container">
+                        @foreach (var link in Model.ResourceLinks)
+                        {
+                            <a class="card-container" href="@link.Url" target="_blank">
+                                <span class="link-title">@link.Title</span>
+                                <span class="link">↗</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
 </article>
