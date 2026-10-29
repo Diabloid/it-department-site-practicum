@@ -27,7 +27,7 @@
 
                         <div class="card-body d-flex flex-column">
                             <small class="text-muted mb-2">
-                                @post.CreatedAt.ToString("dd.MM.yyyy")
+                                @((post.PublishedAt ?? post.CreatedAt).ToString("dd.MM.yyyy"))
                             </small>
 
                             <h5 class="card-title">@post.Title</h5>
