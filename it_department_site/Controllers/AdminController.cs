@@ -11,7 +11,6 @@ namespace it_department_site.Controllers
         private readonly IPageService _pageService;
         private readonly IMenuService _menuService;
         private readonly ILogger<AdminController> _logger;
-        private readonly ISiteSettingsService _settingsService;
         private readonly IPartnerService _partnerService;
         private readonly IPostService _postService;
         private readonly IGraduateService _graduateService;
@@ -22,14 +21,12 @@ namespace it_department_site.Controllers
         private readonly IDisciplineService _disciplineService;
         private readonly IUserService _userService;
         private readonly IFileStorageService _fileStorageService;
-        private readonly IOrganizationInfoService _organizationInfoService;
         private readonly ICategoryService _categoryService;
 
         public AdminController(
             IPageService pageService,
             IMenuService menuService,
             ILogger<AdminController> logger,
-            ISiteSettingsService settingsService,
             IPartnerService partnerService,
             IPostService postService,
             IGraduateService graduateService,
@@ -40,13 +37,11 @@ namespace it_department_site.Controllers
             IDisciplineService disciplineService,
             IUserService userService,
             IFileStorageService fileStorageService,
-            IOrganizationInfoService organizationInfoService,
             ICategoryService categoryService)
         {
             _pageService = pageService;
             _menuService = menuService;
             _logger = logger;
-            _settingsService = settingsService;
             _partnerService = partnerService;
             _postService = postService;
             _graduateService = graduateService;
@@ -57,37 +52,7 @@ namespace it_department_site.Controllers
             _disciplineService = disciplineService;
             _userService = userService;
             _fileStorageService = fileStorageService;
-            _organizationInfoService = organizationInfoService;
             _categoryService = categoryService;
-        }
-
-        public async Task<IActionResult> LayoutSettings()
-        {
-            var settings = await _settingsService.GetAsync();
-            ViewBag.Pages = await _pageService.GetAllPagesAsync();
-            return View("EditLayout", settings);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> LayoutSettings(SiteSettings model, IFormFile? logoFile)
-        {
-            if (string.IsNullOrWhiteSpace(model.SiteTitle))
-            {
-                TempData["Error"] = "Назва сайту не може бути порожньою!";
-                return RedirectToAction(nameof(LayoutSettings));
-            }
-            var current = await _settingsService.GetAsync();
-            current.SiteTitle = model.SiteTitle;
-            current.HomePageId = model.HomePageId;
-
-            if (logoFile != null)
-            {
-                current.SiteLogoUrl = await _fileStorageService.SaveImage(logoFile, string.Empty);
-            }
-
-            await _settingsService.SaveAsync(current);
-            TempData["Success"] = "Зміни збережено!";
-            return RedirectToAction(nameof(LayoutSettings));
         }
 
         public IActionResult Index()
@@ -134,17 +99,10 @@ namespace it_department_site.Controllers
             return PartialView("_EditUser", model);
         }
 
-        [HttpPost]
         [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> CreateUser(UserFormViewModel model)
         {
-            ModelState.Remove("Password");
-            if (string.IsNullOrWhiteSpace(model.Password))
-            {
-                ModelState.AddModelError(nameof(model.Password), "Пароль обов'язковий");
-            }
-
             if (!ModelState.IsValid)
             {
                 model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync()).ToList();
@@ -160,7 +118,7 @@ namespace it_department_site.Controllers
                     EmployeeId = model.EmployeeId,
                     Roles = model.SelectedRoles
                 };
-                await _userService.CreateAsync(user, model.Password!);
+                await _userService.CreateAsync(user);
                 return await Users();
             }
             catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
@@ -187,7 +145,6 @@ namespace it_department_site.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(UserFormViewModel model)
         {
-            ModelState.Remove("Password");
             if (!ModelState.IsValid)
             {
                 model.AvailableEmployees = (await _userService.GetAvailableEmployeesAsync(excludeUserId: model.Id)).ToList();
@@ -203,7 +160,7 @@ namespace it_department_site.Controllers
                     EmployeeId = model.EmployeeId,
                     Roles = model.SelectedRoles
                 };
-                await _userService.UpdateAsync(model.Id, user, model.Password);
+                await _userService.UpdateAsync(model.Id, user);
                 return await Users();
             }
             catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 } mysqlEx)
@@ -225,6 +182,7 @@ namespace it_department_site.Controllers
                 return PartialView("_EditUser", model);
             }
         }
+
         public async Task<IActionResult> Graduates()
         {
             var graduates = await _graduateService.GetAllAsync();
@@ -974,27 +932,6 @@ namespace it_department_site.Controllers
             await _postService.DeleteAsync(id);
             _logger.LogInformation("Admin deleted post with ID {PostId}", id);
             return await Posts();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Settings()
-        {
-            var info = await _organizationInfoService.GetAsync();
-            return View(info);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Settings(OrganizationInfo model)
-        {
-            ModelState.Clear();
-
-            model.PhoneNumbers = model.PhoneNumbers.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
-            model.SocialLinks = model.SocialLinks.Where(s => !string.IsNullOrWhiteSpace(s.Url)).ToList();
-
-            await _organizationInfoService.UpdateAsync(model);
-
-            TempData["SuccessMessage"] = "Налаштування організації успішно збережено!";
-            return RedirectToAction(nameof(Settings));
         }
     }
 }

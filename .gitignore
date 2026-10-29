@@ -40,6 +40,9 @@ bld/
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
+# Rider 
+.idea/
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
@@ -403,3 +406,5 @@ it_department_site/secrets/
 
 # wwwroot
 */wwwroot/uploads/
+
+.env
