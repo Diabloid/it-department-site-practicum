@@ -1,49 +1,12 @@
-﻿namespace it_department_site.Controllers
+namespace it_department_site.Controllers
 {
-    public class PagesController : Controller
+    public class PagesController(IPageService pageService, ICurrentUserService currentUser) : Controller
     {
-        private readonly IPageService _pageService;
-        private readonly ICurrentUserService _currentUser;
-        private readonly IPartnerService _partnerService;
-        private readonly IPostService _postService;
-        private readonly IMainSliderService _mainSliderService;
-        private readonly IGraduateService _graduateService;
-
-        public PagesController(IPageService pageService, 
-            ICurrentUserService currentUser, IPartnerService partnerService, IPostService postService,
-            IMainSliderService mainSliderService, IGraduateService graduateService)
-        {
-            _pageService = pageService;
-            _currentUser = currentUser;
-            _partnerService = partnerService;
-            _postService = postService;
-            _mainSliderService = mainSliderService;
-            _graduateService = graduateService;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var partners = await _partnerService.GetAllPartnersAsync();
-            ViewBag.Partners = partners.ToList();
-            ViewBag.MainSliderSlides = await _mainSliderService.GetDisplaySlidesAsync();
-
-            // 2. --- ЛОГІКА НОВИН ---
-            ViewBag.News = await _postService.GetLatestAsync(4);
-
-            // --- НОВА ЛОГІКА ВІДГУКІВ ---
-            ViewBag.Reviews = await _graduateService.GetRandomReviewsAsync(5);
-
-            // 3. --- ЛОГІКА СТОРІНОК ---
-            var pages = await _pageService.GetAllPagesAsync();
-            var dtoList = pages.Select(PageMapper.ToDto).ToList();
-            return View(dtoList);
-        }
-
         public async Task<IActionResult> Details(string slug)
         {
-            bool isAdmin = _currentUser.IsAuthenticated && _currentUser.IsAdmin;
+            bool isAdmin = currentUser.IsAuthenticated && currentUser.IsAdmin;
 
-            var page = await _pageService.GetPageBySlugAsync(slug, isAdmin);
+            var page = await pageService.GetPageBySlugAsync(slug, isAdmin);
             if (page == null)
             {
                 return NotFound();
@@ -54,7 +17,7 @@
 
             if (!Request.Cookies.ContainsKey(viewCookieName))
             {
-                await _pageService.IncrementViewsAsync(page.Id);
+                await pageService.IncrementViewsAsync(page.Id);
 
                 page.ViewsCount++;
 
@@ -72,7 +35,6 @@
             var dto = PageMapper.ToDto(page);
             return View(dto);
         }
-
 
         [HttpPost]
         [Route("ckeditor/upload")]

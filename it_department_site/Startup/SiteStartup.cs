@@ -48,6 +48,9 @@ namespace it_department_site.Startup
                 options.AreaViewLocationFormats.Add("/Admin/{1}/{0}.cshtml");
                 options.AreaViewLocationFormats.Add("/Admin/Shared/{0}.cshtml");
                 options.AreaViewLocationFormats.Add("/Views/Shared/{0}.cshtml");
+
+                options.ViewLocationFormats.Add("/Public/{1}/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Public/Pages/{0}.cshtml");
             });
 
             builder.Services.AddSession();
@@ -174,7 +177,7 @@ namespace it_department_site.Startup
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Pages}/{action=Index}/{id?}"
+                pattern: "{controller=HomePage}/{action=Index}/{id?}"
             );
 
             await app.RunAsync();
