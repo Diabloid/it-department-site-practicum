@@ -23,7 +23,7 @@
 
             @if (!string.IsNullOrWhiteSpace(Model.Description))
             {
-                <div class="discipline-description">@Model.Description</div>
+                <div class="discipline-description">@Html.Raw(Model.Description)</div>
             }
             else
             {
