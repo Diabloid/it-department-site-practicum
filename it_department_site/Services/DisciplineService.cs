@@ -3,18 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace it_department_site.Services;
 
-public class DisciplineService : IDisciplineService
+public class DisciplineService(ApplicationDbContext context) : IDisciplineService
 {
-    private readonly ApplicationDbContext _context;
-
-    public DisciplineService(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<IEnumerable<Discipline>> GetAllAsync()
     {
-        return await _context.Disciplines
+        return await context.Disciplines
             .Include(d => d.ResourceLinks.OrderBy(l => l.Order))
             .OrderBy(d => d.SortOrder)
             .ThenBy(d => d.Name)
@@ -23,20 +16,21 @@ public class DisciplineService : IDisciplineService
 
     public async Task<Discipline?> GetByIdAsync(int id)
     {
-        return await _context.Disciplines
+        return await context.Disciplines
+            .Include( d => d.Employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName))
             .Include(d => d.ResourceLinks.OrderBy(l => l.Order))
             .FirstOrDefaultAsync(d => d.Id == id);
     }
 
     public async Task CreateAsync(Discipline discipline)
     {
-        _context.Disciplines.Add(discipline);
-        await _context.SaveChangesAsync();
+        context.Disciplines.Add(discipline);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(int id, Discipline discipline)
     {
-        var existing = await _context.Disciplines
+        var existing = await context.Disciplines
             .Include(d => d.ResourceLinks)
             .FirstOrDefaultAsync(d => d.Id == id);
         if (existing == null) return;
@@ -46,37 +40,53 @@ public class DisciplineService : IDisciplineService
         existing.SortOrder = discipline.SortOrder;
         existing.IsRequired = discipline.IsRequired;
 
-        _context.RemoveRange(existing.ResourceLinks);
+        context.RemoveRange(existing.ResourceLinks);
         existing.ResourceLinks = discipline.ResourceLinks
             .Select(l => new DisciplineResourceLink { Title = l.Title, Url = l.Url, Order = l.Order, DisciplineId = id })
             .ToList();
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
     {
+        // REFACTOR_HINT: GetByIdAsync includes unnecessary entities
         var existing = await GetByIdAsync(id);
         if (existing == null) return;
 
-        _context.Disciplines.Remove(existing);
-        await _context.SaveChangesAsync();
+        context.Disciplines.Remove(existing);
+        await context.SaveChangesAsync();
     }
 
-    public async Task<List<Discipline>> GetPagedAsync(int pageNumber, int pageSize, string? name)
+    public async Task<List<Discipline>> GetPagedAsync(bool includeRequired, string? name, int pageNumber, int pageSize)
     {
-        var query = _context.Disciplines.AsQueryable();
+        return await FilteredQuery(includeRequired, name)
+            .OrderBy(d => d.SortOrder)
+            .ThenBy(d => d.Name)
+            .Skip(Math.Max(pageNumber - 1, 0) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public async Task<int> GetTotalPagesCountAsync(bool includeRequired, string? name, int pageSize)
+    {
+        if (pageSize < 1) pageSize = 1;
+
+        var totalCount = await FilteredQuery(includeRequired, name).CountAsync();
+        return (int)Math.Ceiling(totalCount / (double)pageSize);
+    }
+
+    private IQueryable<Discipline> FilteredQuery(bool includeRequired, string? name)
+    {
+        var query = context.Set<Discipline>()
+            .AsNoTracking()
+            .Where(d => d.IsRequired == includeRequired);
 
         if (!string.IsNullOrWhiteSpace(name))
         {
             query = query.Where(d => EF.Functions.Like(d.Name, $"%{name}%"));
         }
 
-        return await query
-            .OrderBy(d => d.SortOrder)
-            .ThenBy(d => d.Name)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+        return query;
     }
 }

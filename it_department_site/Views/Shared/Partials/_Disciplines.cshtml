@@ -1,0 +1,90 @@
+@model IEnumerable<it_department_site.Entities.Discipline>
+@{
+    var currentPage = ViewData["CurrentPage"] as int? ?? 1;
+    var totalPages = ViewData["TotalPages"] as int? ?? 0;
+    var searchName = ViewData["SearchName"] as string ?? "";
+    var isRequired = ViewData["IsRequired"] is bool requiredFlag && requiredFlag;
+    var hasSearch = !string.IsNullOrWhiteSpace(searchName);
+
+    string PagerUrl(int page)
+    {
+        var query = new List<string>
+        {
+            $"required={(isRequired ? "true" : "false")}",
+            $"pageNumber={page}"
+        };
+        if (hasSearch)
+        {
+            query.Add($"name={Uri.EscapeDataString(searchName)}");
+        }
+
+        return "/disciplines?" + string.Join("&", query);
+    }
+}
+
+@if (!Model.Any())
+{
+    <div class="disciplines-empty">
+        @(hasSearch ? "Нічого не знайдено." : "Дисципліни ще не додано.")
+    </div>
+}
+else
+{
+    <div class="disciplines-grid">
+        @foreach (var discipline in Model)
+        {
+            <article class="discipline-card">
+                <a asp-controller="Disciplines"
+                   asp-action="Details"
+                   asp-route-id="@discipline.Id"
+                   class="discipline-card-link">
+                    <h2 class="discipline-card-name">@discipline.Name</h2>
+                </a>
+            </article>
+        }
+    </div>
+}
+
+@if (totalPages > 1)
+{
+    <nav class="disciplines-pager" aria-label="Пагінація дисциплін">
+        @if (currentPage <= 1)
+        {
+            <span class="disciplines-pager-btn disciplines-pager-prev is-disabled" aria-disabled="true">‹</span>
+        }
+        else
+        {
+            <a class="disciplines-pager-btn disciplines-pager-prev"
+               href="@PagerUrl(currentPage - 1)"
+               data-page="@(currentPage - 1)"
+               aria-label="Попередня сторінка">‹</a>
+        }
+
+        @for (var i = 1; i <= totalPages; i++)
+        {
+            if (i == currentPage)
+            {
+                <span class="disciplines-pager-btn is-active" aria-current="page">@i</span>
+            }
+            else
+            {
+                <a class="disciplines-pager-btn"
+                   href="@PagerUrl(i)"
+                   data-page="@i"
+                   aria-label="Сторінка @i">@i</a>
+            }
+        }
+
+        @if (currentPage >= totalPages)
+        {
+            <span class="disciplines-pager-btn disciplines-pager-next is-disabled" aria-disabled="true">›</span>
+        }
+        else
+        {
+            <a class="disciplines-pager-btn disciplines-pager-next"
+               href="@PagerUrl(currentPage + 1)"
+               data-page="@(currentPage + 1)"
+               aria-label="Наступна сторінка">›</a>
+        }
+    </nav>
+}

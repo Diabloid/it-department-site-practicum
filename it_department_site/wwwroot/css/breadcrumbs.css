@@ -4,18 +4,19 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-subtle);
+  margin-bottom: 24px;
 }
 
 .site-breadcrumb a {
-  color: #636ac0;
+  color: var(--color-brand);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .site-breadcrumb a:hover {
-  color: #4a52a8;
+  color: var(--color-brand-hover);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

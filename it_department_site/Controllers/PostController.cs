@@ -6,7 +6,7 @@ namespace it_department_site.Controllers
         public async Task<IActionResult> Index([FromQuery] string? category)
         {
             var posts = category == null 
-                ? await postService.GetAllAsync()
+                ? await postService.GetAllPublishedAsync()
                 : await postService.GetByCategoryName(category);
             return View(posts);
         }

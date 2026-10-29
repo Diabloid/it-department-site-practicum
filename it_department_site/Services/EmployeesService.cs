@@ -148,6 +148,8 @@ public class EmployeeService : IEmployeeService
 
     public async Task SetSelectedDriveCertificatesAsync(int employeeId, IReadOnlyList<string> selectedFileIds)
     {
+        if (!_driveService.IsConfigured) return;
+
         var employee = await GetByIdAsync(employeeId);
         if (employee == null || string.IsNullOrWhiteSpace(employee.GoogleDriveFolderUrl)) return;
 

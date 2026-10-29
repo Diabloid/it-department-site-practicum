@@ -6,7 +6,7 @@
     padding: 20px 5px;
     align-items: center;
     scrollbar-width: thin;
-    scrollbar-color: #5D64AD #f0f0f0;
+    scrollbar-color: var(--color-brand-deep) var(--color-border-light);
 }
 
 .admin-partner-card {
@@ -25,7 +25,7 @@
 }
 
 .admin-partner-card:hover {
-    border-color: #5D64AD;
+    border-color: var(--color-brand-deep);
     transform: translateY(-3px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
@@ -86,13 +86,13 @@
 
 .add-partner-card:hover {
     background: #eef0ff;
-    border-color: #5D64AD;
-    color: #5D64AD;
+    border-color: var(--color-brand-deep);
+    color: var(--color-brand-deep);
     transform: scale(1.02);
 }
 
 .admin-partners-panel {
-    background: #fff;
+    background: var(--color-surface);
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -100,7 +100,7 @@
 
 .admin-partners-title {
     margin-bottom: 20px;
-    color: #333;
+    color: var(--color-text);
 }
 
 .add-partner-trigger {
@@ -114,7 +114,7 @@
     border-radius: 14px;
     background: linear-gradient(180deg, #f3f2ff 0%, #eceaff 100%);
     border: 1px solid #cbc7ff;
-    box-shadow: 0 8px 20px rgba(99, 106, 192, 0.14);
+    box-shadow: 0 8px 20px rgba(var(--color-brand-rgb), 0.14);
 }
 
 .partner-create-title {
@@ -133,7 +133,7 @@
     border: 1px solid #b7b2ff;
     border-radius: 10px;
     padding: 10px 12px;
-    background: #fff;
+    background: var(--color-surface);
     color: #2c2f5f;
 }
 
@@ -158,12 +158,12 @@
 }
 
 .partner-btn-primary {
-    background: #636ac0;
-    color: #fff;
+    background: var(--color-brand);
+    color: var(--color-surface);
 }
 
 .partner-btn-primary:hover {
-    background: #545bb0;
+    background: var(--color-brand-dark);
 }
 
 .partner-btn-secondary {
