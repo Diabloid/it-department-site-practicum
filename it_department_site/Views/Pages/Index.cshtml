@@ -1,4 +1,4 @@
-﻿@{
+@{
    ViewData["Title"] = "Головна";
    var newsList = (ViewBag.News as IEnumerable<Post>)?.ToList() ?? new List<Post>();
    var mainSliderSlides = (ViewBag.MainSliderSlides as IEnumerable<MainSliderSlide>)?.ToList()
@@ -44,7 +44,7 @@
                                        <div class="news-image" style="background-image:url('@(string.IsNullOrEmpty(mainPost.Thumbnail) ? DefaultImages.News : mainPost.Thumbnail)');"></div>
                                         <span class="news-date">
                                             <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
-                                            @mainPost.CreatedAt.ToString("dd.MM.yyyy")
+                                            @((mainPost.PublishedAt ?? mainPost.CreatedAt).ToString("dd.MM.yyyy"))
                                         </span>
                                         <h3>@mainPost.Title</h3>
                                         <div class="news-excerpt">@Html.Raw(mainPost.Excerpt)</div>
@@ -60,7 +60,7 @@
                                                 <small>
                                                     <div class="news-meta" >
                                                         <img class="news-date-icon" src="~/images/icons/calendar.svg" alt="calendar" />
-                                                        @item.CreatedAt.ToString("dd.MM.yyyy")
+                                                        @((item.PublishedAt ?? item.CreatedAt).ToString("dd.MM.yyyy"))
                                                     </div>
                                                   
                                                 </small>
