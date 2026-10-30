@@ -1,7 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using it_department_site.Services.Interfaces;
-using it_department_site.ViewModels;
-
 namespace it_department_site.Public.Pages
 {
     public class HomePageController(
