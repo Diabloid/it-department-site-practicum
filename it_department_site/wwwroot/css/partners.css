@@ -41,10 +41,10 @@
     width: 250px;
     height: 150px;
     /* 2. Дизайн картки (білий фон, тінь, кути) */
-    background: #fff;
+    background: var(--color-surface);
     border-radius: 15px; /* Трохи більш округлі кути */
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--color-border-light);
     /* 3. ВАЖЛИВО: Відступи всередині, щоб картинка не прилипала до країв */
     padding: 5px;
     /* 4. Центрування картинки всередині */
@@ -65,7 +65,7 @@
     .partner-logo:hover {
         transform: translateY(-5px); /* Картка підстрибує при наведенні */
         box-shadow: 0 10px 25px rgba(93, 100, 173, 0.2); /* Тінь стає кольоровою */
-        border-color: #5D64AD;
+        border-color: var(--color-brand-deep);
     }
 
     /* 5. НАЛАШТУВАННЯ САМОЇ КАРТИНКИ */

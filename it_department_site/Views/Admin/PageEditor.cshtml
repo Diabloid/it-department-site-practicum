@@ -113,40 +113,20 @@
     </form>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="~/ckeditor5/ckeditor5.css" asp-append-version="true" />
+}
+
 @section Scripts {
-    <script src="~/ckeditor/ckeditor.js"></script>
-    <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                // Перевір, чи FullEditor існує
-                if (typeof FullEditor === 'undefined') {
-                    console.error("❌ FullEditor is not defined. Використай ClassicEditor або іншу назву редактора.");
-                    return;
-                }
+    <script type="module">
+        import { initEditors } from '/js/editor.js';
+        initEditors();
 
-                const editorInstances = {};
+        function applyTemplate(value) {
+            document.getElementById("LayoutType").value = value;
+        }
+        window.applyTemplate = applyTemplate; // if buttons use onclick="applyTemplate(...)"
 
-        document.querySelectorAll('textarea.editor').forEach(textarea => {
-            FullEditor
-                .create(textarea, {
-                    ckfinder: {
-                        uploadUrl: '/ckeditor/upload'
-                    }
-                })
-                .then(editor => {
-                    editorInstances[textarea.id] = editor;
-                })
-                .catch(error => {
-                    console.error(`❌ Error initializing ${textarea.id}:`, error);
-                });
-        });
-
-                // Функція для вибору шаблону
-                function applyTemplate(value) {
-                    document.getElementById("LayoutType").value = value;
-                }
-
-                // Ініціалізація шаблону при завантаженні
-                applyTemplate('@layoutType');
-            });
+        applyTemplate('@layoutType');
     </script>
 }

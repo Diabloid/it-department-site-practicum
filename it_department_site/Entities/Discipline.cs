@@ -28,6 +28,8 @@ namespace it_department_site.Entities
         [Column("is_required")]
         public bool IsRequired { get; set; } = true;
 
+        public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+
         public ICollection<DisciplineResourceLink> ResourceLinks { get; set; } = new List<DisciplineResourceLink>();
     }
 }

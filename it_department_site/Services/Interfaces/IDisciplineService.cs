@@ -4,7 +4,8 @@ namespace it_department_site.Services.Interfaces
     {
         Task<IEnumerable<Discipline>> GetAllAsync();
         Task<Discipline?> GetByIdAsync(int id);
-        Task<List<Discipline>> GetPagedAsync(int pageNumber, int pageSize, string? name);
+        Task<List<Discipline>> GetPagedAsync(bool includeRequired, string? name, int pageNumber, int pageSize);
+        Task<int> GetTotalPagesCountAsync(bool includeRequired, string? name, int pageSize);
         Task CreateAsync(Discipline discipline);
         Task UpdateAsync(int id, Discipline discipline);
         Task DeleteAsync(int id);
