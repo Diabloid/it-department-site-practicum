@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ItDepartment.Tests/ItDepartment.Tests.csproj" />
+  <Project Path="it_department_site/it_department_site.csproj" />
+</Solution>

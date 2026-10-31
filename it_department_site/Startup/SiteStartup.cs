@@ -1,8 +1,10 @@
 using DotNetEnv;
 using it_department_site.Infrastructure.Extensions;
+using it_department_site.Infrastructure.Resilience;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Quartz;
@@ -41,7 +43,6 @@ namespace it_department_site.Startup
             builder.Services.AddControllersWithViews();
 
             // Вьюхи для area "Admin" лежать у папці Admin/ у корені проєкту
-            // (Admin/Settings/Settings.cshtml, Admin/Settings/_Edit.cshtml тощо)
             builder.Services.Configure<RazorViewEngineOptions>(options =>
             {
                 options.AreaViewLocationFormats.Clear();
@@ -59,40 +60,51 @@ namespace it_department_site.Startup
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddHttpClient();
 
+            // Модуль 3: Caching (In-memory caching для зниження навантаження на БД)
+            builder.Services.AddMemoryCache();
+
+            // Модуль 3: Відмовостійкість (Resilience Service: Polly Retry, Circuit Breaker, Timeout)
+            builder.Services.AddSingleton<IResilienceService, ResilienceService>();
+
+            // Модуль 3: Rate Limiting (Обмеження запитів до API: 30 запитів на хвилину, повертає 429)
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.AddFixedWindowLimiter("api", limiter =>
+                {
+                    limiter.PermitLimit = 30;
+                    limiter.Window = TimeSpan.FromMinutes(1);
+                    limiter.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                    limiter.QueueLimit = 0;
+                });
+            });
+
             builder.Services.ConfigureDatasource(builder.Configuration);
-            // 4. Реєстрація Репозиторіїв та Сервісів (Всі Scoped)
+
+            // Реєстрація репозиторіїв та сервісів
             builder.Services.AddScoped<IPageService, PageService>();
             builder.Services.AddScoped<IMenuService, MenuService>();
-
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGraduateService, GraduateService>();
             builder.Services.AddScoped<IDisciplineService, DisciplineService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
-
             builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
-
             builder.Services.AddScoped<IProfileService, ProfileService>();
-
             builder.Services.AddScoped<EntraIdAuthenticationEvents>();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
             builder.Services.AddScoped<IPartnerService, PartnerService>();
             builder.Services.AddScoped<IMainSliderService, MainSliderService>();
-
             builder.Services.AddScoped<IPostService, PostService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IOrganizationInfoService, OrganizationInfoService>();
             builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
-
             builder.Services.AddQuartz(q =>
             {
                 q.UsePersistentStore(s =>
                 {
-                    // Використовуємо JSON для серіалізації параметрів завдання
                     s.UseNewtonsoftJsonSerializer();
-
                     s.UseMySqlConnector(mySqlOptions =>
                     {
                         mySqlOptions.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -100,7 +112,6 @@ namespace it_department_site.Startup
                 });
             });
 
-            // Додаємо Quartz як фоновий сервіс, який чекатиме завершення задач при вимкненні програми
             builder.Services.AddQuartzHostedService(options =>
             {
                 options.WaitForJobsToComplete = true;
@@ -125,14 +136,19 @@ namespace it_department_site.Startup
 
             app.UseRouting();
 
-            app.UseAuthentication(); // Хто ти?
-            app.UseAuthorization(); // Що тобі можна?
+            // Модуль 3: Підключення Rate Limiting middleware
+            app.UseRateLimiter();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseStatusCodePagesWithReExecute("/Error", "?code={0}");
-
             app.UseSession();
 
-            // Маршрути
+            // Модуль 3: Мапінг REST API контролерів
+            app.MapControllers();
+
+            // Маршрути MVC
             app.MapControllerRoute(
                 name: "zones",
                 pattern: "{area:exists}/{controller}/{action=Index}/{id?}"

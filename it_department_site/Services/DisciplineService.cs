@@ -17,7 +17,7 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
     public async Task<Discipline?> GetByIdAsync(int id)
     {
         return await context.Disciplines
-            .Include( d => d.Employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName))
+            .Include(d => d.Employees.OrderBy(e => e.LastName).ThenBy(e => e.FirstName))
             .Include(d => d.ResourceLinks.OrderBy(l => l.Order))
             .FirstOrDefaultAsync(d => d.Id == id);
     }
@@ -50,8 +50,8 @@ public class DisciplineService(ApplicationDbContext context) : IDisciplineServic
 
     public async Task DeleteAsync(int id)
     {
-        // REFACTOR_HINT: GetByIdAsync includes unnecessary entities
-        var existing = await GetByIdAsync(id);
+        // Оптимізація: прямий FindAsync без завантаження пов'язаних сутностей
+        var existing = await context.Disciplines.FindAsync(id);
         if (existing == null) return;
 
         context.Disciplines.Remove(existing);
