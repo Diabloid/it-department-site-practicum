@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: it-department-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ApiKey__SecretKey
+        generateValue: true
+      - key: ConnectionStrings__DefaultConnection
+        sync: false

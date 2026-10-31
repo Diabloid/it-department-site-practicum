@@ -1,0 +1,41 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: it_department_api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__DefaultConnection: "Server=db;Port=3306;Database=it_department_db;User ID=app_user;Password=${DB_PASSWORD:-SecretDbPass123!};Pooling=true;"
+      ApiKey__SecretKey: "${API_KEY:-practicum-secret-api-key-2026}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    container_name: it_department_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-RootPass123!}"
+      MYSQL_DATABASE: it_department_db
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: "${DB_PASSWORD:-SecretDbPass123!}"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "app_user", "-p${DB_PASSWORD:-SecretDbPass123!}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+volumes:
+  mysql_data:
+    driver: local

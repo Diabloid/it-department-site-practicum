@@ -18,6 +18,13 @@ namespace it_department_site.Startup
         {
             Env.Load();
             var builder = WebApplication.CreateBuilder(args);
+
+            // Підтримка динамічного порту Render / Cloud хмарного хостингу
+            var port = Environment.GetEnvironmentVariable("PORT");
+            if (!string.IsNullOrEmpty(port))
+            {
+                builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+            }
             builder.Services.Configure<GoogleDriveOptions>(
                 builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
@@ -100,16 +107,20 @@ namespace it_department_site.Startup
             builder.Services.AddSingleton<IGoogleDriveService, GoogleDriveService>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
+            var defaultConn = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddQuartz(q =>
             {
-                q.UsePersistentStore(s =>
+                if (!string.IsNullOrWhiteSpace(defaultConn))
                 {
-                    s.UseNewtonsoftJsonSerializer();
-                    s.UseMySqlConnector(mySqlOptions =>
+                    q.UsePersistentStore(s =>
                     {
-                        mySqlOptions.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                        s.UseNewtonsoftJsonSerializer();
+                        s.UseMySqlConnector(mySqlOptions =>
+                        {
+                            mySqlOptions.ConnectionString = defaultConn;
+                        });
                     });
-                });
+                }
             });
 
             builder.Services.AddQuartzHostedService(options =>
