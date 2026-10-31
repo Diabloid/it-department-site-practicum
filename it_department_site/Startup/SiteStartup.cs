@@ -110,7 +110,10 @@ namespace it_department_site.Startup
             var defaultConn = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddQuartz(q =>
             {
-                if (!string.IsNullOrWhiteSpace(defaultConn))
+                // Використовувати MySQL persistent store тільки якщо задано реальний віддалений сервер (не localhost)
+                if (!string.IsNullOrWhiteSpace(defaultConn) 
+                    && !defaultConn.Contains("localhost", StringComparison.OrdinalIgnoreCase) 
+                    && !defaultConn.Contains("127.0.0.1"))
                 {
                     q.UsePersistentStore(s =>
                     {
