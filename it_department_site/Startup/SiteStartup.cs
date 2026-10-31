@@ -28,13 +28,17 @@ namespace it_department_site.Startup
             builder.Services.Configure<GoogleDriveOptions>(
                 builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
+            var entraClientId = builder.Configuration["EntraId:ClientId"] ?? "00000000-0000-0000-0000-000000000000";
+            var entraTenantId = builder.Configuration["EntraId:TenantId"] ?? "common";
+            var entraClientSecret = builder.Configuration["EntraId:ClientSecret"] ?? "dummy-secret-value-12345";
+
             builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(options =>
                 {
                     options.Instance = "https://login.microsoftonline.com/";
-                    options.TenantId = builder.Configuration["EntraId:TenantId"];
-                    options.ClientId = builder.Configuration["EntraId:ClientId"];
-                    options.ClientSecret = builder.Configuration["EntraId:ClientSecret"];
+                    options.TenantId = entraTenantId;
+                    options.ClientId = entraClientId;
+                    options.ClientSecret = entraClientSecret;
                     options.CallbackPath = "/signin-oidc";
                     options.ResponseType = "code";
 
@@ -139,11 +143,9 @@ namespace it_department_site.Startup
                 app.UseHsts();
             }
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            // Swagger доступний для перевірки та тестування на будь-якому середовищі
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -158,6 +160,9 @@ namespace it_department_site.Startup
 
             app.UseStatusCodePagesWithReExecute("/Error", "?code={0}");
             app.UseSession();
+
+            // Швидкий healthcheck для Render / Cloud
+            app.MapGet("/healthz", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow })).AllowAnonymous();
 
             // Модуль 3: Мапінг REST API контролерів
             app.MapControllers();
