@@ -147,10 +147,16 @@ namespace it_department_site.Startup
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseHttpsRedirection();
+            // Примітка: UseHttpsRedirection вимкнено для контейнерів у хмарі (Render/Docker),
+            // оскільки SSL-термінація відбувається на балансувальнику Render, а внутрішній health check іде через HTTP
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            // Швидкий прямий healthcheck для Render (повертає 200 OK до будь-якої авторизації)
+            app.MapGet("/api/v1/health", () => Results.Ok(new { status = "Healthy", version = "1.0", timestamp = DateTime.UtcNow })).AllowAnonymous();
+            app.MapGet("/healthz", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow })).AllowAnonymous();
 
             // Модуль 3: Підключення Rate Limiting middleware
             app.UseRateLimiter();
@@ -160,9 +166,6 @@ namespace it_department_site.Startup
 
             app.UseStatusCodePagesWithReExecute("/Error", "?code={0}");
             app.UseSession();
-
-            // Швидкий healthcheck для Render / Cloud
-            app.MapGet("/healthz", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow })).AllowAnonymous();
 
             // Модуль 3: Мапінг REST API контролерів
             app.MapControllers();
