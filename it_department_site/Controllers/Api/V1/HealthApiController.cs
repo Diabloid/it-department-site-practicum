@@ -5,6 +5,7 @@ namespace it_department_site.Controllers.Api.V1
 {
     [ApiController]
     [Route("api/v1/health")]
+    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
     public class HealthApiController : ControllerBase
     {
         private readonly IResilienceService _resilienceService;

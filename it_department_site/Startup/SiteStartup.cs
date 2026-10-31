@@ -154,8 +154,7 @@ namespace it_department_site.Startup
 
             app.UseRouting();
 
-            // Швидкий прямий healthcheck для Render (повертає 200 OK до будь-якої авторизації)
-            app.MapGet("/api/v1/health", () => Results.Ok(new { status = "Healthy", version = "1.0", timestamp = DateTime.UtcNow })).AllowAnonymous();
+            // Швидкий healthcheck для Render / Cloud
             app.MapGet("/healthz", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow })).AllowAnonymous();
 
             // Модуль 3: Підключення Rate Limiting middleware
